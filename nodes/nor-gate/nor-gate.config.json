@@ -1,0 +1,29 @@
+{
+  "display_name": "NOR Gate",
+  "description": "A logic gate that outputs true only if both inputs are false",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "input1",
+      "display_name": "Input 1",
+      "description": "The first input for the NOR gate",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "input2",
+      "display_name": "Input 2",
+      "description": "The second input for the NOR gate",
+      "type": "boolean",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "The output value of the NOR gate",
+      "type": "boolean"
+    }
+  ]
+} 

@@ -1,0 +1,65 @@
+{
+  "display_name": "Random Number",
+  "description": "Generates random numbers with configurable range and distribution",
+  "icon": "dice",
+  "category": "math",
+  "is_constant": true,
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "min",
+      "display_name": "Minimum",
+      "type": "number",
+      "description": "The minimum value (for uniform and integer distributions)",
+      "default": 0
+    },
+    {
+      "name": "max",
+      "display_name": "Maximum",
+      "type": "number",
+      "description": "The maximum value (for uniform and integer distributions)",
+      "default": 1
+    },
+    {
+      "name": "mean",
+      "display_name": "Mean",
+      "type": "number",
+      "description": "The mean value (for normal distribution)",
+      "default": 0
+    },
+    {
+      "name": "seed",
+      "display_name": "Seed",
+      "type": "number",
+      "description": "Optional seed for reproducible random numbers",
+      "required": false
+    },
+    {
+      "name": "distribution",
+      "display_name": "Distribution",
+      "type": "string",
+      "description": "The type of random distribution to use",
+      "options": ["uniform", "normal", "integer"],
+      "default": "uniform"
+    },
+    {
+      "name": "stddev",
+      "display_name": "Standard Deviation",
+      "type": "number",
+      "description": "The standard deviation (for normal distribution)",
+      "default": 1
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "number",
+      "description": "The generated random number"
+    }
+  ],
+  "settings": [
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

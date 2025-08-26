@@ -1,0 +1,58 @@
+{
+  "display_name": "Switch",
+  "description": "Routes data based on a value matching cases",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "Value to compare against cases",
+      "type": "any",
+      "required": true
+    },
+    {
+      "name": "cases",
+      "display_name": "Cases",
+      "description": "Array of possible values to match",
+      "type": "array",
+      "required": true
+    },
+    {
+      "name": "outputs",
+      "display_name": "Outputs",
+      "description": "Array of values to output for each matching case",
+      "type": "array"
+    },
+    {
+      "name": "default_output",
+      "display_name": "Default Output",
+      "description": "Value to output if no case matches",
+      "type": "any"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Output based on matched case",
+      "type": "any"
+    },
+    {
+      "name": "case_index",
+      "display_name": "Case Index",
+      "description": "Index of the matched case (or -1 for default)",
+      "type": "number"
+    },
+    {
+      "name": "matched",
+      "display_name": "Matched",
+      "description": "Whether any case was matched",
+      "type": "boolean"
+    }
+  ],
+  "dynamic_outputs": {
+    "description": "Outputs for each case",
+    "pattern": "case_{{index}}",
+    "conditional": true
+  }
+} 

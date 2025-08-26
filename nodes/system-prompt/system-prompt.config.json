@@ -1,0 +1,45 @@
+{
+  "display_name": "System Prompt",
+  "description": "Draft a text-based system prompt for an LLM, with configurable variables.",
+  "icon": "fa-comment",
+  "category": "prompting",
+  "custom_render_height": 450,
+  "width": 450,
+  "is_constant": true,
+  "is_resizable": true,
+  "has_expanded_view": true,
+  "inputs": [
+    {
+      "name": "variables",
+      "display_name": "Variables",
+      "type": "object",
+      "allow_multiple": true,
+      "description": "Connect key-value pairs to inject into any matched {{key}} in the text content."
+    }
+  ],
+  "outputs": [
+    {
+      "name": "message",
+      "display_name": "Message",
+      "type": "message",
+      "description": "The message object, containing the prompt text and system role."
+    },
+    {
+      "name": "prompt",
+      "display_name": "Prompt",
+      "type": "string",
+      "description": "The prompt text after variables have been injected."
+    }
+  ],
+  "settings": [
+    {
+      "name": "content",
+      "display_name": "Content",
+      "type": "string",
+      "description": "The content of the message, can be made of text, images, or other types.",
+      "required": true
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+}

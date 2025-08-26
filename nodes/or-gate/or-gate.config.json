@@ -1,0 +1,29 @@
+{
+  "display_name": "OR Gate",
+  "description": "A logic gate that outputs true if either input is true",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "input1",
+      "display_name": "Input 1", 
+      "description": "The first input for the OR gate",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "input2",
+      "display_name": "Input 2",
+      "description": "The second input for the OR gate",
+      "type": "boolean",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "The output value of the OR gate",
+      "type": "boolean"
+    }
+  ]
+} 

@@ -1,0 +1,35 @@
+{
+  "display_name": "Throw Error",
+  "description": "Throws an error with a custom message and optional context for testing error handling.",
+  "icon": "alert-triangle",
+  "category": "testing",
+  "is_constant": false,
+  "needs_key_from": [],
+  "inputs": [
+    {
+      "name": "message",
+      "display_name": "Error Message",
+      "type": "string",
+      "description": "The error message to throw.",
+      "required": true
+    },
+    {
+      "name": "context",
+      "display_name": "Additional Context",
+      "type": "string",
+      "description": "Optional additional context or details about the error.",
+      "required": false
+    },
+    {
+      "name": "errorType",
+      "display_name": "Error Type",
+      "type": "string",
+      "description": "Optional custom error type/name for the Error object.",
+      "required": false
+    }
+  ],
+  "outputs": [],
+  "settings": [],
+  "timeout": 3000,
+  "retry_limit": 1
+} 

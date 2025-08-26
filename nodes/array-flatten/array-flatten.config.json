@@ -1,0 +1,38 @@
+{
+  "display_name": "Array Flatten",
+  "description": "Flattens nested arrays into a single array",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to flatten",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "depth",
+      "display_name": "Depth",
+      "description": "Maximum depth to flatten (-1 for infinite)",
+      "type": "number",
+      "default": -1
+    },
+    {
+      "name": "skip_empty",
+      "display_name": "Skip Empty",
+      "description": "Whether to remove empty arrays",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "array",
+      "display_name": "Flattened Array",
+      "description": "The flattened array result",
+      "type": "array"
+    }
+  ]
+} 

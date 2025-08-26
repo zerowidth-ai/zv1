@@ -1,0 +1,46 @@
+[
+  {
+    "description": "Default value when no input is provided",
+    "inputs": {},
+    "expected": { "value": 0 }
+  },
+  {
+    "description": "Override default value with input",
+    "inputs": { "value": 42 },
+    "expected": { "value": 42 }
+  },
+  {
+    "description": "String input is converted to number",
+    "inputs": { "value": "123" },
+    "expected": { "value": 100 }
+  },
+  {
+    "description": "Value is clamped to maximum",
+    "inputs": { "value": 200 },
+    "settings": { "min": 0, "max": 100, "step": 1 },
+    "expected": { "value": 100 }
+  },
+  {
+    "description": "Value is clamped to minimum",
+    "inputs": { "value": -50 },
+    "settings": { "min": 0, "max": 100, "step": 1 },
+    "expected": { "value": 0 }
+  },
+  {
+    "description": "Custom settings are respected",
+    "inputs": {},
+    "settings": { "value": 75, "min": 0, "max": 100, "step": 5 },
+    "expected": { "value": 75 }
+  },
+  {
+    "description": "Decimal values are supported",
+    "inputs": { "value": 3.14159 },
+    "expected": { "value": 3.14159 }
+  },
+  {
+    "description": "Negative values are supported when in range",
+    "inputs": { "value": -25 },
+    "settings": { "min": -50, "max": 50, "step": 1 },
+    "expected": { "value": -25 }
+  }
+] 

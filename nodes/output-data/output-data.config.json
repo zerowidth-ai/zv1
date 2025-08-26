@@ -1,0 +1,58 @@
+{
+  "display_name": "Data Output",
+  "description": "Outputs labeled data from the flow",
+  "icon": "database",
+  "category": "i/o",
+  "is_output": true,
+  "is_resizable": true,
+  "custom_render_height": 60,
+  "has_expanded_view": true,
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The data value to output",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The output value (same as input)",
+      "hidden": true
+    },
+    {
+      "name": "output_key",
+      "display_name": "Output Key",
+      "type": "string",
+      "description": "The key/name for this output in the final result",
+      "hidden": true
+    },
+    {
+      "name": "output_description",
+      "display_name": "Output Description",
+      "type": "string",
+      "description": "The description for this output",
+      "hidden": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "An optional key/name for this output in the final result",
+      "required": false
+    },
+    {
+      "name": "description",
+      "display_name": "Description",
+      "type": "string",
+      "description": "Optional description of what this output represents",
+      "required": false
+    }
+  ]
+} 

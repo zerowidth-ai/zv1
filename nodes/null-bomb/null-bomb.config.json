@@ -1,0 +1,35 @@
+{
+  "display_name": "Null Bomb",
+  "description": "Randomly returns null/undefined based on probability, useful for testing null handling in flows.",
+  "icon": "bomb",
+  "category": "testing",
+  "is_constant": false,
+  "needs_key_from": [],
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The value to potentially nullify.",
+      "required": true
+    },
+    {
+      "name": "nullProbability",
+      "display_name": "Null Probability",
+      "type": "number",
+      "description": "Probability of returning null (0.0 = never, 1.0 = always, 0.5 = 50% chance).",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "type": "any",
+      "description": "Either the original value or null/undefined based on probability."
+    }
+  ],
+  "settings": [],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

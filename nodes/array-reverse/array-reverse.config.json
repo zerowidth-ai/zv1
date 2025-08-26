@@ -1,0 +1,28 @@
+{
+  "display_name": "Array Reverse",
+  "description": "Reverses the order of elements in an array",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to reverse",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "array",
+      "display_name": "Reversed Array",
+      "description": "The array in reverse order",
+      "type": "array"
+    },
+    {
+      "name": "indices",
+      "display_name": "New Indices",
+      "description": "Mapping of original to new indices",
+      "type": "array"
+    }
+  ]
+} 

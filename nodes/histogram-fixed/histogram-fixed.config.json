@@ -1,0 +1,61 @@
+{
+  "display_name": "Histogram Fixed Bins",
+  "description": "Groups numbers into bins of fixed size",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "numbers",
+      "display_name": "Numbers",
+      "description": "Array of numbers to analyze",
+      "type": "array",
+      "required": true
+    },
+    {
+      "name": "start",
+      "display_name": "Start Value",
+      "description": "Lower bound of first bin",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "bin_size",
+      "display_name": "Bin Size",
+      "description": "Width of each bin",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "bin_count",
+      "display_name": "Number of Bins",
+      "description": "Maximum number of bins to create",
+      "type": "number",
+      "default": 10
+    }
+  ],
+  "outputs": [
+    {
+      "name": "bins",
+      "display_name": "Bins",
+      "description": "Array of bin boundaries",
+      "type": "array"
+    },
+    {
+      "name": "counts",
+      "display_name": "Counts",
+      "description": "Number of values in each bin",
+      "type": "array"
+    },
+    {
+      "name": "overflow",
+      "display_name": "Overflow Count",
+      "description": "Number of values above the highest bin",
+      "type": "number"
+    },
+    {
+      "name": "underflow",
+      "display_name": "Underflow Count", 
+      "description": "Number of values below the lowest bin",
+      "type": "number"
+    }
+  ]
+} 

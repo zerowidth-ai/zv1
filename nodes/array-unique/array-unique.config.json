@@ -1,0 +1,64 @@
+{
+  "display_name": "Array Unique",
+  "description": "Removes duplicate elements from an array",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to deduplicate",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "mode",
+      "display_name": "Compare Mode",
+      "description": "How to compare elements for uniqueness",
+      "type": "string",
+      "options": ["value", "property", "json"],
+      "default": "value"
+    },
+    {
+      "name": "property",
+      "display_name": "Property",
+      "description": "Property to compare when mode is 'property'",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "case_sensitive",
+      "display_name": "Case Sensitive",
+      "description": "Whether string comparisons should be case sensitive",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "array",
+      "display_name": "Unique Array",
+      "description": "Array with duplicates removed",
+      "type": "array"
+    },
+    {
+      "name": "count",
+      "display_name": "Unique Count",
+      "description": "Number of unique elements",
+      "type": "number"
+    },
+    {
+      "name": "duplicates",
+      "display_name": "Duplicates",
+      "description": "Array of removed duplicate elements",
+      "type": "array"
+    },
+    {
+      "name": "indices",
+      "display_name": "Unique Indices",
+      "description": "Original indices of kept elements",
+      "type": "array"
+    }
+  ]
+} 

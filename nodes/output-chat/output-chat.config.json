@@ -1,0 +1,48 @@
+{
+  "display_name": "Chat Output",
+  "description": "Outputs a chat message to the user",
+  "icon": "comment",
+  "category": "i/o",
+  "is_output": true,
+  "is_resizable": true,
+  "custom_render_height": 120,
+  "inputs": [
+    {
+      "name": "message",
+      "display_name": "Message",
+      "type": "message",
+      "description": "The full generated response message."
+    },
+    {
+      "name": "content",
+      "display_name": "Content",
+      "type": "string",
+      "description": "Optionally, just set the content portion of the generated response message."
+    },
+    {
+      "name": "role",
+      "display_name": "Role",
+      "type": "string",
+      "description": "Optionally, just set the role of the generated response message.",
+      "required": false,
+      "default": "assistant"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "chat",
+      "display_name": "Chat",
+      "type": "array of messages",
+      "description": "The resulting output messages"
+    }
+  ],
+  "settings": [
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "A unique identifier for this chat output",
+      "required": false
+    }
+  ]
+} 

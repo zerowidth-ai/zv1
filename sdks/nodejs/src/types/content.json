@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "type": { "type": "string" },
+    "text": { "type": "string" },
+    "name": { "type": "string" },
+    "arguments": { "type": "object" },
+    "image_url": { "type": "object", "properties": { "url": { "type": "string" } } },
+    "result": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "object" },
+        { "type": "array" },
+        { "type": "boolean" },
+        { "type": "null" }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "url": { "type": "string" },
+        "data": { "type": "string" },
+        "media_type": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["type"],
+  "additionalProperties": true
+}

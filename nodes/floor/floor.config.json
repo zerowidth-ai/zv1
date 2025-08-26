@@ -1,0 +1,22 @@
+{
+  "display_name": "Floor",
+  "description": "Rounds down to nearest integer",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "number",
+      "display_name": "Number",
+      "description": "Number to floor",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Floored number",
+      "type": "number"
+    }
+  ]
+} 

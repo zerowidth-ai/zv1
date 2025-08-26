@@ -1,0 +1,29 @@
+{
+  "display_name": "Modulo",
+  "description": "Returns remainder of division",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "a",
+      "display_name": "A",
+      "description": "Number to divide",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "b",
+      "display_name": "B",
+      "description": "Number to divide by",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Remainder of A divided by B",
+      "type": "number"
+    }
+  ]
+} 

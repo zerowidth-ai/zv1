@@ -1,0 +1,30 @@
+{
+  "display_name": "Divide",
+  "description": "Divides first number by second",
+  "category": "math",
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "a",
+      "display_name": "A",
+      "description": "Number to divide",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "b",
+      "display_name": "B",
+      "description": "Number to divide by",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "A divided by B",
+      "type": "number"
+    }
+  ]
+} 

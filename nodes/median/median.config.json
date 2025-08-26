@@ -1,0 +1,22 @@
+{
+  "display_name": "Median",
+  "description": "Finds the middle value of a sorted array of numbers",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "numbers",
+      "display_name": "Numbers",
+      "description": "Array of numbers to find median of",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Median value",
+      "type": "number"
+    }
+  ]
+} 

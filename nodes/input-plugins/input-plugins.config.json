@@ -1,0 +1,16 @@
+{
+  "id": "input-tools",
+  "display_name": "Input Tools",
+  "description": "Provides available tools/plugins to the flow.",
+  "is_input": true,
+  "is_plugin": true,
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "tools",
+      "display_name": "Tools",
+      "type": "array",
+      "description": "Array of available tool schemas"
+    }
+  ]
+}

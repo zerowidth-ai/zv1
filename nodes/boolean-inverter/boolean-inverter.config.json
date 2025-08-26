@@ -1,0 +1,36 @@
+{
+  "display_name": "Boolean Inverter",
+  "description": "Inverts the input boolean value",
+  "icon": "toggle-off",
+  "category": "logic",
+  "is_constant": false,
+  "needs_key_from": [],
+  "inputs": [
+    {
+      "name": "input",
+      "display_name": "Input",
+      "type": "boolean",
+      "description": "The boolean value to be inverted",
+      "required": true,
+      "allow_multiple": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "display_name": "Output",
+      "type": "boolean",
+      "description": "The inverted boolean value"
+    },
+    {
+      "name": "plugin_config",
+      "display_name": "Plugin Config",
+      "type": "plugin",
+      "description": "Configuration for plugins",
+      "hidden": true
+    }
+  ],
+  "settings": [],
+  "timeout": 3000,
+  "retry_limit": 3
+}

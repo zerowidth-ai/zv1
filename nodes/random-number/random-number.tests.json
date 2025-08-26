@@ -1,0 +1,59 @@
+[
+  {
+    "description": "Uniform distribution with default settings",
+    "inputs": {},
+    "settings": {"distribution": "uniform", "min": 0, "max": 1},
+    "expectedSchema": {
+      "value": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    }
+  },
+  {
+    "description": "Integer distribution with custom range",
+    "inputs": {},
+    "settings": {"distribution": "integer", "min": 1, "max": 10},
+    "expectedSchema": {
+      "value": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 10,
+        "__comment": "Should be an integer but we can't validate that directly with our schema"
+      }
+    }
+  },
+  {
+    "description": "Normal distribution with custom parameters",
+    "inputs": {},
+    "settings": {"distribution": "normal", "mean": 50, "stddev": 10},
+    "expectedSchema": {
+      "value": {
+        "type": "number",
+        "__comment": "Normal distribution can technically produce any value, but most values will be within a few standard deviations of the mean"
+      }
+    }
+  },
+  {
+    "description": "Seeded random number is deterministic",
+    "inputs": {"seed": 12345},
+    "settings": {"distribution": "uniform", "min": 0, "max": 1},
+    "expected": {
+      "value": 0.02040268573909998
+    },
+    "__comment": "For seeded random numbers, we can use exact value matching if the implementation is deterministic"
+  },
+  {
+    "description": "Generate trigger produces new value",
+    "inputs": {"generate": true, "seed": 12345},
+    "settings": {"distribution": "uniform", "min": 0, "max": 1},
+    "expectedSchema": {
+      "value": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    }
+  }
+] 

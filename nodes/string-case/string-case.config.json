@@ -1,0 +1,32 @@
+{
+  "display_name": "String Case Convert",
+  "description": "Converts text to different letter cases",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The text to convert",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "case",
+      "display_name": "Case",
+      "description": "The case to convert to",
+      "type": "string",
+      "options": ["upper", "lower", "title", "sentence", "camel", "snake", "kebab"],
+      "default": "lower"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The converted text",
+      "type": "string"
+    }
+  ]
+} 

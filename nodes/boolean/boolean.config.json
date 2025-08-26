@@ -1,0 +1,36 @@
+{
+  "display_name": "Boolean Switch",
+  "description": "A simple switch node that outputs true or false",
+  "icon": "toggle-on",
+  "category": "logic",
+  "custom_render_height": 42,
+  "is_constant": true,
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "boolean",
+      "description": "Optional value to override the default value.",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "boolean",
+      "description": "The value of the switch."
+    }
+  ],
+  "settings": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "boolean",
+      "description": "The initial value of the switch.",
+      "default": false
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+}

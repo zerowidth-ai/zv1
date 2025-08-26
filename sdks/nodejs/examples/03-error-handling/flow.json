@@ -1,0 +1,27 @@
+{
+
+  "nodes": [
+    {
+      "id": "input-1",
+      "type": "input-data",
+      "settings": { "key": "message" }
+    },
+    {
+      "id": "throw-error-1",
+      "type": "throw-error",
+      "settings": {}
+    }
+  ],
+  "links": [
+    {
+      "from": {
+        "node_id": "input-1",
+        "port_name": "value"
+      },
+      "to": {
+        "node_id": "throw-error-1",
+        "port_name": "message"
+      }
+    }
+  ]
+}

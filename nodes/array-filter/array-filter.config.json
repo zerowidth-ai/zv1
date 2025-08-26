@@ -1,0 +1,46 @@
+{
+  "display_name": "Array Filter",
+  "description": "Filters array elements based on a condition",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to filter",
+      "type": "array",
+      "required": true
+    },
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "Value to compare against",
+      "type": "any",
+      "required": false
+    }
+  ],
+  "settings": [
+    {
+      "name": "condition",
+      "display_name": "Condition",
+      "description": "The comparison condition",
+      "type": "string",
+      "options": ["equals", "not_equals", "greater_than", "less_than", "contains", "not_contains", "exists", "not_exists"],
+      "default": "equals"
+    },
+    {
+      "name": "case_sensitive",
+      "display_name": "Case Sensitive",
+      "description": "Whether string comparisons should be case sensitive",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The filtered array",
+      "type": "array"
+    }
+  ]
+} 

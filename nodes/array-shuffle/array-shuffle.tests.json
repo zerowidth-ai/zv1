@@ -1,0 +1,82 @@
+[
+  {
+    "description": "Shuffle array",
+    "inputs": {
+      "array": [1, 2, 3, 4, 5]
+    },
+    "settings": {},
+    "customTest": "shuffleTest"
+  },
+  {
+    "description": "Shuffle with seed",
+    "inputs": {
+      "array": [1, 2, 3, 4, 5]
+    },
+    "settings": {
+      "seed": 42
+    },
+    "customTest": "seedShuffleTest"
+  },
+  {
+    "description": "Empty array",
+    "inputs": {
+      "array": []
+    },
+    "settings": {},
+    "expected": {
+      "array": []
+    }
+  },
+  {
+    "description": "Single element array",
+    "inputs": {
+      "array": [1]
+    },
+    "settings": {},
+    "expected": {
+      "array": [1]
+    }
+  },
+  {
+    "description": "Shuffle string array",
+    "inputs": {
+      "array": ["a", "b", "c", "d"]
+    },
+    "settings": {
+      "seed": 67890
+    },
+    "customTest": "shuffleTest"
+  },
+  {
+    "description": "Shuffle object array",
+    "inputs": {
+      "array": [
+        {"id": 1, "name": "first"},
+        {"id": 2, "name": "second"},
+        {"id": 3, "name": "third"}
+      ]
+    },
+    "settings": {
+      "seed": 54321
+    },
+    "customTest": "shuffleTest"
+  },
+  {
+    "description": "Handle single item",
+    "inputs": {
+      "array": ["solo"]
+    },
+    "expected": {
+      "array": ["solo"]
+    }
+  },
+  {
+    "description": "Handle empty array",
+    "inputs": {
+      "array": []
+    },
+    "expected": {
+      "array": []
+    }
+  }
+] 

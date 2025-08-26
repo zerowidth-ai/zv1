@@ -1,0 +1,29 @@
+{
+  "display_name": "String Concatenate",
+  "description": "Joins two or more strings together",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "string_a",
+      "display_name": "String A",
+      "description": "The string to concatenate first",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "string_b",
+      "display_name": "String B",
+      "description": "The string to concatenate second",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The combined string",
+      "type": "string"
+    }
+  ]
+} 

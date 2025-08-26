@@ -1,0 +1,37 @@
+{
+  "display_name": "Array Shuffle",
+  "description": "Randomly reorders elements in an array",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to shuffle",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "seed",
+      "display_name": "Random Seed",
+      "description": "Seed for reproducible shuffling (optional)",
+      "type": "number",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "array",
+      "display_name": "Shuffled Array",
+      "description": "The randomly reordered array",
+      "type": "array"
+    },
+    {
+      "name": "indices",
+      "display_name": "New Indices",
+      "description": "Mapping of original to new indices",
+      "type": "array"
+    }
+  ]
+} 

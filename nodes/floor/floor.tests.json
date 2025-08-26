@@ -1,0 +1,38 @@
+[
+  {
+    "description": "Floor positive number",
+    "inputs": {
+      "number": 3.7
+    },
+    "expected": {
+      "result": 3
+    }
+  },
+  {
+    "description": "Floor negative number",
+    "inputs": {
+      "number": -3.2
+    },
+    "expected": {
+      "result": -4
+    }
+  },
+  {
+    "description": "Floor whole number",
+    "inputs": {
+      "number": 5.0
+    },
+    "expected": {
+      "result": 5
+    }
+  },
+  {
+    "description": "Floor zero",
+    "inputs": {
+      "number": 0.9
+    },
+    "expected": {
+      "result": 0
+    }
+  }
+] 

@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Extract property from objects",
+    "inputs": {
+      "array": [
+        {"name": "Alice", "age": 30},
+        {"name": "Bob", "age": 25}
+      ],
+      "property": "name"
+    },
+    "expected": {
+      "array": ["Alice", "Bob"]
+    }
+  },
+  {
+    "description": "Handle missing properties",
+    "inputs": {
+      "array": [
+        {"name": "Alice", "age": 30},
+        {"name": "Bob"},
+        {"age": 40}
+      ],
+      "property": "age"
+    },
+    "expected": {
+      "array": [30, null, 40]
+    }
+  },
+  {
+    "description": "Handle non-object items",
+    "inputs": {
+      "array": [
+        {"name": "Alice"},
+        "not an object",
+        null,
+        42
+      ],
+      "property": "name"
+    },
+    "expected": {
+      "array": ["Alice", null, null, null]
+    }
+  }
+] 

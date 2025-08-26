@@ -1,0 +1,59 @@
+{
+  "display_name": "Tool",
+  "description": "Define a tool / function call for a LLM to use.",
+  "icon": "fa-comment",
+  "category": "prompting",
+  "custom_render_height": 200,
+  "is_constant": true,
+  "is_resizable": true,
+  "inputs": [
+    {
+      "name": "name",
+      "display_name": "Name",
+      "type": "string",
+      "description": "Optional override for the name of the tool, visible to the LLM and typically alphanumeric without spaces."
+    },
+    {
+      "name": "description",
+      "display_name": "Description",
+      "type": "string",
+      "description": "Optional override for a short description of the tool, visible to the LLM."
+    },
+    {
+      "name": "parameters",
+      "display_name": "Parameters",
+      "type": "object",
+      "description": "Optional override for the JSON Schema of the parameters for the tool."
+    }
+  ],
+  "outputs": [
+    {
+      "name": "tool",
+      "display_name": "Tool",
+      "type": "tool",
+      "description": "The tool object definition."
+    }
+  ],
+  "settings": [
+    {
+      "name": "name",
+      "display_name": "Name",
+      "type": "string",
+      "description": "The name of the tool, visible to the LLM and typically alphanumeric without spaces."
+    },
+    {
+      "name": "description",
+      "display_name": "Description",
+      "type": "string",
+      "description": "A short description of the tool, visible to the LLM."
+    },
+    {
+      "name": "parameters",
+      "display_name": "Parameters",
+      "type": "object",
+      "description": "The JSON Schema of the parameters for the tool, which the LLM will match when it calls the tool."
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+}

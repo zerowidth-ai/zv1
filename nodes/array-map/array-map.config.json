@@ -1,0 +1,29 @@
+{
+  "display_name": "Array Get Property",
+  "description": "Extracts a specific property from each object in an array",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array of objects to extract properties from",
+      "type": "array",
+      "required": true
+    },
+    {
+      "name": "property",
+      "display_name": "Property Name",
+      "description": "The name of the property to extract from each object",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "array",
+      "display_name": "Result Array",
+      "description": "Array containing the extracted property values",
+      "type": "array"
+    }
+  ]
+} 

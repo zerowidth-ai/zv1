@@ -1,0 +1,65 @@
+{
+  "display_name": "Array Find",
+  "description": "Finds elements in an array that match given criteria",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to search in",
+      "type": "array",
+      "required": true
+    },
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "Value to search for",
+      "type": "any",
+      "required": false
+    }
+  ],
+  "settings": [
+    {
+      "name": "mode",
+      "display_name": "Search Mode",
+      "description": "How to search for matches",
+      "type": "string",
+      "options": ["equals", "contains", "starts_with", "ends_with", "regex"],
+      "default": "equals"
+    },
+    {
+      "name": "case_sensitive",
+      "display_name": "Case Sensitive",
+      "description": "Whether string comparisons should be case sensitive",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "property",
+      "display_name": "Property",
+      "description": "Property to check when searching objects",
+      "type": "string",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "found",
+      "display_name": "Found",
+      "description": "Whether any matching element was found",
+      "type": "boolean"
+    },
+    {
+      "name": "item",
+      "display_name": "Found Item",
+      "description": "The first matching element (null if none found)",
+      "type": "any"
+    },
+    {
+      "name": "index",
+      "display_name": "Found Index",
+      "description": "Position of the first match (-1 if none found)",
+      "type": "number"
+    }
+  ]
+} 

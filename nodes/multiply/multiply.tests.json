@@ -1,0 +1,42 @@
+[
+  {
+    "description": "Multiply positive numbers",
+    "inputs": {
+      "a": 4,
+      "b": 3
+    },
+    "expected": {
+      "result": 12
+    }
+  },
+  {
+    "description": "Multiply negative numbers",
+    "inputs": {
+      "a": -2,
+      "b": -3
+    },
+    "expected": {
+      "result": 6
+    }
+  },
+  {
+    "description": "Multiply decimals",
+    "inputs": {
+      "a": 2.5,
+      "b": 3.2
+    },
+    "expected": {
+      "result": 8.0
+    }
+  },
+  {
+    "description": "Multiply by zero",
+    "inputs": {
+      "a": 5,
+      "b": 0
+    },
+    "expected": {
+      "result": 0
+    }
+  }
+] 

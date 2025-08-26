@@ -1,0 +1,46 @@
+{
+  "display_name": "JSON Parser",
+  "description": "Parses a JSON string into an object or array",
+  "icon": "code",
+  "category": "data",
+  "inputs": [
+    {
+      "name": "json",
+      "display_name": "JSON String",
+      "type": "string",
+      "description": "The JSON string to parse",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The parsed JSON value"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if parsing failed"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether parsing was successful"
+    }
+  ],
+  "settings": [
+    {
+      "name": "default_value",
+      "display_name": "Default Value",
+      "type": "string",
+      "description": "Default value to use if parsing fails (as JSON string)",
+      "default": "{}"
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

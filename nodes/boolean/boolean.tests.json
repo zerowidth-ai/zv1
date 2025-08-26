@@ -1,0 +1,47 @@
+[
+  {
+    "description": "Override default switch value with input true",
+    "inputs": { "value": true },
+    "expected": { "value": true }
+  },
+  {
+    "description": "Override default switch value with input false",
+    "inputs": { "value": false },
+    "expected": { "value": false }
+  },
+  {
+    "description": "Test default switch value when no input is provided",
+    "inputs": {},
+    "expected": { "value": false }
+  },
+  {
+    "description": "Process string input true and ensure it converts to Boolean true",
+    "inputs": { "value": "true" },
+    "expected": { "value": true }
+  },
+  {
+    "description": "Process string input false and ensure it converts to Boolean false",
+    "inputs": { "value": "false" },
+    "expected": { "value": true } 
+  },
+  {
+    "description": "Test with non-boolean numeric input 1 and ensure it converts to Boolean true",
+    "inputs": { "value": 1 },
+    "expected": { "value": true }
+  },
+  {
+    "description": "Test with non-boolean numeric input 0 and ensure it converts to Boolean false",
+    "inputs": { "value": 0 },
+    "expected": { "value": false }
+  },
+  {
+    "description": "Test default false when input is null",
+    "inputs": { "value": null },
+    "expected": { "value": false }
+  },
+  {
+    "description": "Test with an empty input string (considered false)",
+    "inputs": { "value": "" },
+    "expected": { "value": false }
+  }
+]

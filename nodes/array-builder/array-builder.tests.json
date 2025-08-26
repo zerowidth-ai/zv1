@@ -1,0 +1,20 @@
+[
+  {
+    "description": "Wrap a non-array value in an array",
+    "inputs": {
+      "items": "foo"
+    },
+    "expected": {
+      "array": ["foo"]
+    }
+  },
+  {
+    "description": "Return an array unchanged",
+    "inputs": {
+      "items": ["foo", "bar"]
+    },
+    "expected": {
+      "array": ["foo", "bar"]
+    }
+  }
+]

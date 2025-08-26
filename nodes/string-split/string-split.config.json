@@ -1,0 +1,38 @@
+{
+  "display_name": "String Split",
+  "description": "Splits a string into an array using a delimiter",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The string to split",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "delimiter",
+      "display_name": "Delimiter",
+      "description": "The character or string to split on",
+      "type": "string",
+      "default": " "
+    },
+    {
+      "name": "limit",
+      "display_name": "Limit",
+      "description": "Maximum number of splits (optional)",
+      "type": "number",
+      "default": -1
+    }
+  ],
+  "outputs": [
+    {
+      "name": "parts",
+      "display_name": "Parts",
+      "description": "Array of split string parts",
+      "type": "array"
+    }
+  ]
+} 

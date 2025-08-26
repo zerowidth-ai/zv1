@@ -1,0 +1,22 @@
+[
+  {
+    "description": "True NOR true",
+    "inputs": { "input1": true, "input2": true },
+    "expected": { "value": false }
+  },
+  {
+    "description": "True NOR false",
+    "inputs": { "input1": true, "input2": false },
+    "expected": { "value": false }
+  },
+  {
+    "description": "False NOR true",
+    "inputs": { "input1": false, "input2": true },
+    "expected": { "value": false }
+  },
+  {
+    "description": "False NOR false",
+    "inputs": { "input1": false, "input2": false },
+    "expected": { "value": true }
+  }
+] 

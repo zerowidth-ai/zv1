@@ -1,0 +1,38 @@
+{
+  "display_name": "String",
+  "description": "A simple string node that outputs a string",
+  "icon": "string",
+  "category": "text",
+  "custom_render_height": 120,
+  "is_constant": true,
+  "is_resizable": true,
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "string",
+      "description": "Optional value to override the default value.",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "string",
+      "description": "The value of the string."
+    }
+  ],
+  "settings": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "string",
+      "is_multiline": true,
+      "description": "The value of the string.",
+      "default": "Hello, world!"
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "description": "Subtract positive numbers",
+    "inputs": {
+      "a": 8,
+      "b": 3
+    },
+    "expected": {
+      "result": 5
+    }
+  },
+  {
+    "description": "Subtract negative numbers",
+    "inputs": {
+      "a": -2,
+      "b": -5
+    },
+    "expected": {
+      "result": 3
+    }
+  },
+  {
+    "description": "Subtract decimals",
+    "inputs": {
+      "a": 5.7,
+      "b": 2.3
+    },
+    "expected": {
+      "result": 3.4
+    }
+  },
+  {
+    "description": "Handle missing inputs",
+    "inputs": {
+      "a": 5
+    },
+    "expected": {
+      "result": 5
+    }
+  }
+] 

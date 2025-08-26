@@ -1,0 +1,32 @@
+{
+  "display_name": "Greater Than or Equal",
+  "description": "Checks if the first number is greater than or equal to the second number",
+  "icon": "greater-than-equal",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "a",
+      "display_name": "A",
+      "description": "First number to compare",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "b",
+      "display_name": "B",
+      "description": "Second number to compare",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "True if A >= B, false otherwise",
+      "type": "boolean"
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

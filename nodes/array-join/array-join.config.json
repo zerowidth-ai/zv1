@@ -1,0 +1,29 @@
+{
+  "display_name": "Array Join",
+  "description": "Combines array elements into a single string with a separator",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to join",
+      "type": "array",
+      "required": true
+    },
+    {
+      "name": "separator",
+      "display_name": "Separator",
+      "description": "Text to insert between elements",
+      "type": "string",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The joined string",
+      "type": "string"
+    }
+  ]
+} 

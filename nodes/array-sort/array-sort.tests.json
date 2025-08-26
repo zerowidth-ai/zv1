@@ -1,0 +1,95 @@
+[
+  {
+    "description": "Sort strings ascending",
+    "inputs": {
+      "array": ["banana", "apple", "cherry", "date"]
+    },
+    "settings": {
+      "order": "ascending",
+      "type": "string"
+    },
+    "expected": {
+      "array": ["apple", "banana", "cherry", "date"]
+    }
+  },
+  {
+    "description": "Sort numbers descending",
+    "inputs": {
+      "array": [3, 1, 4, 1, 5, 9, 2, 6]
+    },
+    "settings": {
+      "order": "descending",
+      "type": "number"
+    },
+    "expected": {
+      "array": [9, 6, 5, 4, 3, 2, 1, 1]
+    }
+  },
+  {
+    "description": "Sort by object property",
+    "inputs": {
+      "array": [
+        {"name": "Charlie", "age": 30},
+        {"name": "Alice", "age": 25},
+        {"name": "Bob", "age": 35}
+      ]
+    },
+    "settings": {
+      "property": "name",
+      "type": "string"
+    },
+    "expected": {
+      "array": [
+        {"name": "Alice", "age": 25},
+        {"name": "Bob", "age": 35},
+        {"name": "Charlie", "age": 30}
+      ]
+    }
+  },
+  {
+    "description": "Sort dates",
+    "inputs": {
+      "array": [
+        "2023-03-15",
+        "2023-01-01",
+        "2023-12-31",
+        "2023-06-30"
+      ]
+    },
+    "settings": {
+      "type": "date"
+    },
+    "expected": {
+      "array": [
+        "2023-01-01",
+        "2023-03-15",
+        "2023-06-30",
+        "2023-12-31"
+      ]
+    }
+  },
+  {
+    "description": "Case insensitive sort",
+    "inputs": {
+      "array": ["Apple", "banana", "CHERRY", "Date"]
+    },
+    "settings": {
+      "case_sensitive": false
+    },
+    "expected": {
+      "array": ["Apple", "banana", "CHERRY", "Date"]
+    }
+  },
+  {
+    "description": "Handle null values",
+    "inputs": {
+      "array": ["banana", null, "apple", null, "cherry"]
+    },
+    "settings": {
+      "type": "string"
+    },
+    "expected": {
+      "array": ["apple", "banana", "cherry", null, null]
+    }
+  }
+] 

@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Extract middle portion",
+    "inputs": {
+      "text": "hello world",
+      "start": 6,
+      "end": 11
+    },
+    "expected": {
+      "text": "world"
+    }
+  },
+  {
+    "description": "Extract from start",
+    "inputs": {
+      "text": "hello world",
+      "start": 0,
+      "end": 5
+    },
+    "expected": {
+      "text": "hello"
+    }
+  },
+  {
+    "description": "Extract to end",
+    "inputs": {
+      "text": "hello world",
+      "start": 6
+    },
+    "expected": {
+      "text": "world"
+    }
+  },
+  {
+    "description": "Handle negative indices",
+    "inputs": {
+      "text": "hello world",
+      "start": -5
+    },
+    "expected": {
+      "text": "world"
+    }
+  }
+] 

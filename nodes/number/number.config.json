@@ -1,0 +1,57 @@
+{
+  "display_name": "Number",
+  "description": "A simple number node that outputs a constant numeric value",
+  "icon": "calculator",
+  "category": "math",
+  "custom_render_height": 42,
+  "is_constant": true,
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "number",
+      "description": "Optional value to override the default value.",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "number",
+      "description": "The numeric value."
+    }
+  ],
+  "settings": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "number",
+      "description": "The numeric value to output.",
+      "default": 0
+    },
+    {
+      "name": "min",
+      "display_name": "Minimum",
+      "type": "number",
+      "description": "The minimum allowed value for the slider.",
+      "default": 0
+    },
+    {
+      "name": "max",
+      "display_name": "Maximum",
+      "type": "number",
+      "description": "The maximum allowed value for the slider.",
+      "default": 100
+    },
+    {
+      "name": "step",
+      "display_name": "Step",
+      "type": "number",
+      "description": "The step size for the slider.",
+      "default": 1
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

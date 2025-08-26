@@ -1,0 +1,89 @@
+{
+  "display_name": "HTTP Request",
+  "description": "Makes HTTP requests (GET, POST, PUT, PATCH, DELETE, etc.) to a specified URL with optional headers, query parameters, and body.",
+  "icon": "globe",
+  "category": "network",
+  "inputs": [
+    {
+      "name": "url",
+      "display_name": "URL",
+      "type": "string",
+      "description": "The URL to send the request to.",
+      "required": true
+    },
+    {
+      "name": "method",
+      "display_name": "Method",
+      "type": "string",
+      "description": "The HTTP method to use.",
+      "default": "GET",
+      "options": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+    },
+    {
+      "name": "headers",
+      "display_name": "Headers",
+      "type": "object",
+      "description": "Optional HTTP headers as key-value pairs.",
+      "required": false
+    },
+    {
+      "name": "query",
+      "display_name": "Query Parameters",
+      "type": "object",
+      "description": "Optional query parameters as key-value pairs.",
+      "required": false
+    },
+    {
+      "name": "body",
+      "display_name": "Body",
+      "type": "any",
+      "description": "Optional request body (for POST, PUT, PATCH, etc.).",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "status",
+      "display_name": "Status",
+      "type": "number",
+      "description": "The HTTP status code returned by the server."
+    },
+    {
+      "name": "headers",
+      "display_name": "Response Headers",
+      "type": "object",
+      "description": "The response headers as key-value pairs."
+    },
+    {
+      "name": "body",
+      "display_name": "Response Body",
+      "type": "any",
+      "description": "The response body, parsed as JSON if possible, otherwise as text."
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if the request failed.",
+      "required": false
+    }
+  ],
+  "settings": [
+    {
+      "name": "timeout",
+      "display_name": "Timeout (ms)",
+      "type": "number",
+      "description": "Request timeout in milliseconds.",
+      "default": 10000
+    },
+    {
+      "name": "follow_redirects",
+      "display_name": "Follow Redirects",
+      "type": "boolean",
+      "description": "Whether to follow HTTP redirects.",
+      "default": true
+    }
+  ],
+  "timeout": 15000,
+  "retry_limit": 1
+} 

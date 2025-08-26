@@ -1,0 +1,38 @@
+[
+  {
+    "description": "Trim whitespace from both ends",
+    "inputs": { "text": "  hello world  " },
+    "settings": { "mode": "both" },
+    "expected": { "text": "hello world" }
+  },
+  {
+    "description": "Trim whitespace from start only",
+    "inputs": { "text": "  hello world  " },
+    "settings": { "mode": "start" },
+    "expected": { "text": "hello world  " }
+  },
+  {
+    "description": "Trim whitespace from end only",
+    "inputs": { "text": "  hello world  " },
+    "settings": { "mode": "end" },
+    "expected": { "text": "  hello world" }
+  },
+  {
+    "description": "Trim specific characters from both ends",
+    "inputs": {
+      "text": "...hello world...",
+      "chars": "."
+    },
+    "settings": { "mode": "both" },
+    "expected": { "text": "hello world" }
+  },
+  {
+    "description": "Trim multiple specific characters",
+    "inputs": {
+      "text": "...###hello world###...",
+      "chars": ".#"
+    },
+    "settings": { "mode": "both" },
+    "expected": { "text": "hello world" }
+  }
+] 

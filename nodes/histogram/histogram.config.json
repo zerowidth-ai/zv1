@@ -1,0 +1,35 @@
+{
+  "display_name": "Histogram",
+  "description": "Groups numbers into bins and counts frequency",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "numbers",
+      "display_name": "Numbers",
+      "description": "Array of numbers to analyze",
+      "type": "array of numbers",
+      "required": true
+    },
+    {
+      "name": "bins",
+      "display_name": "Number of Bins",
+      "description": "Number of groups to divide data into",
+      "type": "number",
+      "default": 10
+    }
+  ],
+  "outputs": [
+    {
+      "name": "bins",
+      "display_name": "Bins",
+      "description": "Array of bin boundaries",
+      "type": "array of numbers"
+    },
+    {
+      "name": "counts",
+      "display_name": "Counts",
+      "description": "Number of values in each bin",
+      "type": "array of numbers"
+    }
+  ]
+} 

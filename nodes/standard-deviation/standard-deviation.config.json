@@ -1,0 +1,28 @@
+{
+  "display_name": "Standard Deviation",
+  "description": "Calculates standard deviation of numbers",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "numbers",
+      "display_name": "Numbers",
+      "description": "Array of numbers to calculate standard deviation of",
+      "type": "array of numbers",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Standard deviation",
+      "type": "number"
+    },
+    {
+      "name": "variance",
+      "display_name": "Variance",
+      "description": "Variance (standard deviation squared)",
+      "type": "number"
+    }
+  ]
+} 

@@ -1,0 +1,29 @@
+{
+  "display_name": "Power",
+  "description": "Raises first number to power of second",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "base",
+      "display_name": "Base",
+      "description": "Base number",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "exponent",
+      "display_name": "Exponent",
+      "description": "Power to raise to",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Base raised to exponent",
+      "type": "number"
+    }
+  ]
+} 

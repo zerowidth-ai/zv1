@@ -1,0 +1,36 @@
+{
+  "display_name": "Array Slice",
+  "description": "Extracts a portion of an array between start and end indices",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to slice",
+      "type": "array",
+      "required": true
+    },
+    {
+      "name": "start",
+      "display_name": "Start Index",
+      "description": "Starting position (0-based)",
+      "type": "number",
+      "required": false
+    },
+    {
+      "name": "end",
+      "display_name": "End Index",
+      "description": "Ending position (optional)",
+      "type": "number", 
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The sliced array",
+      "type": "array"
+    }
+  ]
+} 

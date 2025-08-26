@@ -1,0 +1,41 @@
+[
+  {
+    "description": "Join with comma separator",
+    "inputs": {
+      "array": ["a", "b", "c"],
+      "separator": ","
+    },
+    "expected": {
+      "text": "a,b,c"
+    }
+  },
+  {
+    "description": "Join with space separator",
+    "inputs": {
+      "array": ["hello", "world"],
+      "separator": " "
+    },
+    "expected": {
+      "text": "hello world"
+    }
+  },
+  {
+    "description": "Join numbers",
+    "inputs": {
+      "array": [1, 2, 3],
+      "separator": "-"
+    },
+    "expected": {
+      "text": "1-2-3"
+    }
+  },
+  {
+    "description": "Join single element",
+    "inputs": {
+      "array": ["solo"]
+    },
+    "expected": {
+      "text": "solo"
+    }
+  }
+] 

@@ -1,0 +1,22 @@
+{
+  "display_name": "Round",
+  "description": "Rounds a number to nearest integer",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "number",
+      "display_name": "Number",
+      "description": "Number to round",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Rounded number",
+      "type": "number"
+    }
+  ]
+} 

@@ -1,0 +1,37 @@
+[
+  {
+    "description": "Select an element from a valid index",
+    "inputs": { "array": [10, 20, 30, 40, 50], "index": 2 },
+    "expected": { "element": 30 }
+  },
+  {
+    "description": "Index out of bounds (positive)",
+    "inputs": { "array": [10, 20, 30, 40, 50], "index": 10 },
+    "expectedError": "Index 10 is out of bounds for array of length 5"
+  },
+  {
+    "description": "Index out of bounds (negative)",
+    "inputs": { "array": [10, 20, 30, 40, 50], "index": -1 },
+    "expectedError": "Index -1 is out of bounds for array of length 5"
+  },
+  {
+    "description": "Default index selection",
+    "inputs": { "array": [100, 200, 300], "index": 0 },
+    "expected": { "element": 100 }
+  },
+  {
+    "description": "Index is a floating point number",
+    "inputs": { "array": [5, 10, 15, 20], "index": 1.9 },
+    "expected": { "element": 15 }
+  },
+  {
+    "description": "Select from an empty array",
+    "inputs": { "array": [], "index": 0 },
+    "expectedError": "Index 0 is out of bounds for array of length 0"
+  },
+  {
+    "description": "Default index selection with missing index input",
+    "inputs": { "array": ["apple", "banana", "cherry"] },
+    "expected": { "element": "apple" }
+  }
+]

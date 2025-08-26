@@ -1,0 +1,49 @@
+{
+  "display_name": "Random Error",
+  "description": "Randomly throws an error based on probability, useful for testing error handling and flow robustness.",
+  "icon": "zap",
+  "category": "testing",
+  "is_constant": false,
+  "needs_key_from": [],
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The value to return if no error is thrown.",
+      "required": true
+    },
+    {
+      "name": "errorProbability",
+      "display_name": "Error Probability",
+      "type": "number",
+      "description": "Probability of throwing an error (0.0 = never, 1.0 = always, 0.5 = 50% chance).",
+      "required": false
+    },
+    {
+      "name": "errorMessage",
+      "display_name": "Error Message",
+      "type": "string",
+      "description": "Custom error message to throw when an error occurs.",
+      "required": false
+    },
+    {
+      "name": "errorType",
+      "display_name": "Error Type",
+      "type": "string",
+      "description": "Custom error type/name for the Error object.",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "type": "any",
+      "description": "The input value if no error is thrown."
+    }
+  ],
+  "settings": [],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

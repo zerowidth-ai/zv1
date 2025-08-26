@@ -1,0 +1,28 @@
+{
+  "display_name": "Mode",
+  "description": "Finds most frequent value(s) in array of numbers",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "numbers",
+      "display_name": "Numbers",
+      "description": "Array of numbers to find mode of",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Mode value(s)",
+      "type": "array"
+    },
+    {
+      "name": "frequency",
+      "display_name": "Frequency",
+      "description": "Number of occurrences of mode value(s)",
+      "type": "number" 
+    }
+  ]
+} 

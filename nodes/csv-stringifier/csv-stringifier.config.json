@@ -1,0 +1,75 @@
+{
+  "display_name": "CSV Stringifier",
+  "description": "Converts an array of objects or arrays into a CSV string",
+  "icon": "table",
+  "category": "data",
+  "inputs": [
+    {
+      "name": "data",
+      "display_name": "Data",
+      "type": "array",
+      "description": "The array of objects or arrays to convert to CSV",
+      "required": true
+    },
+    {
+      "name": "headers",
+      "display_name": "Headers",
+      "type": "array",
+      "description": "Optional column headers (if not provided, will be extracted from data)",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "csv",
+      "display_name": "CSV String",
+      "type": "string",
+      "description": "The generated CSV string"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if conversion failed"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether conversion was successful"
+    }
+  ],
+  "settings": [
+    {
+      "name": "delimiter",
+      "display_name": "Delimiter",
+      "type": "string",
+      "description": "Character used to separate values",
+      "default": ","
+    },
+    {
+      "name": "include_headers",
+      "display_name": "Include Headers",
+      "type": "boolean",
+      "description": "Whether to include column headers in the output",
+      "default": true
+    },
+    {
+      "name": "quote_strings",
+      "display_name": "Quote Strings",
+      "type": "boolean",
+      "description": "Whether to quote string values",
+      "default": true
+    },
+    {
+      "name": "newline",
+      "display_name": "Newline Character",
+      "type": "string",
+      "description": "Character(s) used for line breaks",
+      "default": "\n",
+      "options": ["\n", "\r\n"]
+    }
+  ],
+  "timeout": 5000,
+  "retry_limit": 3
+} 

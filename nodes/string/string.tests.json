@@ -1,0 +1,56 @@
+[
+  {
+    "description": "Use default string value when no input is provided",
+    "inputs": {},
+    "settings": { "value": "Hello, world!" },
+    "expected": { "value": "Hello, world!" }
+  },
+  {
+    "description": "Override default string value with input string",
+    "inputs": { "value": "Custom string" },
+    "settings": { "value": "Hello, world!" },
+    "expected": { "value": "Custom string" }
+  },
+  {
+    "description": "Handle empty string input",
+    "inputs": { "value": "" },
+    "settings": { "value": "Hello, world!" },
+    "expected": { "value": "" }
+  },
+  {
+    "description": "Handle numeric input by converting to string",
+    "inputs": { "value": 42 },
+    "settings": { "value": "Hello, world!" },
+    "expected": { "value": 42 }
+  },
+  {
+    "description": "Handle boolean input by preserving the value",
+    "inputs": { "value": true },
+    "settings": { "value": "Hello, world!" },
+    "expected": { "value": true }
+  },
+  {
+    "description": "Handle null input by using default value",
+    "inputs": { "value": null },
+    "settings": { "value": "Hello, world!" },
+    "expected": { "value": null }
+  },
+  {
+    "description": "Handle undefined input by using default value",
+    "inputs": {},
+    "settings": { "value": "Hello, world!" },
+    "expected": { "value": "Hello, world!" }
+  },
+  {
+    "description": "Handle custom default value in settings",
+    "inputs": {},
+    "settings": { "value": "Custom default" },
+    "expected": { "value": "Custom default" }
+  },
+  {
+    "description": "Handle special characters in string",
+    "inputs": { "value": "Special chars: !@#$%^&*()" },
+    "settings": { "value": "Hello, world!" },
+    "expected": { "value": "Special chars: !@#$%^&*()" }
+  }
+] 

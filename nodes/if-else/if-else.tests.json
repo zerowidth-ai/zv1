@@ -1,0 +1,94 @@
+[
+  {
+    "description": "True condition with values",
+    "inputs": {
+      "condition": true,
+      "if_true": "This is true",
+      "if_false": "This is false"
+    },
+    "expected": {
+      "result": "This is true",
+      "true_path": true
+    }
+  },
+  {
+    "description": "False condition with values",
+    "inputs": {
+      "condition": false,
+      "if_true": "This is true",
+      "if_false": "This is false"
+    },
+    "expected": {
+      "result": "This is false",
+      "false_path": true
+    }
+  },
+  {
+    "description": "String truthy condition",
+    "inputs": {
+      "condition": "yes",
+      "if_true": 42,
+      "if_false": 0
+    },
+    "expected": {
+      "result": 42,
+      "true_path": true
+    }
+  },
+  {
+    "description": "String falsy condition",
+    "inputs": {
+      "condition": "false",
+      "if_true": 42,
+      "if_false": 0
+    },
+    "expected": {
+      "result": 0,
+      "false_path": true
+    }
+  },
+  {
+    "description": "Numeric truthy condition",
+    "inputs": {
+      "condition": 1,
+      "if_true": true,
+      "if_false": false
+    },
+    "expected": {
+      "result": true,
+      "true_path": true
+    }
+  },
+  {
+    "description": "Numeric falsy condition",
+    "inputs": {
+      "condition": 0,
+      "if_true": true,
+      "if_false": false
+    },
+    "expected": {
+      "result": false,
+      "false_path": true
+    }
+  },
+  {
+    "description": "Missing if_true",
+    "inputs": {
+      "condition": true,
+      "if_false": "This is false"
+    },
+    "expected": {
+      "true_path": true
+    }
+  },
+  {
+    "description": "Missing if_false",
+    "inputs": {
+      "condition": false,
+      "if_true": "This is true"
+    },
+    "expected": {
+      "false_path": true
+    }
+  }
+] 

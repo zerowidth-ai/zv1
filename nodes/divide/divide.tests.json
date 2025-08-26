@@ -1,0 +1,42 @@
+[
+  {
+    "description": "Divide positive numbers",
+    "inputs": {
+      "a": 10,
+      "b": 2
+    },
+    "expected": {
+      "result": 5
+    }
+  },
+  {
+    "description": "Divide negative numbers",
+    "inputs": {
+      "a": -6,
+      "b": -2
+    },
+    "expected": {
+      "result": 3
+    }
+  },
+  {
+    "description": "Divide decimals",
+    "inputs": {
+      "a": 5.4,
+      "b": 2
+    },
+    "expected": {
+      "result": 2.7
+    }
+  },
+  {
+    "description": "Handle division by zero",
+    "inputs": {
+      "a": 5,
+      "b": 0
+    },
+    "expected": {
+      "result": null
+    }
+  }
+] 

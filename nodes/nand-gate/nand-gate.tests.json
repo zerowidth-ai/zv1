@@ -1,0 +1,22 @@
+[
+  {
+    "description": "True NAND true",
+    "inputs": { "input1": true, "input2": true },
+    "expected": { "value": false }
+  },
+  {
+    "description": "True NAND false",
+    "inputs": { "input1": true, "input2": false },
+    "expected": { "value": true }
+  },
+  {
+    "description": "False NAND true",
+    "inputs": { "input1": false, "input2": true },
+    "expected": { "value": true }
+  },
+  {
+    "description": "False NAND false",
+    "inputs": { "input1": false, "input2": false },
+    "expected": { "value": true }
+  }
+] 

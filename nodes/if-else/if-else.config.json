@@ -1,0 +1,49 @@
+{
+  "display_name": "If/Else",
+  "description": "Routes data based on a condition",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "condition",
+      "display_name": "Condition",
+      "description": "Boolean condition to evaluate",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "if_true",
+      "display_name": "If True",
+      "description": "Value to output if condition is true",
+      "type": "any"
+    },
+    {
+      "name": "if_false",
+      "display_name": "If False",
+      "description": "Value to output if condition is false",
+      "type": "any"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Output based on condition",
+      "type": "any",
+      "conditional": true
+    },
+    {
+      "name": "true_path",
+      "display_name": "True Path",
+      "description": "Triggered only when condition is true",
+      "type": "boolean",
+      "conditional": true
+    },
+    {
+      "name": "false_path",
+      "display_name": "False Path",
+      "description": "Triggered only when condition is false",
+      "type": "boolean",
+      "conditional": true
+    }
+  ]
+} 

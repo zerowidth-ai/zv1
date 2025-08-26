@@ -1,0 +1,57 @@
+[
+  {
+    "description": "Parse valid JSON object",
+    "inputs": {"json": "{\"name\":\"John\",\"age\":30}"},
+    "expected": {
+      "value": {"name":"John","age":30},
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Parse valid JSON array",
+    "inputs": {"json": "[1,2,3,4,5]"},
+    "expected": {
+      "value": [1,2,3,4,5],
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Parse invalid JSON",
+    "inputs": {"json": "{name:John}"},
+    "expected": {
+      "value": {},
+      "success": false
+    },
+    "test": "function(result) { return result.error.length > 0 && !result.success; }"
+  },
+  {
+    "description": "Use default value when parsing fails",
+    "inputs": {"json": "invalid json"},
+    "settings": {"default_value": "[\"default\"]"},
+    "expected": {
+      "value": ["default"],
+      "success": false
+    },
+    "test": "function(result) { return result.error.length > 0 && !result.success; }"
+  },
+  {
+    "description": "Parse empty string",
+    "inputs": {"json": ""},
+    "expected": {
+      "value": {},
+      "success": false
+    },
+    "test": "function(result) { return result.error.length > 0 && !result.success; }"
+  },
+  {
+    "description": "Parse null value",
+    "inputs": {"json": "null"},
+    "expected": {
+      "value": null,
+      "error": "",
+      "success": true
+    }
+  }
+] 

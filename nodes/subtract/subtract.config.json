@@ -1,0 +1,30 @@
+{
+  "display_name": "Subtract",
+  "description": "Subtracts second number from first",
+  "category": "math",
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "a",
+      "display_name": "A",
+      "description": "Number to subtract from",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "b", 
+      "display_name": "B",
+      "description": "Number to subtract",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "A minus B",
+      "type": "number"
+    }
+  ]
+} 

@@ -1,0 +1,29 @@
+{
+  "display_name": "XOR Gate",
+  "description": "A logic gate that outputs true if inputs are different, false if they are the same",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "input1",
+      "display_name": "Input 1",
+      "description": "The first input for the XOR gate",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "input2",
+      "display_name": "Input 2",
+      "description": "The second input for the XOR gate",
+      "type": "boolean",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "The output value of the XOR gate",
+      "type": "boolean"
+    }
+  ]
+} 

@@ -1,0 +1,38 @@
+[
+  {
+    "description": "Round up",
+    "inputs": {
+      "number": 3.7
+    },
+    "expected": {
+      "result": 4
+    }
+  },
+  {
+    "description": "Round down",
+    "inputs": {
+      "number": 3.2
+    },
+    "expected": {
+      "result": 3
+    }
+  },
+  {
+    "description": "Round exactly half",
+    "inputs": {
+      "number": 3.5
+    },
+    "expected": {
+      "result": 4
+    }
+  },
+  {
+    "description": "Round negative",
+    "inputs": {
+      "number": -3.7
+    },
+    "expected": {
+      "result": -4
+    }
+  }
+] 

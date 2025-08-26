@@ -1,0 +1,40 @@
+{
+  "display_name": "Quartiles",
+  "description": "Calculates quartile values of a dataset",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "numbers",
+      "display_name": "Numbers",
+      "description": "Array of numbers to analyze",
+      "type": "array of numbers",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "q1",
+      "display_name": "Q1",
+      "description": "First quartile (25th percentile)",
+      "type": "number"
+    },
+    {
+      "name": "q2",
+      "display_name": "Q2",
+      "description": "Second quartile (median, 50th percentile)",
+      "type": "number"
+    },
+    {
+      "name": "q3",
+      "display_name": "Q3", 
+      "description": "Third quartile (75th percentile)",
+      "type": "number"
+    },
+    {
+      "name": "iqr",
+      "display_name": "IQR",
+      "description": "Interquartile range (Q3 - Q1)",
+      "type": "number"
+    }
+  ]
+} 

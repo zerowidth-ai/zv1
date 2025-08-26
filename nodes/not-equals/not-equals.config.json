@@ -1,0 +1,31 @@
+{
+  "display_name": "Not Equals",
+  "description": "Checks if two values are not equal, with deep comparison for objects and arrays",
+  "icon": "not-equals",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "a",
+      "display_name": "Value A",
+      "type": "any",
+      "description": "First value to compare",
+      "required": true
+    },
+    {
+      "name": "b",
+      "display_name": "Value B",
+      "type": "any",
+      "description": "Second value to compare",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "type": "boolean",
+      "description": "True if values are not equal, false otherwise"
+    }
+  ],
+  "settings": []
+} 

@@ -1,0 +1,42 @@
+{
+  "display_name": "Delay",
+  "description": "Waits for specified time before continuing",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "Value to pass through after delay",
+      "type": "any"
+    },
+    {
+      "name": "delay_ms",
+      "display_name": "Delay (ms)",
+      "description": "Time to wait in milliseconds",
+      "type": "number",
+      "default": 1000,
+      "required": true
+    },
+    {
+      "name": "max_delay_ms",
+      "display_name": "Maximum Delay (ms)",
+      "description": "Maximum allowed delay (for safety)",
+      "type": "number",
+      "default": 60000
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Original value after delay",
+      "type": "any"
+    },
+    {
+      "name": "actual_delay_ms",
+      "display_name": "Actual Delay (ms)",
+      "description": "Actual time delayed in milliseconds",
+      "type": "number"
+    }
+  ]
+} 

@@ -1,0 +1,58 @@
+[
+  {
+    "description": "Case sensitive match",
+    "inputs": {
+      "text": "Hello World",
+      "search": "World"
+    },
+    "settings": {
+      "case_sensitive": true
+    },
+    "expected": {
+      "contains": true,
+      "position": 6
+    }
+  },
+  {
+    "description": "Case sensitive no match",
+    "inputs": {
+      "text": "Hello World",
+      "search": "world"
+    },
+    "settings": {
+      "case_sensitive": true
+    },
+    "expected": {
+      "contains": false,
+      "position": -1
+    }
+  },
+  {
+    "description": "Case insensitive match",
+    "inputs": {
+      "text": "Hello World",
+      "search": "world"
+    },
+    "settings": {
+      "case_sensitive": false
+    },
+    "expected": {
+      "contains": true,
+      "position": 6
+    }
+  },
+  {
+    "description": "Not found",
+    "inputs": {
+      "text": "Hello World",
+      "search": "xyz"
+    },
+    "settings": {
+      "case_sensitive": true
+    },
+    "expected": {
+      "contains": false,
+      "position": -1
+    }
+  }
+] 

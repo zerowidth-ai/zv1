@@ -1,0 +1,53 @@
+{
+  "display_name": "JSON Stringifier",
+  "description": "Converts an object or array to a JSON string",
+  "icon": "code",
+  "category": "data",
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The value to convert to JSON",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "json",
+      "display_name": "JSON String",
+      "type": "string",
+      "description": "The stringified JSON"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if stringification failed"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether stringification was successful"
+    }
+  ],
+  "settings": [
+    {
+      "name": "pretty",
+      "display_name": "Pretty Print",
+      "type": "boolean",
+      "description": "Whether to format the JSON with indentation",
+      "default": false
+    },
+    {
+      "name": "indent",
+      "display_name": "Indent Size",
+      "type": "number",
+      "description": "Number of spaces for indentation (when pretty print is enabled)",
+      "default": 2
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

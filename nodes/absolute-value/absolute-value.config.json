@@ -1,0 +1,23 @@
+{
+  "display_name": "Absolute Value",
+  "description": "Returns the absolute value of a number.",
+  "category": "math",
+  "is_plugin": true,
+  "inputs": [
+    { 
+      "name": "input", 
+      "display_name": "Input",
+      "description": "The number to find the absolute value of",
+      "type": "number", 
+      "required": true 
+    }
+  ],
+  "outputs": [
+    { 
+      "name": "output", 
+      "display_name": "Output",
+      "description": "The absolute value of the input number",
+      "type": "number" 
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "display_name": "Range",
+  "description": "Calculates range statistics of numbers",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "numbers",
+      "display_name": "Numbers",
+      "description": "Array of numbers to analyze",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "min",
+      "display_name": "Minimum",
+      "description": "Smallest value",
+      "type": "number"
+    },
+    {
+      "name": "max",
+      "display_name": "Maximum", 
+      "description": "Largest value",
+      "type": "number"
+    },
+    {
+      "name": "range",
+      "display_name": "Range",
+      "description": "Difference between max and min",
+      "type": "number"
+    }
+  ]
+} 

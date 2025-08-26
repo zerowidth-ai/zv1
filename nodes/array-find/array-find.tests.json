@@ -1,0 +1,83 @@
+[
+  {
+    "description": "Find exact match",
+    "inputs": {
+      "array": ["apple", "banana", "cherry"],
+      "value": "banana"
+    },
+    "settings": {
+      "mode": "equals"
+    },
+    "expected": {
+      "found": true,
+      "item": "banana",
+      "index": 1
+    }
+  },
+  {
+    "description": "Find in objects",
+    "inputs": {
+      "array": [
+        {"name": "Alice", "age": 30},
+        {"name": "Bob", "age": 25},
+        {"name": "Charlie", "age": 35}
+      ],
+      "value": "Bob"
+    },
+    "settings": {
+      "mode": "equals",
+      "property": "name"
+    },
+    "expected": {
+      "found": true,
+      "item": {"name": "Bob", "age": 25},
+      "index": 1
+    }
+  },
+  {
+    "description": "Find with regex",
+    "inputs": {
+      "array": ["apple", "banana", "cherry"],
+      "value": ".*na.*"
+    },
+    "settings": {
+      "mode": "regex"
+    },
+    "expected": {
+      "found": true,
+      "item": "banana",
+      "index": 1
+    }
+  },
+  {
+    "description": "Case insensitive search",
+    "inputs": {
+      "array": ["Apple", "BANANA", "Cherry"],
+      "value": "banana"
+    },
+    "settings": {
+      "mode": "equals",
+      "case_sensitive": false
+    },
+    "expected": {
+      "found": true,
+      "item": "BANANA",
+      "index": 1
+    }
+  },
+  {
+    "description": "No match found",
+    "inputs": {
+      "array": ["apple", "banana", "cherry"],
+      "value": "mango"
+    },
+    "settings": {
+      "mode": "equals"
+    },
+    "expected": {
+      "found": false,
+      "item": null,
+      "index": -1
+    }
+  }
+] 

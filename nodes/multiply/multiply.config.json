@@ -1,0 +1,29 @@
+{
+  "display_name": "Multiply",
+  "description": "Multiplies two numbers together",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "a",
+      "display_name": "A",
+      "description": "First number",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "b",
+      "display_name": "B",
+      "description": "Second number",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Product of A and B",
+      "type": "number"
+    }
+  ]
+} 

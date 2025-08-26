@@ -1,0 +1,39 @@
+{
+  "display_name": "String Trim",
+  "description": "Removes whitespace or specified characters from the start and/or end of text",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The text to trim",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "chars",
+      "display_name": "Characters",
+      "description": "Specific characters to trim (optional)",
+      "type": "string",
+      "required": false
+    }
+  ],
+  "settings": [
+    {
+      "name": "mode",
+      "display_name": "Trim Mode",
+      "description": "Which parts of the string to trim",
+      "type": "string",
+      "options": ["both", "start", "end"],
+      "default": "both"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The trimmed text",
+      "type": "string"
+    }
+  ]
+} 

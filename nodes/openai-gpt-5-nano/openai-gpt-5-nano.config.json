@@ -1,0 +1,174 @@
+{
+  "display_name": "OpenAI: GPT-5 Nano",
+  "description": "GPT-5-Nano is the smallest and fastest variant in the GPT-5 system, optimized for developer tools, rapid interactions, and ultra-low latency environments. While limited in reasoning depth compared to its larger counterparts, it retains key instruction-following and safety features. It is the successor to GPT-4.1-nano and offers a lightweight option for cost-sensitive or real-time applications.",
+  "category": "llm",
+  "provider": "openai",
+  "accepts_plugins": true,
+  "model_id": "openai/gpt-5-nano",
+  "context_length": 400000,
+  "supported_parameters": [
+    "include_reasoning",
+    "max_tokens",
+    "reasoning",
+    "response_format",
+    "seed",
+    "structured_outputs",
+    "tool_choice",
+    "tools"
+  ],
+  "inputs": [
+    {
+      "name": "system_prompt",
+      "display_name": "System Prompt",
+      "type": "string or message",
+      "description": "System prompt for the model",
+      "default": null
+    },
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array of messages or message or string",
+      "description": "Array of chat messages",
+      "required": true
+    },
+    {
+      "name": "tools",
+      "display_name": "Tools",
+      "type": "tool",
+      "description": "Array of tools to use",
+      "default": null,
+      "allow_multiple": true
+    },
+    {
+      "name": "max_tokens",
+      "display_name": "Max Tokens",
+      "type": "number",
+      "description": "Maximum tokens to generate",
+      "default": null
+    },
+    {
+      "name": "include_reasoning",
+      "display_name": "Include Reasoning",
+      "type": "boolean",
+      "description": "Include reasoning in response",
+      "default": null
+    },
+    {
+      "name": "reasoning",
+      "display_name": "Reasoning",
+      "type": "boolean",
+      "description": "Internal reasoning mode",
+      "default": null
+    },
+    {
+      "name": "response_format",
+      "display_name": "Response Format",
+      "type": "string or object",
+      "description": "Output format specification",
+      "default": null
+    },
+    {
+      "name": "seed",
+      "display_name": "Seed",
+      "type": "number",
+      "description": "Deterministic outputs",
+      "default": null
+    },
+    {
+      "name": "structured_outputs",
+      "display_name": "Structured Outputs",
+      "type": "string or object",
+      "description": "JSON schema enforcement",
+      "default": null
+    },
+    {
+      "name": "tool_choice",
+      "display_name": "Tool Choice",
+      "type": "string",
+      "description": "Tool selection control",
+      "default": null
+    }
+  ],
+  "outputs": [
+    {
+      "name": "content",
+      "display_name": "Content",
+      "can_stream": true,
+      "type": "string",
+      "description": "The content portion of the generated response message."
+    },
+    {
+      "name": "message",
+      "display_name": "Message",
+      "type": "message",
+      "can_stream": true,
+      "description": "The full generated response message."
+    },
+    {
+      "name": "role",
+      "display_name": "Role",
+      "can_stream": true,
+      "type": "string",
+      "description": "Role of the response (usually 'assistant')"
+    },
+    {
+      "name": "tool_calls",
+      "display_name": "Tool Calls",
+      "type": "array of tools",
+      "description": "Tool calls made by the model"
+    },
+    {
+      "name": "finish_reason",
+      "display_name": "Finish Reason",
+      "type": "string",
+      "description": "Why the completion finished"
+    },
+    {
+      "name": "usage",
+      "display_name": "Token Usage",
+      "type": "object",
+      "description": "Token usage statistics"
+    },
+    {
+      "name": "cost_total",
+      "display_name": "Total Cost",
+      "type": "number",
+      "description": "Total cost for processing this request (USD)"
+    },
+    {
+      "name": "cost_itemized",
+      "display_name": "Itemized Cost",
+      "type": "array",
+      "description": "Detailed breakdown of costs"
+    },
+    {
+      "name": "reasoning",
+      "display_name": "Reasoning",
+      "type": "string",
+      "description": "The detailed reasoning chain from the model"
+    },
+    {
+      "name": "refusal",
+      "display_name": "Refusal",
+      "type": "string",
+      "description": "Model refusal response (if any)"
+    }
+  ],
+  "pricing": {
+    "reference": "https://openrouter.ai/models",
+    "items": [
+      {
+        "key": "input_cost_per_million",
+        "label": "Input Tokens (per 1M)",
+        "cost": 0.049999999999999996,
+        "currency": "USD"
+      },
+      {
+        "key": "output_cost_per_million",
+        "label": "Output Tokens (per 1M)",
+        "cost": 0.39999999999999997,
+        "currency": "USD"
+      }
+    ]
+  }
+}

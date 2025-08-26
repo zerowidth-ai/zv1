@@ -1,0 +1,57 @@
+[
+  {
+    "description": "Basic histogram",
+    "inputs": {
+      "numbers": [1, 2, 2, 3, 3, 3, 4, 4, 5],
+      "bins": 5
+    },
+    "expected": {
+      "bins": [1, 1.8, 2.6, 3.4, 4.2, 5],
+      "counts": [1, 2, 3, 2, 1]
+    }
+  },
+  {
+    "description": "Default bins",
+    "inputs": {
+      "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    "expected": {
+      "bins": [1, 1.9, 2.8, 3.7, 4.6, 5.5, 6.4, 7.3, 8.2, 9.1, 10],
+      "counts": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    }
+  },
+  {
+    "description": "Single value",
+    "inputs": {
+      "numbers": [42],
+      "bins": 3
+    },
+    "expected": {
+      "bins": [42, 42, 42, 42],
+      "counts": [1, 0, 0]
+    }
+  },
+  {
+    "description": "Empty array",
+    "inputs": {
+      "numbers": [],
+      "bins": 5
+    },
+    "expected": {
+      "bins": [],
+      "counts": []
+    }
+  },
+  {
+    "description": "Mixed valid/invalid values",
+    "inputs": {
+      "numbers": [1, "2", 3, null, "invalid", 5],
+      "bins": 4
+    },
+    "expected": {
+      "bins": [1, 2, 3, 4, 5],
+      "counts": [1, 1, 1, 1]
+    },
+    "expectedError": "Input contains non-numeric values that cannot be processed"
+  }
+] 

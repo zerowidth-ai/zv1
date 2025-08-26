@@ -1,0 +1,82 @@
+[
+  {
+    "description": "Simple match",
+    "inputs": {
+      "text": "Hello World",
+      "pattern": "World"
+    },
+    "settings": {
+      "case_sensitive": true,
+      "global": false
+    },
+    "expected": {
+      "matched": true,
+      "matches": ["World"],
+      "groups": []
+    }
+  },
+  {
+    "description": "Capture groups",
+    "inputs": {
+      "text": "Hello World",
+      "pattern": "Hello (\\w+)"
+    },
+    "settings": {
+      "case_sensitive": true,
+      "global": false
+    },
+    "expected": {
+      "matched": true,
+      "matches": ["Hello World"],
+      "groups": ["World"]
+    }
+  },
+  {
+    "description": "Global match",
+    "inputs": {
+      "text": "test test test",
+      "pattern": "test"
+    },
+    "settings": {
+      "case_sensitive": true,
+      "global": true
+    },
+    "expected": {
+      "matched": true,
+      "matches": ["test", "test", "test"],
+      "groups": []
+    }
+  },
+  {
+    "description": "Case insensitive",
+    "inputs": {
+      "text": "Hello World",
+      "pattern": "world"
+    },
+    "settings": {
+      "case_sensitive": false,
+      "global": false
+    },
+    "expected": {
+      "matched": true,
+      "matches": ["World"],
+      "groups": []
+    }
+  },
+  {
+    "description": "No match",
+    "inputs": {
+      "text": "Hello World",
+      "pattern": "xyz"
+    },
+    "settings": {
+      "case_sensitive": true,
+      "global": false
+    },
+    "expected": {
+      "matched": false,
+      "matches": [],
+      "groups": []
+    }
+  }
+] 

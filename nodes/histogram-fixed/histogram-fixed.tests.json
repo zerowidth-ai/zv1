@@ -1,0 +1,62 @@
+[
+  {
+    "description": "Basic fixed histogram",
+    "inputs": {
+      "numbers": [1, 2, 2, 3, 3, 3, 4, 4, 5],
+      "start": 0,
+      "bin_size": 2,
+      "bin_count": 3
+    },
+    "expected": {
+      "bins": [0, 2, 4, 6],
+      "counts": [1, 5, 3],
+      "overflow": 0,
+      "underflow": 0
+    }
+  },
+  {
+    "description": "With overflow and underflow",
+    "inputs": {
+      "numbers": [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8],
+      "start": 2,
+      "bin_size": 2,
+      "bin_count": 2
+    },
+    "expected": {
+      "bins": [2, 4, 6],
+      "counts": [2, 2],
+      "overflow": 3,
+      "underflow": 3
+    }
+  },
+  {
+    "description": "Decimal bin size",
+    "inputs": {
+      "numbers": [1.1, 1.2, 1.5, 1.7, 2.1, 2.3],
+      "start": 1,
+      "bin_size": 0.5,
+      "bin_count": 3
+    },
+    "expected": {
+      "bins": [1, 1.5, 2, 2.5],
+      "counts": [2, 2, 2],
+      "overflow": 0,
+      "underflow": 0
+    }
+  },
+  {
+    "description": "Empty array",
+    "inputs": {
+      "numbers": [],
+      "start": 0,
+      "bin_size": 1,
+      "bin_count": 5
+    },
+    "expected": {
+      "bins": [0, 1, 2, 3, 4, 5],
+      "counts": [0, 0, 0, 0, 0],
+      "overflow": 0,
+      "underflow": 0
+    }
+  }
+] 

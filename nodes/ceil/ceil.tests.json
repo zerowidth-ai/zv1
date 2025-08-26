@@ -1,0 +1,38 @@
+[
+  {
+    "description": "Ceil positive number",
+    "inputs": {
+      "number": 3.2
+    },
+    "expected": {
+      "result": 4
+    }
+  },
+  {
+    "description": "Ceil negative number",
+    "inputs": {
+      "number": -3.7
+    },
+    "expected": {
+      "result": -3
+    }
+  },
+  {
+    "description": "Ceil whole number",
+    "inputs": {
+      "number": 5.0
+    },
+    "expected": {
+      "result": 5
+    }
+  },
+  {
+    "description": "Ceil small decimal",
+    "inputs": {
+      "number": 0.1
+    },
+    "expected": {
+      "result": 1
+    }
+  }
+] 

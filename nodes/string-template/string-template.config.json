@@ -1,0 +1,38 @@
+{
+  "display_name": "String Template",
+  "description": "Fills a template string with variable values",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "template",
+      "display_name": "Template",
+      "description": "The template string with {variable} placeholders",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "variables",
+      "display_name": "Variables",
+      "description": "Object containing variable values",
+      "type": "object",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "keep_missing",
+      "display_name": "Keep Missing",
+      "description": "Keep placeholders that don't have values instead of removing them",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The filled template string",
+      "type": "string"
+    }
+  ]
+} 

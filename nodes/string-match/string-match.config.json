@@ -1,0 +1,57 @@
+{
+  "display_name": "String Match",
+  "description": "Performs regex matching on text with capture groups",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The text to match against",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "pattern",
+      "display_name": "Pattern",
+      "description": "Regular expression pattern",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "case_sensitive",
+      "display_name": "Case Sensitive",
+      "description": "Whether the pattern is case sensitive",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "global",
+      "display_name": "Global Match",
+      "description": "Find all matches instead of just the first",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "matched",
+      "display_name": "Matched",
+      "description": "Whether the pattern matched",
+      "type": "boolean"
+    },
+    {
+      "name": "matches",
+      "display_name": "Matches",
+      "description": "Array of match results",
+      "type": "array"
+    },
+    {
+      "name": "groups",
+      "display_name": "Groups",
+      "description": "Captured groups from the first match",
+      "type": "array"
+    }
+  ]
+} 

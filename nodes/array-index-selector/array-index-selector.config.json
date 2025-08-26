@@ -1,0 +1,35 @@
+{
+  "display_name": "Array Index Selector",
+  "description": "Select a specific index from an array, safely handling cases where the index does not exist.",
+  "icon": "list-ol",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "type": "array",
+      "description": "The array to select the element from",
+      "required": true,
+      "allow_multiple": false
+    },
+    {
+      "name": "index",
+      "display_name": "Index",
+      "type": "number",
+      "description": "The index of the element to select",
+      "allow_multiple": false,
+      "default": 0
+    }
+  ],
+  "outputs": [
+    {
+      "name": "element",
+      "display_name": "Element",
+      "type": "any",
+      "description": "The element at the specified index, or undefined if the index does not exist"
+    }
+  ],
+  "settings": [],
+  "timeout": 3000,
+  "retry_limit": 3
+}

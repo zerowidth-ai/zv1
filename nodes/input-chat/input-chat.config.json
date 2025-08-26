@@ -1,0 +1,44 @@
+{
+  "display_name": "Input Chat",
+  "description": "Accepts chat messages as input to the conversation flow",
+  "icon": "message-circle",
+  "category": "i/o",
+  "is_input": true,
+  "is_resizable": true,
+  "custom_render_height": 450,
+  "has_expanded_view": true,
+  "width": 450,
+  "inputs": [
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array of messages",
+      "description": "The incoming chat messages"
+    },
+    {
+      "name": "message",
+      "display_name": "Most Recent Message Text",
+      "type": "string",
+      "description": "The text content of the most recent chat message"
+    }
+  ],
+  "settings": [
+    {
+      "name": "automatic_append",
+      "display_name": "Automatic Append",
+      "type": "boolean",
+      "description": "If true, each message into an Output Chat node (with the same key) will be appended to the messages array for easy testing.",
+      "default": true
+    },
+    {
+      "name": "key",
+      "display_name": "Key",
+      "description": "A way to identify the chat if this file has multiple chat nodes.",
+      "type": "string"
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

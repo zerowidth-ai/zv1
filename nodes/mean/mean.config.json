@@ -1,0 +1,22 @@
+{
+  "display_name": "Mean",
+  "description": "Calculates arithmetic mean (average) of numbers",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "numbers",
+      "display_name": "Numbers",
+      "description": "Array of numbers to average",
+      "type": "array of numbers",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Arithmetic mean",
+      "type": "number"
+    }
+  ]
+} 

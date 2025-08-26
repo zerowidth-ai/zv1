@@ -1,0 +1,29 @@
+{
+  "display_name": "NAND Gate",
+  "description": "A logic gate that outputs false only if both inputs are true",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "input1",
+      "display_name": "Input 1",
+      "description": "The first input for the NAND gate",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "name": "input2",
+      "display_name": "Input 2",
+      "description": "The second input for the NAND gate",
+      "type": "boolean",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "The output value of the NAND gate",
+      "type": "boolean"
+    }
+  ]
+} 

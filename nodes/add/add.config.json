@@ -1,0 +1,30 @@
+{
+  "display_name": "Add",
+  "description": "Adds two numbers together",
+  "category": "math",
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "a",
+      "display_name": "A",
+      "description": "First number",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "b",
+      "display_name": "B",
+      "description": "Second number",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Sum of A and B",
+      "type": "number"
+    }
+  ]
+} 

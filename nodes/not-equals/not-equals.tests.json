@@ -1,0 +1,77 @@
+[
+  {
+    "description": "Compare unequal numbers",
+    "inputs": {"a": 5, "b": 10},
+    "expected": {
+      "result": true
+    }
+  },
+  {
+    "description": "Compare equal numbers",
+    "inputs": {"a": 5, "b": 5},
+    "expected": {
+      "result": false
+    }
+  },
+  {
+    "description": "Compare unequal strings",
+    "inputs": {"a": "hello", "b": "world"},
+    "expected": {
+      "result": true
+    }
+  },
+  {
+    "description": "Compare equal strings",
+    "inputs": {"a": "hello", "b": "hello"},
+    "expected": {
+      "result": false
+    }
+  },
+  {
+    "description": "Compare different types",
+    "inputs": {"a": "5", "b": 5},
+    "expected": {
+      "result": true
+    }
+  },
+  {
+    "description": "Compare unequal objects",
+    "inputs": {
+      "a": {"name": "John", "age": 30},
+      "b": {"name": "John", "age": 31}
+    },
+    "expected": {
+      "result": true
+    }
+  },
+  {
+    "description": "Compare equal objects",
+    "inputs": {
+      "a": {"name": "John", "age": 30},
+      "b": {"name": "John", "age": 30}
+    },
+    "expected": {
+      "result": false
+    }
+  },
+  {
+    "description": "Compare unequal arrays",
+    "inputs": {
+      "a": [1, 2, 3],
+      "b": [1, 2, 4]
+    },
+    "expected": {
+      "result": true
+    }
+  },
+  {
+    "description": "Compare equal arrays",
+    "inputs": {
+      "a": [1, 2, 3],
+      "b": [1, 2, 3]
+    },
+    "expected": {
+      "result": false
+    }
+  }
+] 

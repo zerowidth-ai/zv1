@@ -1,0 +1,26 @@
+[
+  {
+    "description": "Split by space",
+    "inputs": { "text": "hello world test" },
+    "settings": { "delimiter": " " },
+    "expected": { "parts": ["hello", "world", "test"] }
+  },
+  {
+    "description": "Split by comma",
+    "inputs": { "text": "one,two,three" },
+    "settings": { "delimiter": "," },
+    "expected": { "parts": ["one", "two", "three"] }
+  },
+  {
+    "description": "Split with limit",
+    "inputs": { "text": "a b c d e" },
+    "settings": { "delimiter": " ", "limit": 2 },
+    "expected": { "parts": ["a", "b"] }
+  },
+  {
+    "description": "Split empty string",
+    "inputs": { "text": "" },
+    "settings": { "delimiter": " " },
+    "expected": { "parts": [""] }
+  }
+] 

@@ -1,0 +1,73 @@
+{
+  "flow": {
+    "nodes": [
+      {
+        "id": "input-1",
+        "type": "input-data",
+        "settings": { "key": "test-data" }
+      },
+      {
+        "id": "null-bomb-1",
+        "type": "null-bomb",
+        "settings": {}
+      },
+      {
+        "id": "random-error-1",
+        "type": "random-error",
+        "settings": {}
+      },
+      {
+        "id": "output-1",
+        "type": "output-data",
+        "settings": { "key": "result" }
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "input-1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "null-bomb-1",
+          "port_name": "value"
+        }
+      },
+      {
+        "from": {
+          "node_id": "null-bomb-1",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "random-error-1",
+          "port_name": "value"
+        }
+      },
+      {
+        "from": {
+          "node_id": "random-error-1",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "output-1",
+          "port_name": "value"
+        }
+      }
+    ]
+  },
+  "inputs": {
+    "test-data": "Combined Test"
+  },
+  "expectedSchema": {
+    "type": "object",
+    "properties": {
+      "result": {
+        "oneOf": [
+          { "type": "string" },
+          { "type": "null" },
+          { "type": "object" }
+        ]
+      }
+    }
+  }
+} 

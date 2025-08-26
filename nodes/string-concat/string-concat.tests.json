@@ -1,0 +1,12 @@
+[
+  {
+    "description": "Two strings without separator",
+    "inputs": { "string_a": "hello", "string_b": "world" },
+    "expected": { "text": "helloworld" }
+  },
+  {
+    "description": "Two strings with space separator",
+    "inputs": { "string_a": "hello ", "string_b": "world" },
+    "expected": { "text": "hello world" }
+  }
+] 

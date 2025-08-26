@@ -1,0 +1,65 @@
+{
+  "display_name": "Date Formatter",
+  "description": "Formats a date or timestamp into a string using various formats",
+  "icon": "calendar",
+  "category": "date",
+  "inputs": [
+    {
+      "name": "date",
+      "display_name": "Date",
+      "type": "any",
+      "description": "The date to format (string, timestamp, or Date object)",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "formatted",
+      "display_name": "Formatted Date",
+      "type": "string",
+      "description": "The formatted date string"
+    },
+    {
+      "name": "timestamp",
+      "display_name": "Timestamp",
+      "type": "number",
+      "description": "The date as a Unix timestamp (milliseconds)"
+    },
+    {
+      "name": "iso",
+      "display_name": "ISO String",
+      "type": "string",
+      "description": "The date in ISO format"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if formatting failed"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether formatting was successful"
+    }
+  ],
+  "settings": [
+    {
+      "name": "format",
+      "display_name": "Format",
+      "type": "string",
+      "description": "The format string (e.g., 'YYYY-MM-DD HH:mm:ss')",
+      "default": "YYYY-MM-DD"
+    },
+    {
+      "name": "timezone",
+      "display_name": "Timezone",
+      "type": "string",
+      "description": "The timezone to use (e.g., 'UTC', 'America/New_York')",
+      "default": "UTC"
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

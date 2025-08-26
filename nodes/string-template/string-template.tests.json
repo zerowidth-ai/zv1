@@ -1,0 +1,63 @@
+[
+  {
+    "description": "Simple template",
+    "inputs": {
+      "template": "Hello {name}!",
+      "variables": {
+        "name": "World"
+      }
+    },
+    "settings": {
+      "keep_missing": false
+    },
+    "expected": {
+      "text": "Hello World!"
+    }
+  },
+  {
+    "description": "Multiple variables",
+    "inputs": {
+      "template": "{greeting} {name}!",
+      "variables": {
+        "greeting": "Hello",
+        "name": "World"
+      }
+    },
+    "settings": {
+      "keep_missing": false
+    },
+    "expected": {
+      "text": "Hello World!"
+    }
+  },
+  {
+    "description": "Keep missing placeholders",
+    "inputs": {
+      "template": "Hello {name}! {missing}",
+      "variables": {
+        "name": "World"
+      }
+    },
+    "settings": {
+      "keep_missing": true
+    },
+    "expected": {
+      "text": "Hello World! {missing}"
+    }
+  },
+  {
+    "description": "Remove missing placeholders",
+    "inputs": {
+      "template": "Hello {name}! {missing}",
+      "variables": {
+        "name": "World"
+      }
+    },
+    "settings": {
+      "keep_missing": false
+    },
+    "expected": {
+      "text": "Hello World! "
+    }
+  }
+] 

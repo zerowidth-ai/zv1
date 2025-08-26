@@ -1,0 +1,31 @@
+{
+  "display_name": "Equals",
+  "description": "Checks if two values are equal, with deep comparison for objects and arrays",
+  "icon": "equals",
+  "category": "logic",
+  "inputs": [
+    {
+      "name": "a",
+      "display_name": "Value A",
+      "type": "any",
+      "description": "First value to compare",
+      "required": true
+    },
+    {
+      "name": "b",
+      "display_name": "Value B",
+      "type": "any",
+      "description": "Second value to compare",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "type": "boolean",
+      "description": "True if values are equal, false otherwise"
+    }
+  ],
+  "settings": []
+} 

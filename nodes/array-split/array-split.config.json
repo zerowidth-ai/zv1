@@ -1,0 +1,49 @@
+{
+  "display_name": "Array Split",
+  "description": "Splits an array into multiple chunks based on different criteria",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to split",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "mode",
+      "display_name": "Split Mode",
+      "description": "How to split the array",
+      "type": "string",
+      "options": [
+        "size",
+        "count"
+      ],
+      "default": "size"
+    },
+    {
+      "name": "size",
+      "display_name": "Chunk Size",
+      "description": "Size of each chunk (for size mode)",
+      "type": "number",
+      "default": 2
+    },
+    {
+      "name": "count",
+      "display_name": "Chunk Count",
+      "description": "Number of chunks to create (for count mode)",
+      "type": "number",
+      "default": 2
+    }
+  ],
+  "outputs": [
+    {
+      "name": "chunks",
+      "display_name": "Chunks",
+      "description": "Array of chunks",
+      "type": "array"
+    }
+  ]
+} 

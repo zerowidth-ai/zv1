@@ -1,0 +1,17 @@
+[
+  {
+    "description": "Absolute-value of a positive number",
+    "inputs": { "input": 5 },
+    "expected": { "output": 5 }
+  },
+  {
+    "description": "Absolute-value of a negative number",
+    "inputs": { "input": -5 },
+    "expected": { "output": 5 }
+  },
+  {
+    "description": "Absolute-value of zero",
+    "inputs": { "input": 0 },
+    "expected": { "output": 0 }
+  }
+]

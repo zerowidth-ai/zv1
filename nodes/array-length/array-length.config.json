@@ -1,0 +1,27 @@
+{
+  "display_name": "Array Length",
+  "description": "Measures the length of an array.",
+  "icon": "ruler",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "type": "array",
+      "description": "The array to measure the length of",
+      "required": true,
+      "allow_multiple": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "length",
+      "display_name": "Length",
+      "type": "number",
+      "description": "The length of the array"
+    }
+  ],
+  "settings": [],
+  "timeout": 3000,
+  "retry_limit": 3
+}

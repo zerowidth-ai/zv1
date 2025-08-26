@@ -1,0 +1,82 @@
+{
+  "nodes": [
+    {
+      "id": "input-data-1",
+      "type": "input-data",
+      "settings": {
+        "key": "user_name",
+        "type": "string",
+        "description": "User's name"
+      }
+    },
+    {
+      "id": "input-chat-1",
+      "type": "input-chat",
+      "settings": {
+        "key": "conversation",
+        "description": "Chat conversation"
+      }
+    },
+    {
+      "id": "input-prompt-1",
+      "type": "input-prompt",
+      "settings": {
+        "key": "system_prompt",
+        "description": "System instructions"
+      }
+    },
+    {
+      "id": "output-data-1",
+      "type": "output-data",
+      "settings": {
+        "key": "user_name_output"
+      }
+    },
+    {
+      "id": "output-data-2",
+      "type": "output-data",
+      "settings": {
+        "key": "system_prompt_output"
+      }
+    },
+    {
+      "id": "output-chat-1",
+      "type": "output-chat",
+      "settings": {
+        "key": "conversation_output"
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": {
+        "node_id": "input-data-1",
+        "port_name": "value"
+      },
+      "to": {
+        "node_id": "output-data-1",
+        "port_name": "value"
+      }
+    },
+    {
+      "from": {
+        "node_id": "input-prompt-1",
+        "port_name": "prompt"
+      },
+      "to": {
+        "node_id": "output-data-2",
+        "port_name": "value"
+      }
+    },
+    {
+      "from": {
+        "node_id": "input-chat-1",
+        "port_name": "message"
+      },
+      "to": {
+        "node_id": "output-chat-1",
+        "port_name": "content"
+      }
+    }
+  ]
+}

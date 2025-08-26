@@ -1,0 +1,32 @@
+[
+  {
+    "description": "Calculate length of a non-empty array",
+    "inputs": { "array": [10, 20, 30, 40, 50] },
+    "expected": { "length": 5 }
+  },
+  {
+    "description": "Calculate length of an empty array",
+    "inputs": { "array": [] },
+    "expected": { "length": 0 }
+  },
+  {
+    "description": "Calculate length with no array input provided",
+    "inputs": {},
+    "expected": { "length": 0 }
+  },
+  {
+    "description": "Calculate length of a nested array",
+    "inputs": { "array": [[1, 2], [3, 4], [5, 6]] },
+    "expected": { "length": 3 }
+  },
+  {
+    "description": "Calculate length of an array with mixed types",
+    "inputs": { "array": [1, "two", { "three": 3 }, [4, 5], null] },
+    "expected": { "length": 5 }
+  },
+  {
+    "description": "Calculate length of an array with null values",
+    "inputs": { "array": [null, null, null] },
+    "expected": { "length": 3 }
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "display_name": "Ceil",
+  "description": "Rounds up to nearest integer",
+  "category": "math",
+  "inputs": [
+    {
+      "name": "number",
+      "display_name": "Number",
+      "description": "Number to ceil",
+      "type": "number",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "description": "Ceiled number",
+      "type": "number"
+    }
+  ]
+} 

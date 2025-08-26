@@ -1,0 +1,42 @@
+{
+  "display_name": "Self Healing Error",
+  "description": "Throws an error initially but succeeds on retry, useful for testing retry logic and error recovery.",
+  "icon": "refresh-cw",
+  "category": "testing",
+  "is_constant": false,
+  "needs_key_from": [],
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The value to return after healing.",
+      "required": true
+    },
+    {
+      "name": "failCount",
+      "display_name": "Fail Count",
+      "type": "number",
+      "description": "Number of times to fail before succeeding (default: 1).",
+      "required": false
+    },
+    {
+      "name": "errorMessage",
+      "display_name": "Error Message",
+      "type": "string",
+      "description": "Custom error message to throw during failures.",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "display_name": "Result",
+      "type": "any",
+      "description": "The input value after the node has healed."
+    }
+  ],
+  "settings": [],
+  "timeout": 3000,
+  "retry_limit": 3
+} 

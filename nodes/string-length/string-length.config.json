@@ -1,0 +1,22 @@
+{
+  "display_name": "String Length",
+  "description": "Counts the number of characters in a string",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The string to measure",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "length",
+      "display_name": "Length",
+      "description": "The number of characters in the string",
+      "type": "number"
+    }
+  ]
+} 

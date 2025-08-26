@@ -1,0 +1,49 @@
+[
+  {
+    "description": "Basic standard deviation",
+    "inputs": {
+      "numbers": [2, 4, 4, 4, 5, 5, 7, 9]
+    },
+    "expected": {
+      "result": 2,
+      "variance": 4
+    }
+  },
+  {
+    "description": "All same values",
+    "inputs": {
+      "numbers": [1, 1, 1, 1, 1]
+    },
+    "expected": {
+      "result": 0,
+      "variance": 0
+    }
+  },
+  {
+    "description": "Single value",
+    "inputs": {
+      "numbers": [42]
+    },
+    "expected": {
+      "result": 0,
+      "variance": 0
+    }
+  },
+  {
+    "description": "Empty array",
+    "inputs": {
+      "numbers": []
+    },
+    "expected": {
+      "result": 0,
+      "variance": 0
+    }
+  },
+  {
+    "description": "Mixed valid/invalid values",
+    "inputs": {
+      "numbers": [1, "2", 3, null, 4, "invalid"]
+    },
+    "expectedError": "Input contains non-numeric values that cannot be processed"
+  }
+] 

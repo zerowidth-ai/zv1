@@ -1,0 +1,44 @@
+{
+  "display_name": "String Contains",
+  "description": "Checks if a string contains a specific substring",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The text to search in",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "search",
+      "display_name": "Search Text",
+      "description": "The text to search for",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "case_sensitive",
+      "display_name": "Case Sensitive",
+      "description": "Whether the search should match exact case",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "contains",
+      "display_name": "Contains",
+      "description": "Whether the text contains the search string",
+      "type": "boolean"
+    },
+    {
+      "name": "position",
+      "display_name": "Position",
+      "description": "The position where the search text was found (-1 if not found)",
+      "type": "number"
+    }
+  ]
+} 

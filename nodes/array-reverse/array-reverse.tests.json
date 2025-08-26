@@ -1,0 +1,60 @@
+[
+  {
+    "description": "Reverse number array",
+    "inputs": {
+      "array": [1, 2, 3, 4, 5]
+    },
+    "expected": {
+      "array": [5, 4, 3, 2, 1],
+      "indices": [4, 3, 2, 1, 0]
+    }
+  },
+  {
+    "description": "Reverse string array",
+    "inputs": {
+      "array": ["a", "b", "c"]
+    },
+    "expected": {
+      "array": ["c", "b", "a"],
+      "indices": [2, 1, 0]
+    }
+  },
+  {
+    "description": "Reverse object array",
+    "inputs": {
+      "array": [
+        {"id": 1, "name": "first"},
+        {"id": 2, "name": "second"},
+        {"id": 3, "name": "third"}
+      ]
+    },
+    "expected": {
+      "array": [
+        {"id": 3, "name": "third"},
+        {"id": 2, "name": "second"},
+        {"id": 1, "name": "first"}
+      ],
+      "indices": [2, 1, 0]
+    }
+  },
+  {
+    "description": "Handle single item",
+    "inputs": {
+      "array": ["solo"]
+    },
+    "expected": {
+      "array": ["solo"],
+      "indices": [0]
+    }
+  },
+  {
+    "description": "Handle empty array",
+    "inputs": {
+      "array": []
+    },
+    "expected": {
+      "array": [],
+      "indices": []
+    }
+  }
+] 

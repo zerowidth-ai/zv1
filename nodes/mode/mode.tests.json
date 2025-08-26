@@ -1,0 +1,53 @@
+[
+  {
+    "description": "Basic mode",
+    "inputs": {
+      "numbers": [1, 2, 2, 3, 4, 4, 4, 5]
+    },
+    "expected": {
+      "result": 4,
+      "count": 5,
+      "frequency": 3
+    }
+  },
+  {
+    "description": "Multiple modes (returns first)",
+    "inputs": {
+      "numbers": [1, 1, 2, 2, 3]
+    },
+    "expected": {
+      "result": 1,
+      "count": 3,
+      "frequency": 2
+    }
+  },
+  {
+    "description": "Single number",
+    "inputs": {
+      "numbers": [42]
+    },
+    "expected": {
+      "result": 42,
+      "count": 1,
+      "frequency": 1
+    }
+  },
+  {
+    "description": "Empty array",
+    "inputs": {
+      "numbers": []
+    },
+    "expected": {
+      "result": null,
+      "count": 0,
+      "frequency": 0
+    }
+  },
+  {
+    "description": "Mixed valid/invalid values",
+    "inputs": {
+      "numbers": [1, "2", 3, null, 5]
+    },
+    "expectedError": "Input contains non-numeric values that cannot be processed"
+  }
+] 

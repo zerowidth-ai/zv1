@@ -1,0 +1,96 @@
+[
+  {
+    "description": "Simple value deduplication",
+    "inputs": {
+      "array": [1, 2, 2, 3, 3, 3, 4]
+    },
+    "settings": {
+      "mode": "value"
+    },
+    "expected": {
+      "array": [1, 2, 3, 4],
+      "count": 4,
+      "duplicates": [2, 3, 3],
+      "indices": [0, 1, 3, 6]
+    }
+  },
+  {
+    "description": "Case insensitive string deduplication",
+    "inputs": {
+      "array": ["Apple", "banana", "APPLE", "Banana", "cherry"]
+    },
+    "settings": {
+      "mode": "value",
+      "case_sensitive": false
+    },
+    "expected": {
+      "array": ["Apple", "banana", "cherry"],
+      "count": 3,
+      "duplicates": ["APPLE", "Banana"],
+      "indices": [0, 1, 4]
+    }
+  },
+  {
+    "description": "Object property deduplication",
+    "inputs": {
+      "array": [
+        {"id": 1, "name": "Alice"},
+        {"id": 2, "name": "Bob"},
+        {"id": 3, "name": "Alice"},
+        {"id": 4, "name": "Charlie"}
+      ]
+    },
+    "settings": {
+      "mode": "property",
+      "property": "name"
+    },
+    "expected": {
+      "array": [
+        {"id": 1, "name": "Alice"},
+        {"id": 2, "name": "Bob"},
+        {"id": 4, "name": "Charlie"}
+      ],
+      "count": 3,
+      "duplicates": [{"id": 3, "name": "Alice"}],
+      "indices": [0, 1, 3]
+    }
+  },
+  {
+    "description": "JSON mode for complex objects",
+    "inputs": {
+      "array": [
+        {"x": 1, "y": 2},
+        {"y": 2, "x": 1},
+        {"x": 2, "y": 1},
+        {"x": 1, "y": 2}
+      ]
+    },
+    "settings": {
+      "mode": "json"
+    },
+    "expected": {
+      "array": [
+        {"x": 1, "y": 2},
+        {"x": 2, "y": 1}
+      ],
+      "count": 2,
+      "duplicates": [{"y": 2, "x": 1}, {"x": 1, "y": 2}],
+      "indices": [0, 2]
+    }
+  },
+  {
+    "description": "Handle null and undefined",
+    "inputs": {
+      "array": [null, 1, null, 2, null, 3]
+    },
+    "settings": {
+      "mode": "value"
+    },
+    "expected": {
+      "array": [null, 1, 2, 3],
+      "count": 4,
+      "duplicates": [null, null],
+      "indices": [0, 1, 3, 5]
+    }
+  }
+] 

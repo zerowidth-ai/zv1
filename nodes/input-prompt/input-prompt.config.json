@@ -1,0 +1,38 @@
+{
+  "display_name": "Prompt Input",
+  "description": "For direct instructing with a single text prompt instead of a conversation.",
+  "icon": "arrow-to-right",
+  "category": "i/o",
+  "is_input": true,
+  "is_resizable": true,
+  "custom_render_height": 450,
+  "width": 450,
+  "inputs": [
+  ],
+  "outputs": [
+    {
+      "name": "prompt",
+      "display_name": "Prompt Text",
+      "description": "The text content of the prompt to be processed.",
+      "type": "string"
+    }
+  ],
+  "settings": [
+    {
+      "name": "prompt",
+      "display_name": "Prompt",
+      "description": "The prompt to be processed.",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "key",
+      "display_name": "Key",
+      "description": "A way to identify the prompt if this file has multiple prompts.",
+      "type": "string",
+      "default": "prompt"
+    }
+  ],
+  "timeout": 5000,
+  "retry_limit": 3
+}

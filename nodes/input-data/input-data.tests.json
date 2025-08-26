@@ -1,0 +1,53 @@
+[
+  {
+    "description": "Test that the default value is returned if no value is provided",
+    "settings": {
+      "variable_name": "test_variable",
+      "default_value": "test_value"
+    },
+    "expected": {
+      "value": "test_value",
+      "data": {
+        "test_variable": "test_value"
+      }
+    }
+  },
+  {
+    "description": "Test that the value is returned if it is provided",
+    "settings": {
+      "variable_name": "test_variable",
+      "value": "test_value"
+    },
+    "expected": {
+      "value": "test_value",
+      "data": {
+        "test_variable": "test_value"
+      }
+    }
+  },
+  {
+    "description": "Test that the value is a part of the options if the type is select",
+    "settings": {
+      "variable_name": "test_variable",
+      "value": "test_value",
+      "type": "select",
+      "options": ["test_value", "test_value2"]
+    },
+    "expected": {
+      "value": "test_value",
+      "data": {
+        "test_variable": "test_value"
+      }
+    }
+  },
+  {
+    "description": "Test that an error is thrown if the value is not a part of the options if the type is select",
+    "settings": {
+      "variable_name": "test_variable",
+      "value": "test_value",
+      "type": "select",
+      "options": ["test_value2"]
+    },
+    "expectedError": "Invalid value for select variable test_variable: test_value"
+  }
+]

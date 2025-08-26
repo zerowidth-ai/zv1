@@ -1,0 +1,66 @@
+[
+  {
+    "description": "Basic modulo",
+    "inputs": {
+      "dividend": 10,
+      "divisor": 3
+    },
+    "expected": {
+      "result": 1
+    }
+  },
+  {
+    "description": "Negative dividend",
+    "inputs": {
+      "dividend": -10,
+      "divisor": 3
+    },
+    "expected": {
+      "result": -1
+    }
+  },
+  {
+    "description": "Negative divisor",
+    "inputs": {
+      "dividend": 10,
+      "divisor": -3
+    },
+    "expected": {
+      "result": 1
+    }
+  },
+  {
+    "description": "Decimal numbers",
+    "inputs": {
+      "dividend": 10.5,
+      "divisor": 3.2
+    },
+    "expected": {
+      "result": 0.9
+    }
+  },
+  {
+    "description": "Division by zero",
+    "inputs": {
+      "dividend": 10,
+      "divisor": 0
+    },
+    "expectedError": "Division by zero"
+  },
+  {
+    "description": "Non-numeric dividend",
+    "inputs": {
+      "dividend": "abc",
+      "divisor": 5
+    },
+    "expectedError": "Dividend must be a number"
+  },
+  {
+    "description": "Non-numeric divisor",
+    "inputs": {
+      "dividend": 10,
+      "divisor": null
+    },
+    "expectedError": "Divisor must be a number"
+  }
+] 

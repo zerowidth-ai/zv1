@@ -1,0 +1,58 @@
+{
+  "display_name": "Input Data",
+  "description": "Defines a single data input that can be requested from the user during flow execution",
+  "icon": "input-cursor",
+  "category": "i/o",
+  "is_input": true,
+  "is_resizable": true,
+  "custom_render_height": 450,
+  "has_expanded_view": true,
+  "width": 450,
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The value provided by the user for this data input"
+    },
+    {
+      "name": "data",
+      "display_name": "Data",
+      "type": "object",
+      "description": "The data object for this data input, in the form of a key-value pair",
+      "required": false
+    }
+  ],
+  "settings": [
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "A way to identify the data input if this file has multiple data inputs."
+    },
+    {
+      "name": "type",
+      "display_name": "Data Type",
+      "type": "string",
+      "description": "The type of input to request from the user",
+      "default": "string",
+      "options": ["string", "number", "boolean", "array", "object"],
+      "required": true
+    },
+    {
+      "name": "default_value",
+      "display_name": "Default Value",
+      "type": "string",
+      "description": "Default value for this data input",
+      "required": false
+    },
+    {
+      "name": "description",
+      "display_name": "Description",
+      "type": "string",
+      "description": "A description of the data input",
+      "required": false
+    }
+  ]
+} 

@@ -1,0 +1,54 @@
+{
+  "display_name": "Array Sort",
+  "description": "Sorts array elements in ascending or descending order",
+  "category": "lists",
+  "inputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The array to sort",
+      "type": "array",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "order",
+      "display_name": "Sort Order",
+      "description": "Whether to sort ascending or descending",
+      "type": "string",
+      "options": ["ascending", "descending"],
+      "default": "ascending"
+    },
+    {
+      "name": "type",
+      "display_name": "Sort Type",
+      "description": "How to compare elements",
+      "type": "string",
+      "options": ["string", "number", "date"],
+      "default": "string"
+    },
+    {
+      "name": "property",
+      "display_name": "Sort Property",
+      "description": "Property to sort by when elements are objects",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "case_sensitive",
+      "display_name": "Case Sensitive",
+      "description": "Whether string comparisons should be case sensitive",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "array",
+      "display_name": "Array",
+      "description": "The sorted array",
+      "type": "array"
+    }
+  ]
+} 

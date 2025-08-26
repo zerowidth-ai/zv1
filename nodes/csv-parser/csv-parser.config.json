@@ -1,0 +1,73 @@
+{
+  "display_name": "CSV Parser",
+  "description": "Parses a CSV string into an array of objects or arrays",
+  "icon": "table",
+  "category": "data",
+  "inputs": [
+    {
+      "name": "csv",
+      "display_name": "CSV String",
+      "type": "string",
+      "description": "The CSV string to parse",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "data",
+      "display_name": "Data",
+      "type": "array",
+      "description": "The parsed CSV data"
+    },
+    {
+      "name": "headers",
+      "display_name": "Headers",
+      "type": "array",
+      "description": "The column headers (if present)"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if parsing failed"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether parsing was successful"
+    }
+  ],
+  "settings": [
+    {
+      "name": "delimiter",
+      "display_name": "Delimiter",
+      "type": "string",
+      "description": "Character used to separate values",
+      "default": ","
+    },
+    {
+      "name": "has_headers",
+      "display_name": "Has Headers",
+      "type": "boolean",
+      "description": "Whether the first row contains column headers",
+      "default": true
+    },
+    {
+      "name": "trim_values",
+      "display_name": "Trim Values",
+      "type": "boolean",
+      "description": "Whether to trim whitespace from values",
+      "default": true
+    },
+    {
+      "name": "skip_empty_lines",
+      "display_name": "Skip Empty Lines",
+      "type": "boolean",
+      "description": "Whether to skip empty lines",
+      "default": true
+    }
+  ],
+  "timeout": 5000,
+  "retry_limit": 3
+} 

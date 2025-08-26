@@ -1,0 +1,52 @@
+{
+  "display_name": "String Replace",
+  "description": "Replaces occurrences of text within a string",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The string to perform replacements on",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "search",
+      "display_name": "Search For",
+      "description": "The text to find",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "replacement",
+      "display_name": "Replace With",
+      "description": "The text to replace with",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "regex",
+      "display_name": "Use Regex",
+      "description": "Treat search text as regular expression",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "case_sensitive",
+      "display_name": "Case Sensitive",
+      "description": "Match exact case when searching",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "description": "The text after replacements",
+      "type": "string"
+    }
+  ]
+} 
