@@ -130,36 +130,6 @@ export default class OpenRouterIntegration {
 
             let count = 0;
             for await (const chunk of stream) {
-              console.log('chunk', JSON.stringify(chunk, null, 2));
-              // tool call example chunk {
-              //   "id": "gen-1755741370-p7iqvILHSNwx7m2xIx8n",
-              //   "provider": "OpenAI",
-              //   "model": "openai/gpt-4.1-nano",
-              //   "object": "chat.completion.chunk",
-              //   "created": 1755741370,
-              //   "choices": [
-              //     {
-              //       "index": 0,
-              //       "delta": {
-              //         "role": "assistant",
-              //         "content": null,
-              //         "tool_calls": [
-              //           {
-              //             "index": 0,
-              //             "function": {
-              //               "arguments": "p\": \""
-              //             },
-              //             "type": "function"
-              //           }
-              //         ]
-              //       },
-              //       "finish_reason": null,
-              //       "native_finish_reason": null,
-              //       "logprobs": null
-              //     }
-              //   ],
-              //   "system_fingerprint": "fp_e91a518ddb"
-              // }
               switch(chunk.object){
                 case 'chat.completion.chunk':
                   let event = {

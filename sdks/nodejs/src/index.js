@@ -925,7 +925,7 @@ export default class zv1 {
       toolCallMessage = null;
 
       if (llmResult.tool_calls && llmResult.tool_calls.length > 0) {
-        console.log("We have tool calls", llmResult.tool_calls);
+        
         for (const tool_call of llmResult.tool_calls) {
 
           if(tool_call.type === 'function'){

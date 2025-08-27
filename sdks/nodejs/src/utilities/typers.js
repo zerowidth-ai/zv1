@@ -207,7 +207,6 @@ export function convertImportToNodeType(importDef) {
     // All imports share this process function
     process: async ({inputs, settings, config, nodeConfig}) => {
       this.logDebug(`Processing import node with inputs:`, inputs);
-      console.log(inputs)
       
       const timelineEntry = {
         nodeId: processedImportDef.id,

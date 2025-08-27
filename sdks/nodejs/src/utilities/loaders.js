@@ -31,7 +31,7 @@ export async function loadNodes(flow) {
 
   // Load regular nodes from filesystem
   const nodeLoadPromises = Array.from(nodeTypes).map(async (type) => {
-    console.log('type', type);
+    
     if(type.startsWith('imported-')) {
       return;
     }

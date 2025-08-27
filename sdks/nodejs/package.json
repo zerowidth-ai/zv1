@@ -6,8 +6,9 @@
     "uuid": "^11.1.0"
   },
   "name": "zv1",
-  "version": "0.1.0",
-  "repository": "git@github.com:ZeroWidthAI/zv1.git",
+  "version": "0.1.2",
+  "repository": "https://github.com/zerowidth-ai/zv1",
+  
   "description": "The zv1 SDK for making processing flows created via zv1.ai, by ZeroWidth",
   "main": "./src/index.js",
   "devDependencies": {
@@ -18,6 +19,6 @@
     "test-flows": "node tests/test.flows.js"
   },
   "author": "Peter Binggeser @ ZeroWidth, LLC",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module"
 }
