@@ -2,7 +2,7 @@
 
 A Node.js implementation of ZeroWidth's zv1 framework for executing AI and automation workflows through a visual node-based interface. Design flows on zv1.ai, export as JSON, and execute with precision and control.
 
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ## Table of Contents
 
@@ -627,7 +627,7 @@ const result = await engine.run(inputs);
 
 ## License
 
-MIT © ZeroWidth
+Apache 2.0 © ZeroWidth
 
 ---
 

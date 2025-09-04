@@ -861,10 +861,22 @@ export default class zv1 {
         
         const schema = this.generateToolSchema(pluginNode);
         toolSchemas.push(schema);
-        toolRunners[schema.name] = async (args) => {
-          // When the LLM calls the tool, process the node with the provided args
-          return await this.processNodeWithArgs(pluginNode, args);
-        };
+        
+        // Check if this is an imported node with chat inputs
+        const nodeDefinition = this.nodes[pluginNode.type];
+        const hasChatInput = nodeDefinition?.config?.is_import && 
+          nodeDefinition.config.inputs?.some(input => input.is_chat_input);
+        
+        if (hasChatInput) {
+          toolRunners[schema.name] = async (args) => {
+            return await this.processImportedChatNode(pluginNode, args);
+          };
+        } else {
+          toolRunners[schema.name] = async (args) => {
+            // When the LLM calls the tool, process the node with the provided args
+            return await this.processNodeWithArgs(pluginNode, args);
+          };
+        }
       } else if (isRemoteMCPTool(pluginNode)) {
         // Fetch all tools from the MCP endpoint
         const url = pluginNode.settings?.url;
@@ -1028,15 +1040,34 @@ export default class zv1 {
     const properties = {};
     const required = [];
     (config.inputs || []).forEach(input => {
-      properties[input.name] = {
-        type: mapTypeToJSONSchema(input.type),
-        description: input.description || "",
-      };
-      if (input.default !== undefined) {
-        properties[input.name].default = input.default;
-      }
-      if (input.required) {
-        required.push(input.name);
+      if(config.is_import){
+        if(input.is_data_input){
+          properties[input.name] = {
+            type: "object",
+            description: input.description || "",
+          };
+        } else if(input.is_chat_input){
+          properties[input.name] = {
+            type: "string",
+            description: "A conversational chat message to send to this agent."
+          };
+        } else if(input.is_prompt_input){
+          properties[input.name] = {
+            type: "string",
+            description: input.description || "",
+          };
+        }
+      } else {
+        properties[input.name] = {
+          type: mapTypeToJSONSchema(input.type),
+          description: input.description || "",
+        };
+        if (input.default !== undefined) {
+          properties[input.name].default = input.default;
+        }
+        if (input.required) {
+          required.push(input.name);
+        }
       }
     });
 
@@ -1052,6 +1083,119 @@ export default class zv1 {
     };
   }
 
+
+  /**
+   * Process imported nodes with chat inputs, maintaining conversation state per chat key
+   * @param {Object} node - The imported node to process
+   * @param {Object} args - Arguments from the LLM tool call
+   * @returns {Object} The outputs from the node
+   */
+  async processImportedChatNode(node, args) {
+    this.logDebug('processImportedChatNode', node.id, args);
+
+    const nodeDefinition = this.nodes[node.type];
+    if (!nodeDefinition || !nodeDefinition.config.is_import) {
+      throw new Error(`Node ${node.id} is not an imported node`);
+    }
+
+    // Initialize conversation state if it doesn't exist
+    if (!this._conversationState) {
+      this._conversationState = {};
+    }
+
+    // Find the imported flow definition to get the actual input-chat nodes
+    const importDef = nodeDefinition.config.importDefinition;
+    const inputChatNodes = importDef.nodes.filter(n => n.type === 'input-chat');
+    
+    // Transform string arguments to message arrays for each chat input
+    const transformedArgs = { ...args };
+    
+    for (const chatInput of nodeDefinition.config.inputs.filter(input => input.is_chat_input)) {
+      const inputValue = args[chatInput.name];
+      if (typeof inputValue === 'string') {
+        
+        // Find the corresponding input-chat node to get its key
+        const inputChatNode = inputChatNodes.find(n => n.id === chatInput.name);
+        const chatKey = inputChatNode?.settings?.key || 'chat';
+        
+        // Create conversation key: nodeId + chatKey for this specific chat stream
+        const conversationKey = `${node.id}_${chatKey}`;
+        
+        if (!this._conversationState[conversationKey]) {
+          this._conversationState[conversationKey] = [];
+        }
+
+        // Add the new user message to this chat stream's history
+        this._conversationState[conversationKey].push({
+          role: 'user',
+          content: inputValue
+        });
+        
+        // Pass the full conversation history for this chat stream
+        transformedArgs[chatInput.name] = [...this._conversationState[conversationKey]];
+        
+        this.logDebug(`Updated conversation for ${conversationKey}:`, this._conversationState[conversationKey]);
+      }
+    }
+
+    // Process the imported node with the full conversation context
+    const outputs = await this.processNodeWithArgs(node, transformedArgs);
+
+    // Handle responses from output-chat nodes and append to appropriate conversation streams
+    const outputChatNodes = importDef.nodes.filter(n => n.type === 'output-chat');
+    
+    for (const outputChatNode of outputChatNodes) {
+      const chatKey = outputChatNode.settings?.key || 'chat';
+      const conversationKey = `${node.id}_${chatKey}`;
+      
+      // Look for this output-chat node's result by its ID (not chat key)
+      const chatOutput = outputs[outputChatNode.id];
+      
+      this.logDebug(`Looking for output from node ${outputChatNode.id} with chat key ${chatKey}:`, chatOutput);
+      
+      if (chatOutput && Array.isArray(chatOutput)) {
+        if (!this._conversationState[conversationKey]) {
+          this._conversationState[conversationKey] = [];
+        }
+        
+        // The chat output contains new response messages to append
+        // (not the full conversation history)
+        if (chatOutput.length > 0) {
+          this._conversationState[conversationKey].push(...chatOutput);
+          this.logDebug(`Appended ${chatOutput.length} new messages to conversation ${conversationKey}:`, chatOutput);
+        }
+      } else {
+        this.logDebug(`No chat output found for node ${outputChatNode.id}, available outputs:`, Object.keys(outputs));
+      }
+    }
+
+    return outputs;
+  }
+
+  /**
+   * Reset conversation state for specific chat streams or all conversations
+   * @param {string} nodeId - Optional node ID to reset conversations for
+   * @param {string} chatKey - Optional chat key to reset specific chat stream
+   */
+  resetConversationState(nodeId = null, chatKey = null) {
+    if (!this._conversationState) return;
+    
+    if (nodeId && chatKey) {
+      const conversationKey = `${nodeId}_${chatKey}`;
+      delete this._conversationState[conversationKey];
+      this.logDebug(`Reset conversation state for node ${nodeId}, chat key ${chatKey}`);
+    } else if (nodeId) {
+      // Reset all chat streams for this node
+      const keysToDelete = Object.keys(this._conversationState).filter(key => 
+        key.startsWith(`${nodeId}_`)
+      );
+      keysToDelete.forEach(key => delete this._conversationState[key]);
+      this.logDebug(`Reset all conversation states for node ${nodeId}`);
+    } else {
+      this._conversationState = {};
+      this.logDebug('Reset all conversation states');
+    }
+  }
 
   async processNodeWithArgs(node, args) {
     this.logDebug('processNodeWithArgs', node, args);

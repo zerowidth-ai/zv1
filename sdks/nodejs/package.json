@@ -6,7 +6,7 @@
     "uuid": "^11.1.0"
   },
   "name": "zv1",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repository": "https://github.com/zerowidth-ai/zv1",
   
   "description": "The zv1 SDK for making processing flows created via zv1.ai, by ZeroWidth",

@@ -155,6 +155,7 @@ export function convertImportToNodeType(importDef) {
       category: "imported",
       is_constant: true, // All imports are potentially constant
       is_plugin: true,   // <-- Add this line to mark all imports as plugin-capable
+      is_import: true,
       accepts_plugins: processedImportDef.nodes.some(node => node.type === 'input-plugins'),
       inputs: inputNodes.map(node => {
         
@@ -163,6 +164,8 @@ export function convertImportToNodeType(importDef) {
             name: node.id,
             display_name: `Data: ${node.settings?.key || 'value'}`,
             type: node.settings?.type || 'any',
+            required: true,
+            is_data_input: true,
             description: node.settings?.description || 'Imported data input'
           };
         } else if (node.type === 'input-chat') {
@@ -170,6 +173,8 @@ export function convertImportToNodeType(importDef) {
             name: node.id,
             display_name: 'Chat',
             type: 'array of messages',
+            required: true,
+            is_chat_input: true,
             description: 'Chat messages to process'
           };
         } else { // input-prompt
@@ -177,6 +182,8 @@ export function convertImportToNodeType(importDef) {
             name: node.id,
             display_name: 'Prompt',
             type: 'string',
+            required: true,
+            is_prompt_input: true,
             description: 'Prompt input'
           };
         }
