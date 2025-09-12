@@ -503,7 +503,7 @@ export default class zv1 {
           }
           
           if(inputNode.type === "input-data") {
-            let variable_value = inputData[inputNode.settings.key || 'data'];
+            let variable_value = inputData[inputNode.settings?.key || 'data'];
 
             if(variable_value === undefined) {
               variable_value = inputNode.settings.default_value;
@@ -516,12 +516,12 @@ export default class zv1 {
               inputsMissingValues.push({
                 id: inputNode.id,
                 type: inputNode.type,
-                key: inputNode.settings.key || 'data'
+                key: inputNode.settings?.key || 'data'
               });
             }
           } else if(inputNode.type === "input-chat") {
 
-            let variable_value = inputData[inputNode.settings.key || 'chat'];
+            let variable_value = inputData[inputNode.settings?.key || 'chat'];
 
             if(variable_value !== undefined) {
               await this.processNode({ ...inputNode, settings: { ...inputNode.settings, ...{messages: variable_value} } });
@@ -530,12 +530,12 @@ export default class zv1 {
               inputsMissingValues.push({
                 id: inputNode.id,
                 type: inputNode.type,
-                key: inputNode.settings.key || 'chat'
+                key: inputNode.settings?.key || 'chat'
               });
             }
 
           } else if(inputNode.type === "input-prompt") {
-            let variable_value = inputData[inputNode.settings.key || 'prompt'];
+            let variable_value = inputData[inputNode.settings?.key || 'prompt'];
 
             if(variable_value !== undefined) {
               await this.processNode({ ...inputNode, settings: { ...inputNode.settings, ...{prompt: variable_value} } });
@@ -544,7 +544,7 @@ export default class zv1 {
               inputsMissingValues.push({
                 id: inputNode.id,
                 type: inputNode.type,
-                key: inputNode.settings.key || 'prompt'
+                key: inputNode.settings?.key || 'prompt'
               });
             }
           } 
@@ -630,7 +630,7 @@ export default class zv1 {
         
         // check cache to see if this node returned a value for output_key
 
-        const outputKey = node.settings.key;
+        const outputKey = node.settings?.key;
         
         let doesThisNodeHaveAKey = false;
         
@@ -1043,7 +1043,7 @@ export default class zv1 {
       if(config.is_import){
         if(input.is_data_input){
           properties[input.name] = {
-            type: "object",
+            type: input.type || "object",
             description: input.description || "",
           };
         } else if(input.is_chat_input){
@@ -1056,6 +1056,9 @@ export default class zv1 {
             type: "string",
             description: input.description || "",
           };
+        }
+        if (input.required) {
+          required.push(input.name);
         }
       } else {
         properties[input.name] = {

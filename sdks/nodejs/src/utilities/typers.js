@@ -161,7 +161,8 @@ export function convertImportToNodeType(importDef) {
         
         if (node.type === 'input-data') {
           return {
-            name: node.id,
+            // name: node.id,
+            name: node.settings?.key || 'data',
             display_name: `Data: ${node.settings?.key || 'value'}`,
             type: node.settings?.type || 'any',
             required: true,
@@ -170,7 +171,8 @@ export function convertImportToNodeType(importDef) {
           };
         } else if (node.type === 'input-chat') {
           return {
-            name: node.id,
+            // name: node.id,
+            name: node.settings?.key || 'chat',
             display_name: 'Chat',
             type: 'array of messages',
             required: true,
@@ -179,7 +181,8 @@ export function convertImportToNodeType(importDef) {
           };
         } else { // input-prompt
           return {
-            name: node.id,
+            // name: node.id,
+            name: node.settings?.key || 'prompt',
             display_name: 'Prompt',
             type: 'string',
             required: true,
@@ -192,14 +195,16 @@ export function convertImportToNodeType(importDef) {
       outputs: outputNodes.map(node => {
         if (node.type === 'output-data') {
           return {
-            name: node.id,
+            // name: node.id,
+            name: node.settings?.key || 'data',
             display_name: `Data: ${node.settings?.key || 'value'}`,
             type: node.settings?.type || 'any',
             description: node.settings?.description || 'Imported data output'
           };
         } else { // output-chat
           return {
-            name: node.id,
+            // name: node.id,
+            name: node.settings?.key || 'chat',
             display_name: 'Response',
             type: 'message',
             description: 'Chat response output'
@@ -227,38 +232,18 @@ export function convertImportToNodeType(importDef) {
       // Create a new engine instance with the processed import definition
       const importEngine = await zv1.create(processedImportDef, config);
 
-      // Prepare input data object based on the type of inputs
-      const inputData = {
-        // data: {},    // for input-data nodes
-        // chat: {}, // for input-chat nodes
-        // prompt: {}  // for input-prompt nodes
-      };
-
-      // Map outer inputs to inner input nodes
-      for (const [inputId, value] of Object.entries(inputs)) {
-        const inputNode = processedImportDef.nodes.find(n => n.id === inputId);
-        if (!inputNode) continue;
-
-        if (inputNode.type === 'input-data') {
-          inputData[inputNode.settings?.key || 'data'] = value;
-        } else if (inputNode.type === 'input-chat') {
-          inputData[inputNode.settings?.key || 'chat'] = value;
-        } else if (inputNode.type === 'input-prompt') {
-          inputData[inputNode.settings?.key || 'prompt'] = value;
-        }
-      }
+      const inputData = inputs;
 
       // Run the imported flow
       const result = await importEngine.run(inputData);
       const endDate = new Date();
-      timelineEntry.outputs = JSON.parse(JSON.stringify(result));
+      timelineEntry.outputs = JSON.parse(JSON.stringify(result.outputs));
       timelineEntry.endTime = endDate.toISOString();
       timelineEntry.durationMs = endDate - startDate;
       this.timeline.push(timelineEntry);
-      this.logDebug(`Import node execution result:`, result);
+      this.logDebug(`Import node execution result:`, result.outputs);
 
       // Map outputs back to the outer flow's format
-      
       const outputs = {};
       outputNodes.forEach(node => {
         if (node.type === 'output-data') {
