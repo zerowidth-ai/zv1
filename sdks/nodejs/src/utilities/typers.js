@@ -237,7 +237,16 @@ export function convertImportToNodeType(importDef) {
       // Run the imported flow
       const result = await importEngine.run(inputData);
       const endDate = new Date();
-      timelineEntry.outputs = JSON.parse(JSON.stringify(result.outputs));
+      if(result.outputs) {
+        timelineEntry.outputs = JSON.parse(JSON.stringify(result.outputs));
+      } else {
+        timelineEntry.outputs = {};
+      }
+      if(result.terminalNodes) {
+        timelineEntry.terminalNodes = JSON.parse(JSON.stringify(result.terminalNodes));
+      } else {
+        timelineEntry.terminalNodes = [];
+      }
       timelineEntry.endTime = endDate.toISOString();
       timelineEntry.durationMs = endDate - startDate;
       this.timeline.push(timelineEntry);
