@@ -53,18 +53,7 @@
       "name": "schema",
       "display_name": "Schema",
       "type": "object",
-      "description": "The JSON Schema definition that the model response must follow.",
-      "default": {
-        "type": "object",
-        "properties": {
-          "response": {
-            "type": "string",
-            "description": "The model's response"
-          }
-        },
-        "required": ["response"],
-        "additionalProperties": false
-      }
+      "description": "The JSON Schema definition that the model response must follow."
     }
   ],
   "timeout": 3000,

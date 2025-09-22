@@ -253,22 +253,22 @@ export function convertImportToNodeType(importDef) {
       this.logDebug(`Import node execution result:`, result.outputs);
 
       // Map outputs back to the outer flow's format
-      const outputs = {};
-      outputNodes.forEach(node => {
-        if (node.type === 'output-data') {
-          if(node.settings?.key) {
-            outputs[node.id] = result.outputs[node.settings?.key];
-          } else {
-            outputs[node.id] = result.outputs.data
-          }
-        } else if (node.type === 'output-chat') {
-          if(node.settings?.key) {
-            outputs[node.id] = result.outputs[node.settings?.key];
-          } else {
-            outputs[node.id] = result.outputs.chat;
-          }
-        }
-      });
+      const outputs = result.outputs || {};
+      // outputNodes.forEach(node => {
+      //   if (node.type === 'output-data') {
+      //     if(node.settings?.key) {
+      //       outputs[node.id] = result.outputs[node.settings?.key];
+      //     } else {
+      //       outputs[node.id] = result.outputs.data
+      //     }
+      //   } else if (node.type === 'output-chat') {
+      //     if(node.settings?.key) {
+      //       outputs[node.id] = result.outputs[node.settings?.key];
+      //     } else {
+      //       outputs[node.id] = result.outputs.chat;
+      //     }
+      //   }
+      // });
 
 
       // --- Add outputs for all terminal nodes in the imported flow ---
