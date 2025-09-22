@@ -1,0 +1,129 @@
+[
+  {
+    "description": "Tokenize simple string with cl200k_base (default)",
+    "inputs": {
+      "input": "Hello, world!"
+    },
+    "expected": {
+      "tokens": [13225, 11, 2375, 0]
+    }
+  },
+  {
+    "description": "Tokenize with cl100k_base tokenizer",
+    "inputs": {
+      "input": "Hello, world!"
+    },
+    "settings": {
+      "tokenizer": "cl100k_base"
+    },
+    "expected": {
+      "tokens": [9906, 11, 1917, 0]
+    }
+  },
+  {
+    "description": "Tokenize Message object with cl200k_base",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": "This is a test message"
+      }
+    },
+    "settings": {
+      "tokenizer": "cl200k_base"
+    },
+    "expected": {
+      "tokens": [2500, 382, 261, 1746, 3176]
+    }
+  },
+  {
+    "description": "Tokenize array of strings with cl100k_base",
+    "inputs": {
+      "input": [
+        "First message",
+        "Second message"
+      ]
+    },
+    "settings": {
+      "tokenizer": "cl100k_base"
+    },
+    "expected": {
+      "tokens": [5451, 1984, 16041, 1984]
+    }
+  },
+  {
+    "description": "Tokenize array of Message objects",
+    "inputs": {
+      "input": [
+        {
+          "role": "user",
+          "content": "Hello"
+        },
+        {
+          "role": "assistant", 
+          "content": "Hi there!"
+        }
+      ]
+    },
+    "expected": {
+      "tokens": [13225, 12194, 1354, 0]
+    }
+  },
+  {
+    "description": "Handle empty string",
+    "inputs": {
+      "input": ""
+    },
+    "expected": {
+      "tokens": []
+    }
+  },
+  {
+    "description": "Handle empty array",
+    "inputs": {
+      "input": []
+    },
+    "expected": {
+      "tokens": []
+    }
+  },
+  {
+    "description": "Handle multi-modal content structure",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Hello, world!"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "tokens": [13225, 11, 2375, 0]
+    }
+  },
+  {
+    "description": "Handle multi-modal content with image (text only)",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Hello"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://example.com/image.png"
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "tokens": [13225]
+    }
+  }
+]

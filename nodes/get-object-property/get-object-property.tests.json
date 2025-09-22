@@ -1,0 +1,101 @@
+[
+  {
+    "description": "Get existing property from object",
+    "inputs": {
+      "object": {"name": "John", "age": 30, "city": "New York"},
+      "key": "name"
+    },
+    "expected": {
+      "value": "John",
+      "exists": true,
+      "key": "name"
+    }
+  },
+  {
+    "description": "Get non-existing property with default value",
+    "inputs": {
+      "object": {"name": "John", "age": 30},
+      "key": "email"
+    },
+    "settings": {
+      "default_value": "unknown@example.com"
+    },
+    "expected": {
+      "value": "unknown@example.com",
+      "exists": false,
+      "key": "email"
+    }
+  },
+  {
+    "description": "Get nested object property",
+    "inputs": {
+      "object": {"user": {"profile": {"name": "Jane"}}, "id": 123},
+      "key": "user"
+    },
+    "expected": {
+      "value": {"profile": {"name": "Jane"}},
+      "exists": true,
+      "key": "user"
+    }
+  },
+  {
+    "description": "Get property from empty object",
+    "inputs": {
+      "object": {},
+      "key": "any_key"
+    },
+    "expected": {
+      "value": null,
+      "exists": false,
+      "key": "any_key"
+    }
+  },
+  {
+    "description": "Handle null object input",
+    "inputs": {
+      "object": null,
+      "key": "test"
+    },
+    "expected": {
+      "value": null,
+      "exists": false,
+      "key": "test"
+    }
+  },
+  {
+    "description": "Handle non-string key",
+    "inputs": {
+      "object": {"name": "John"},
+      "key": 123
+    },
+    "expected": {
+      "value": null,
+      "exists": false,
+      "key": 123
+    }
+  },
+  {
+    "description": "Get property with special characters in key",
+    "inputs": {
+      "object": {"user-name": "John", "user@email": "john@example.com"},
+      "key": "user-name"
+    },
+    "expected": {
+      "value": "John",
+      "exists": true,
+      "key": "user-name"
+    }
+  },
+  {
+    "description": "Get property with array value",
+    "inputs": {
+      "object": {"tags": ["javascript", "nodejs"], "count": 2},
+      "key": "tags"
+    },
+    "expected": {
+      "value": ["javascript", "nodejs"],
+      "exists": true,
+      "key": "tags"
+    }
+  }
+]

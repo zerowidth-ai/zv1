@@ -1,0 +1,182 @@
+{
+  "display_name": "OpenAI: Omni Moderation Latest",
+  "description": "Identify potentially harmful content in text and images using OpenAI's omni-moderation-latest model. This model supports more categorization options and multi-modal inputs compared to the legacy text-moderation-latest model.",
+  "icon": "shield-check",
+  "category": "moderation",
+  "provider": "openai",
+  "model_id": "openai/omni-moderation-latest",
+  "needs_key_from": "openai",
+  "inputs": [
+    {
+      "name": "input",
+      "display_name": "Input",
+      "type": "string or array or message",
+      "description": "Text, Message object, or array of multi-modal inputs to moderate. Can be a string, Message object with {role, content}, array of strings, or array of objects with 'type' and 'text'/'image_url' properties.",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "flagged",
+      "display_name": "Flagged",
+      "type": "boolean",
+      "description": "Whether any of the categories are flagged as potentially harmful"
+    },
+    {
+      "name": "sexual",
+      "display_name": "Sexual",
+      "type": "boolean",
+      "description": "Whether content is flagged as sexual"
+    },
+    {
+      "name": "sexual_score",
+      "display_name": "Sexual Score",
+      "type": "number",
+      "description": "Confidence score for sexual content (0-1)"
+    },
+    {
+      "name": "sexual_minors",
+      "display_name": "Sexual/Minors",
+      "type": "boolean",
+      "description": "Whether content is flagged as sexual involving minors"
+    },
+    {
+      "name": "sexual_minors_score",
+      "display_name": "Sexual/Minors Score",
+      "type": "number",
+      "description": "Confidence score for sexual content involving minors (0-1)"
+    },
+    {
+      "name": "harassment",
+      "display_name": "Harassment",
+      "type": "boolean",
+      "description": "Whether content is flagged as harassment"
+    },
+    {
+      "name": "harassment_score",
+      "display_name": "Harassment Score",
+      "type": "number",
+      "description": "Confidence score for harassment content (0-1)"
+    },
+    {
+      "name": "harassment_threatening",
+      "display_name": "Harassment/Threatening",
+      "type": "boolean",
+      "description": "Whether content is flagged as threatening harassment"
+    },
+    {
+      "name": "harassment_threatening_score",
+      "display_name": "Harassment/Threatening Score",
+      "type": "number",
+      "description": "Confidence score for threatening harassment content (0-1)"
+    },
+    {
+      "name": "hate",
+      "display_name": "Hate",
+      "type": "boolean",
+      "description": "Whether content is flagged as hate speech"
+    },
+    {
+      "name": "hate_score",
+      "display_name": "Hate Score",
+      "type": "number",
+      "description": "Confidence score for hate speech content (0-1)"
+    },
+    {
+      "name": "hate_threatening",
+      "display_name": "Hate/Threatening",
+      "type": "boolean",
+      "description": "Whether content is flagged as threatening hate speech"
+    },
+    {
+      "name": "hate_threatening_score",
+      "display_name": "Hate/Threatening Score",
+      "type": "number",
+      "description": "Confidence score for threatening hate speech content (0-1)"
+    },
+    {
+      "name": "illicit",
+      "display_name": "Illicit",
+      "type": "boolean",
+      "description": "Whether content is flagged as illicit advice"
+    },
+    {
+      "name": "illicit_score",
+      "display_name": "Illicit Score",
+      "type": "number",
+      "description": "Confidence score for illicit content (0-1)"
+    },
+    {
+      "name": "illicit_violent",
+      "display_name": "Illicit/Violent",
+      "type": "boolean",
+      "description": "Whether content is flagged as violent illicit advice"
+    },
+    {
+      "name": "illicit_violent_score",
+      "display_name": "Illicit/Violent Score",
+      "type": "number",
+      "description": "Confidence score for violent illicit content (0-1)"
+    },
+    {
+      "name": "self_harm",
+      "display_name": "Self-Harm",
+      "type": "boolean",
+      "description": "Whether content is flagged as self-harm"
+    },
+    {
+      "name": "self_harm_score",
+      "display_name": "Self-Harm Score",
+      "type": "number",
+      "description": "Confidence score for self-harm content (0-1)"
+    },
+    {
+      "name": "self_harm_intent",
+      "display_name": "Self-Harm/Intent",
+      "type": "boolean",
+      "description": "Whether content is flagged as self-harm intent"
+    },
+    {
+      "name": "self_harm_intent_score",
+      "display_name": "Self-Harm/Intent Score",
+      "type": "number",
+      "description": "Confidence score for self-harm intent content (0-1)"
+    },
+    {
+      "name": "self_harm_instructions",
+      "display_name": "Self-Harm/Instructions",
+      "type": "boolean",
+      "description": "Whether content is flagged as self-harm instructions"
+    },
+    {
+      "name": "self_harm_instructions_score",
+      "display_name": "Self-Harm/Instructions Score",
+      "type": "number",
+      "description": "Confidence score for self-harm instructions content (0-1)"
+    },
+    {
+      "name": "violence",
+      "display_name": "Violence",
+      "type": "boolean",
+      "description": "Whether content is flagged as violence"
+    },
+    {
+      "name": "violence_score",
+      "display_name": "Violence Score",
+      "type": "number",
+      "description": "Confidence score for violence content (0-1)"
+    },
+    {
+      "name": "violence_graphic",
+      "display_name": "Violence/Graphic",
+      "type": "boolean",
+      "description": "Whether content is flagged as graphic violence"
+    },
+    {
+      "name": "violence_graphic_score",
+      "display_name": "Violence/Graphic Score",
+      "type": "number",
+      "description": "Confidence score for graphic violence content (0-1)"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "display_name": "Response Format",
+  "description": "Define a JSON Schema response format for structured outputs from LLMs.",
+  "icon": "fa-code",
+  "category": "prompting",
+  "custom_render_height": 200,
+  "is_constant": true,
+  "is_resizable": true,
+  "inputs": [
+    {
+      "name": "name",
+      "display_name": "Name",
+      "type": "string",
+      "description": "Optional override for the name of the response format, used to identify the schema."
+    },
+    {
+      "name": "strict",
+      "display_name": "Strict",
+      "type": "boolean",
+      "description": "Optional override for strict mode. When true, the model must follow the schema exactly."
+    },
+    {
+      "name": "schema",
+      "display_name": "Schema",
+      "type": "object",
+      "description": "Optional override for the JSON Schema definition that the model response must follow."
+    }
+  ],
+  "outputs": [
+    {
+      "name": "response_format",
+      "display_name": "Response Format",
+      "type": "object",
+      "description": "The response format object definition for structured outputs."
+    }
+  ],
+  "settings": [
+    {
+      "name": "name",
+      "display_name": "Name",
+      "type": "string",
+      "description": "The name of the response format, used to identify the schema.",
+      "default": "response"
+    },
+    {
+      "name": "strict",
+      "display_name": "Strict",
+      "type": "boolean",
+      "description": "When true, the model must follow the schema exactly. When false, the model can be more flexible.",
+      "default": true
+    },
+    {
+      "name": "schema",
+      "display_name": "Schema",
+      "type": "object",
+      "description": "The JSON Schema definition that the model response must follow.",
+      "default": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "string",
+            "description": "The model's response"
+          }
+        },
+        "required": ["response"],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+}

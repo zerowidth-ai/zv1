@@ -1,0 +1,28 @@
+{
+  "name": "zv1-sync-scripts",
+  "version": "1.0.0",
+  "description": "Sync scripts for zv1 monorepo",
+  "main": "sync-watcher.js",
+  "bin": {
+    "sync-watcher": "./sync-watcher.js"
+  },
+  "scripts": {
+    "sync": "node sync-watcher.js",
+    "watch": "node sync-watcher.js --watch",
+    "dev": "node sync-watcher.js --watch --verbose"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "zv1",
+    "sync",
+    "watcher",
+    "monorepo"
+  ],
+  "author": "ZeroWidth",
+  "license": "MIT"
+}

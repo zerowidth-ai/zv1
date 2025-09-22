@@ -1,0 +1,103 @@
+[
+  {
+    "description": "Moderate harmless text",
+    "inputs": {
+      "input": "Hello, how are you today?"
+    },
+    "expected": {
+      "flagged": false,
+      "sexual": false,
+      "sexual_score": 0,
+      "hate": false,
+      "hate_score": 0,
+      "harassment": false,
+      "harassment_score": 0,
+      "violence": false,
+      "violence_score": 0,
+      "self_harm": false,
+      "self_harm_score": 0
+    }
+  },
+  {
+    "description": "Moderate Message object with harmless content",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": "This is a normal message"
+      }
+    },
+    "expected": {
+      "flagged": false,
+      "sexual": false,
+      "sexual_score": 0,
+      "hate": false,
+      "hate_score": 0,
+      "harassment": false,
+      "harassment_score": 0,
+      "violence": false,
+      "violence_score": 0,
+      "self_harm": false,
+      "self_harm_score": 0
+    }
+  },
+  {
+    "description": "Moderate potentially harmful text",
+    "inputs": {
+      "input": "I want to hurt someone"
+    },
+    "expected": {
+      "flagged": true,
+      "violence": true,
+      "violence_score": 0.8
+    }
+  },
+  {
+    "description": "Moderate multi-modal input with text and image",
+    "inputs": {
+      "input": [
+        {
+          "type": "text",
+          "text": "This is a test message"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://example.com/image.png"
+          }
+        }
+      ]
+    },
+    "expected": {
+      "flagged": false,
+      "sexual": false,
+      "sexual_score": 0,
+      "hate": false,
+      "hate_score": 0,
+      "harassment": false,
+      "harassment_score": 0,
+      "violence": false,
+      "violence_score": 0,
+      "self_harm": false,
+      "self_harm_score": 0
+    }
+  },
+  {
+    "description": "Handle empty input gracefully",
+    "inputs": {
+      "input": ""
+    },
+    "expected": {
+      "flagged": false,
+      "sexual": false,
+      "sexual_score": 0,
+      "hate": false,
+      "hate_score": 0,
+      "harassment": false,
+      "harassment_score": 0,
+      "violence": false,
+      "violence_score": 0,
+      "self_harm": false,
+      "self_harm_score": 0
+    }
+  }
+]

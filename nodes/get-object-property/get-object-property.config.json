@@ -1,0 +1,53 @@
+{
+  "display_name": "Get Object Property",
+  "description": "Extract a specific property value from an object by key name.",
+  "icon": "fa-key",
+  "category": "data",
+  "inputs": [
+    {
+      "name": "object",
+      "display_name": "Object",
+      "type": "object",
+      "description": "The object to extract the property from",
+      "required": true
+    },
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "The name of the property to extract",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The value of the specified property"
+    },
+    {
+      "name": "exists",
+      "display_name": "Exists",
+      "type": "boolean",
+      "description": "Whether the property exists in the object"
+    },
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "The key that was accessed"
+    }
+  ],
+  "settings": [
+    {
+      "name": "default_value",
+      "display_name": "Default Value",
+      "type": "any",
+      "description": "Value to return if the property doesn't exist",
+      "default": null
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+}

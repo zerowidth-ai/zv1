@@ -1,0 +1,171 @@
+[
+  {
+    "description": "Delete existing property from object",
+    "inputs": {
+      "object": {"name": "John", "age": 30, "city": "New York"},
+      "key": "age"
+    },
+    "expected": {
+      "object": {"name": "John", "city": "New York"},
+      "key": "age",
+      "removed_value": 30,
+      "was_removed": true
+    }
+  },
+  {
+    "description": "Delete non-existing property",
+    "inputs": {
+      "object": {"name": "John", "age": 30},
+      "key": "email"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "email",
+      "removed_value": null,
+      "was_removed": false
+    }
+  },
+  {
+    "description": "Delete property with null value",
+    "inputs": {
+      "object": {"name": "John", "email": null, "age": 30},
+      "key": "email"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "email",
+      "removed_value": null,
+      "was_removed": true
+    }
+  },
+  {
+    "description": "Delete property with null value",
+    "inputs": {
+      "object": {"name": "John", "email": null, "age": 30},
+      "key": "email"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "email",
+      "removed_value": null,
+      "was_removed": true
+    }
+  },
+  {
+    "description": "Delete property with empty string value",
+    "inputs": {
+      "object": {"name": "John", "email": "", "age": 30},
+      "key": "email"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "email",
+      "removed_value": "",
+      "was_removed": true
+    }
+  },
+  {
+    "description": "Delete property with zero value",
+    "inputs": {
+      "object": {"name": "John", "count": 0, "age": 30},
+      "key": "count"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "count",
+      "removed_value": 0,
+      "was_removed": true
+    }
+  },
+  {
+    "description": "Delete property with false value",
+    "inputs": {
+      "object": {"name": "John", "active": false, "age": 30},
+      "key": "active"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "active",
+      "removed_value": false,
+      "was_removed": true
+    }
+  },
+  {
+    "description": "Delete property with array value",
+    "inputs": {
+      "object": {"name": "John", "tags": ["javascript", "nodejs"], "age": 30},
+      "key": "tags"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "tags",
+      "removed_value": ["javascript", "nodejs"],
+      "was_removed": true
+    }
+  },
+  {
+    "description": "Delete property with object value",
+    "inputs": {
+      "object": {"name": "John", "profile": {"city": "NYC"}, "age": 30},
+      "key": "profile"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "profile",
+      "removed_value": {"city": "NYC"},
+      "was_removed": true
+    }
+  },
+  {
+    "description": "Delete property from empty object",
+    "inputs": {
+      "object": {},
+      "key": "any_key"
+    },
+    "expected": {
+      "object": {},
+      "key": "any_key",
+      "removed_value": null,
+      "was_removed": false
+    }
+  },
+  {
+    "description": "Handle null object input",
+    "inputs": {
+      "object": null,
+      "key": "test"
+    },
+    "expected": {
+      "object": {},
+      "key": "test",
+      "removed_value": null,
+      "was_removed": false
+    }
+  },
+  {
+    "description": "Handle non-string key",
+    "inputs": {
+      "object": {"name": "John"},
+      "key": 123
+    },
+    "expected": {
+      "object": {"name": "John"},
+      "key": 123,
+      "removed_value": null,
+      "was_removed": false
+    }
+  },
+  {
+    "description": "Delete property with special characters in key",
+    "inputs": {
+      "object": {"user-name": "John", "user@email": "john@example.com"},
+      "key": "user-name"
+    },
+    "expected": {
+      "object": {"user@email": "john@example.com"},
+      "key": "user-name",
+      "removed_value": "John",
+      "was_removed": true
+    }
+  }
+]

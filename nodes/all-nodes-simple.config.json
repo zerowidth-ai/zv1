@@ -498,6 +498,7 @@ openai-o4-mini-high,OpenAI: o4 Mini High,OpenAI o4-mini-high is the same model a
 OpenAI o4-mini is a compact reasoning model in the o-series, optimized for fast, cost-efficient performance while retaining strong multimodal and agentic capabilities. It supports tool use and demonstrates competitive reasoning and coding performance across benchmarks like AIME (99.5% with Python) and SWE-bench, outperforming its predecessor o3-mini and even approaching o3 in some domains.
 
 Despite its smaller size, o4-mini exhibits high accuracy in STEM tasks, visual problem solving (e.g., MathVista, MMMU), and code editing. It is especially well-suited for high-throughput scenarios where latency or cost is critical. Thanks to its efficient architecture and refined reinforcement learning training, o4-mini can chain tools, generate structured outputs, and solve multi-step tasks with minimal delay—often in under a minute.
+openai-omni-moderation-latest,OpenAI: Omni Moderation Latest,Identify potentially harmful content in text and images using OpenAI's omni-moderation-latest model. This model supports more categorization options and multi-modal inputs compared to the legacy text-moderation-latest model.
 or-gate,OR Gate,A logic gate that outputs true if either input is true
 output-chat,Chat Output,Outputs a chat message to the user
 output-data,Data Output,Outputs labeled data from the flow
@@ -658,6 +659,7 @@ subtract,Subtract,Subtracts second number from first
 switch,Switch,Routes data based on a value matching cases
 system-prompt,System Prompt,Draft a text-based system prompt for an LLM, with configurable variables.
 throw-error,Throw Error,Throws an error with a custom message and optional context for testing error handling.
+token-count,Token Count,Count tokens in text, messages, or arrays of messages using the cl100k_base tokenizer (used by GPT-4, GPT-3.5-turbo, and other OpenAI models).
 tool,Tool,Define a tool / function call for a LLM to use.
 x-ai-grok-2-1212,xAI: Grok 2 1212,Grok 2 1212 introduces significant enhancements to accuracy, instruction adherence, and multilingual support, making it a powerful and flexible choice for developers seeking a highly steerable, intelligent model.
 x-ai-grok-2-vision-1212,xAI: Grok 2 Vision 1212,Grok 2 Vision 1212 advances image-based AI with stronger visual comprehension, refined instruction-following, and multilingual support. From object recognition to style analysis, it empowers developers to build more intuitive, visually aware applications. Its enhanced steerability and reasoning establish a robust foundation for next-generation image solutions.

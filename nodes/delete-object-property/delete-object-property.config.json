@@ -1,0 +1,51 @@
+{
+  "display_name": "Delete Object Property",
+  "description": "Remove a specific property from an object, returning a new object without that property.",
+  "icon": "fa-trash",
+  "category": "data",
+  "inputs": [
+    {
+      "name": "object",
+      "display_name": "Object",
+      "type": "object",
+      "description": "The object to remove the property from",
+      "required": true
+    },
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "The name of the property to remove",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "object",
+      "display_name": "Object",
+      "type": "object",
+      "description": "The new object without the specified property"
+    },
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "The key that was removed"
+    },
+    {
+      "name": "removed_value",
+      "display_name": "Removed Value",
+      "type": "any",
+      "description": "The value that was removed (null if property didn't exist)"
+    },
+    {
+      "name": "was_removed",
+      "display_name": "Was Removed",
+      "type": "boolean",
+      "description": "Whether the property was actually removed (true) or didn't exist (false)"
+    }
+  ],
+  "settings": [],
+  "timeout": 3000,
+  "retry_limit": 3
+}

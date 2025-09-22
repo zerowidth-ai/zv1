@@ -1,0 +1,56 @@
+{
+  "display_name": "Truncate by Tokens",
+  "description": "Keep only the most recent messages that fit within the specified token limit.",
+  "icon": "scissors",
+  "category": "messages",
+  "inputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array of message objects to truncate",
+      "required": true
+    },
+    {
+      "name": "max_tokens",
+      "display_name": "Max Tokens",
+      "type": "number",
+      "description": "Maximum number of tokens to keep",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array containing messages that fit within the token limit"
+    },
+    {
+      "name": "token_count",
+      "display_name": "Token Count",
+      "type": "number",
+      "description": "Total number of tokens in the truncated messages"
+    },
+    {
+      "name": "truncated",
+      "display_name": "Truncated",
+      "type": "boolean",
+      "description": "Whether any messages were removed due to token limit"
+    }
+  ],
+  "settings": [
+    {
+      "name": "tokenizer",
+      "display_name": "Tokenizer",
+      "type": "string",
+      "description": "The tokenizer to use for counting tokens",
+      "default": "cl200k_base",
+      "options": [
+        "cl200k_base",
+        "cl100k_base"
+      ],
+      "required": true
+    }
+  ]
+}

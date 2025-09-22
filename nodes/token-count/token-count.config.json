@@ -1,0 +1,23 @@
+{
+  "display_name": "Token Count",
+  "description": "Count tokens in text, messages, or arrays of messages using the cl100k_base tokenizer (used by GPT-4, GPT-3.5-turbo, and other OpenAI models).",
+  "icon": "hash",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "input",
+      "display_name": "Input",
+      "type": "string or message or array",
+      "description": "Text string, Message object with {role, content}, or array of messages to count tokens for.",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "tokens",
+      "display_name": "Token Count",
+      "type": "number",
+      "description": "Total number of tokens in the input"
+    }
+  ]
+}

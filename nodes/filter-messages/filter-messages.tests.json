@@ -1,0 +1,125 @@
+[
+  {
+    "description": "Filter messages by minimum length",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hi"},
+        {"role": "assistant", "content": "Hello there, how can I help you today?"},
+        {"role": "user", "content": "OK"},
+        {"role": "assistant", "content": "I understand your request"}
+      ],
+      "filter_type": "min_length",
+      "filter_value": 10
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Filter messages by maximum length",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hi"},
+        {"role": "assistant", "content": "Hello there, how can I help you today?"},
+        {"role": "user", "content": "OK"},
+        {"role": "assistant", "content": "I understand"}
+      ],
+      "filter_type": "max_length",
+      "filter_value": 15
+    },
+    "expected": {
+      "count": 3
+    }
+  },
+  {
+    "description": "Filter messages containing specific text",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello world"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "Good morning"},
+        {"role": "assistant", "content": "Hello, how are you?"}
+      ],
+      "filter_type": "contains_text",
+      "filter_value": "hello"
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Filter messages starting with specific text",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello world"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "Hello there"},
+        {"role": "assistant", "content": "Good morning"}
+      ],
+      "filter_type": "starts_with",
+      "filter_value": "hello"
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Filter messages ending with specific text",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello world"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "Good morning"},
+        {"role": "assistant", "content": "Hello there"}
+      ],
+      "filter_type": "ends_with",
+      "filter_value": "there"
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Filter messages by role equals",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "How are you?"},
+        {"role": "system", "content": "System message"}
+      ],
+      "filter_type": "role_equals",
+      "filter_value": "user"
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Filter messages by role not equals",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "How are you?"},
+        {"role": "system", "content": "System message"}
+      ],
+      "filter_type": "role_not_equals",
+      "filter_value": "user"
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Handle empty message array",
+    "inputs": {
+      "messages": [],
+      "filter_type": "contains_text",
+      "filter_value": "hello"
+    },
+    "expected": {
+      "count": 0
+    }
+  }
+]

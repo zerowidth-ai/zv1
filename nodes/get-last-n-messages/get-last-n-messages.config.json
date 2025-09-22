@@ -1,0 +1,36 @@
+{
+  "display_name": "Get Last N Messages",
+  "description": "Extract the most recent N messages from an array of messages.",
+  "icon": "arrow-down",
+  "category": "messages",
+  "inputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array of message objects to extract from",
+      "required": true
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Number of recent messages to extract",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array containing the last N messages"
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Actual number of messages returned"
+    }
+  ]
+}

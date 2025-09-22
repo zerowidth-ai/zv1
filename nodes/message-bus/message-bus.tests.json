@@ -1,0 +1,137 @@
+[
+  {
+    "description": "Combine messages from multiple inputs",
+    "inputs": {
+      "input_1": [{"role": "user", "content": "Hello"}],
+      "input_2": [{"role": "assistant", "content": "Hi there"}],
+      "input_3": [{"role": "user", "content": "How are you?"}]
+    },
+    "expected": {
+      "message_count": 3,
+      "inputs_used": 3
+    }
+  },
+  {
+    "description": "Handle single messages and arrays",
+    "inputs": {
+      "input_1": {"role": "user", "content": "Hello"},
+      "input_2": [{"role": "assistant", "content": "Hi"}, {"role": "user", "content": "How are you?"}],
+      "input_3": {"role": "assistant", "content": "I'm doing well"}
+    },
+    "expected": {
+      "message_count": 4,
+      "inputs_used": 3
+    }
+  },
+  {
+    "description": "Handle empty inputs gracefully",
+    "inputs": {
+      "input_1": [{"role": "user", "content": "Hello"}],
+      "input_2": null,
+      "input_3": [],
+      "input_4": [{"role": "assistant", "content": "Hi there"}]
+    },
+    "expected": {
+      "message_count": 2,
+      "inputs_used": 2
+    }
+  },
+  {
+    "description": "Use only some inputs",
+    "inputs": {
+      "input_1": [{"role": "user", "content": "Hello"}],
+      "input_5": [{"role": "assistant", "content": "Hi"}],
+      "input_8": [{"role": "user", "content": "How are you?"}]
+    },
+    "expected": {
+      "message_count": 3,
+      "inputs_used": 3
+    }
+  },
+  {
+    "description": "Filter empty messages when filter_empty is true",
+    "inputs": {
+      "input_1": [
+        {"role": "user", "content": "Hello"},
+        {"role": "user", "content": ""},
+        {"role": "assistant", "content": "Hi"}
+      ],
+      "input_2": [
+        {"role": "user", "content": "How are you?"},
+        null,
+        {"role": "assistant", "content": "I'm doing well"}
+      ]
+    },
+    "settings": {
+      "filter_empty": true
+    },
+    "expected": {
+      "message_count": 4,
+      "inputs_used": 2
+    }
+  },
+  {
+    "description": "Don't filter empty messages when filter_empty is false",
+    "inputs": {
+      "input_1": [
+        {"role": "user", "content": "Hello"},
+        {"role": "user", "content": ""},
+        {"role": "assistant", "content": "Hi"}
+      ]
+    },
+    "settings": {
+      "filter_empty": false
+    },
+    "expected": {
+      "message_count": 3,
+      "inputs_used": 1
+    }
+  },
+  {
+    "description": "Handle all empty inputs",
+    "inputs": {
+      "input_1": null,
+      "input_2": [],
+      "input_3": null
+    },
+    "expected": {
+      "message_count": 0,
+      "inputs_used": 0
+    }
+  },
+  {
+    "description": "Daisy-chain simulation - first bus",
+    "inputs": {
+      "input_1": [{"role": "system", "content": "You are helpful"}],
+      "input_2": [{"role": "user", "content": "Hello"}]
+    },
+    "expected": {
+      "message_count": 2,
+      "inputs_used": 2
+    }
+  },
+  {
+    "description": "Daisy-chain simulation - second bus",
+    "inputs": {
+      "input_1": [{"role": "assistant", "content": "Hi there"}],
+      "input_2": [{"role": "user", "content": "How are you?"}],
+      "input_3": [{"role": "assistant", "content": "I'm doing well"}]
+    },
+    "expected": {
+      "message_count": 3,
+      "inputs_used": 3
+    }
+  },
+  {
+    "description": "Complex multi-modal content",
+    "inputs": {
+      "input_1": [{"role": "user", "content": "Hello"}],
+      "input_2": [{"role": "user", "content": [{"type": "text", "text": "How are you?"}, {"type": "image_url", "image_url": {"url": "https://example.com/image.png"}}]}],
+      "input_3": [{"role": "assistant", "content": "I'm doing well, thanks for the image!"}]
+    },
+    "expected": {
+      "message_count": 3,
+      "inputs_used": 3
+    }
+  }
+]

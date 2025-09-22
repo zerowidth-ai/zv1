@@ -1,0 +1,144 @@
+[
+  {
+    "description": "Extract text from single string",
+    "inputs": {
+      "input": "Hello, world!"
+    },
+    "expected": {
+      "text": "Hello, world!",
+      "message_count": 1
+    }
+  },
+  {
+    "description": "Extract text from single message object",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": "Hello, how are you?"
+      }
+    },
+    "expected": {
+      "text": "Hello, how are you?",
+      "message_count": 1
+    }
+  },
+  {
+    "description": "Extract text from array of messages",
+    "inputs": {
+      "input": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"},
+        {"role": "user", "content": "How are you?"}
+      ]
+    },
+    "expected": {
+      "text": "Hello\n\nHi there!\n\nHow are you?",
+      "message_count": 3
+    }
+  },
+  {
+    "description": "Extract text with role prefixes",
+    "inputs": {
+      "input": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"}
+      ]
+    },
+    "settings": {
+      "include_role": true,
+      "role_format": "{role}: "
+    },
+    "expected": {
+      "text": "USER: Hello\n\nASSISTANT: Hi there!",
+      "message_count": 2
+    }
+  },
+  {
+    "description": "Extract text with custom role format",
+    "inputs": {
+      "input": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"}
+      ]
+    },
+    "settings": {
+      "include_role": true,
+      "role_format": "[{role}] "
+    },
+    "expected": {
+      "text": "[USER] Hello\n\n[ASSISTANT] Hi there!",
+      "message_count": 2
+    }
+  },
+  {
+    "description": "Extract text from multi-modal content",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": [
+          {"type": "text", "text": "Hello, "},
+          {"type": "image_url", "image_url": {"url": "https://example.com/image.png"}},
+          {"type": "text", "text": "how are you?"}
+        ]
+      }
+    },
+    "expected": {
+      "text": "Hello, how are you?",
+      "message_count": 1
+    }
+  },
+  {
+    "description": "Extract text from array of strings",
+    "inputs": {
+      "input": ["Hello", "World", "How are you?"]
+    },
+    "expected": {
+      "text": "Hello\n\nWorld\n\nHow are you?",
+      "message_count": 3
+    }
+  },
+  {
+    "description": "Extract text with custom separator",
+    "inputs": {
+      "input": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"}
+      ]
+    },
+    "settings": {
+      "separator": " | "
+    },
+    "expected": {
+      "text": "Hello | Hi there!",
+      "message_count": 2
+    }
+  },
+  {
+    "description": "Handle empty content gracefully",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": ""
+      }
+    },
+    "expected": {
+      "text": "",
+      "message_count": 0
+    }
+  },
+  {
+    "description": "Handle multi-modal content with no text",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": [
+          {"type": "image_url", "image_url": {"url": "https://example.com/image.png"}}
+        ]
+      }
+    },
+    "expected": {
+      "text": "",
+      "message_count": 0
+    }
+  }
+]

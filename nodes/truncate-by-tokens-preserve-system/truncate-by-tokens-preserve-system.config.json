@@ -1,0 +1,70 @@
+{
+  "display_name": "Truncate by Tokens Preserve System",
+  "description": "Always keep system messages, truncate other messages to fit within the specified token limit.",
+  "icon": "shield",
+  "category": "messages",
+  "inputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array of message objects to truncate",
+      "required": true
+    },
+    {
+      "name": "max_tokens",
+      "display_name": "Max Tokens",
+      "type": "number",
+      "description": "Maximum number of tokens to keep",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array containing system messages and other messages that fit within the token limit"
+    },
+    {
+      "name": "token_count",
+      "display_name": "Token Count",
+      "type": "number",
+      "description": "Total number of tokens in the truncated messages"
+    },
+    {
+      "name": "truncated",
+      "display_name": "Truncated",
+      "type": "boolean",
+      "description": "Whether any non-system messages were removed due to token limit"
+    },
+    {
+      "name": "system_count",
+      "display_name": "System Count",
+      "type": "number",
+      "description": "Number of system messages preserved"
+    }
+  ],
+  "settings": [
+    {
+      "name": "tokenizer",
+      "display_name": "Tokenizer",
+      "type": "string",
+      "description": "The tokenizer to use for counting tokens",
+      "default": "cl200k_base",
+      "options": [
+        "cl200k_base",
+        "cl100k_base"
+      ],
+      "required": true
+    },
+    {
+      "name": "count_system",
+      "display_name": "Count System",
+      "type": "boolean",
+      "description": "Whether system messages count toward the token limit (false = always include system messages)",
+      "default": false,
+      "required": true
+    }
+  ]
+}

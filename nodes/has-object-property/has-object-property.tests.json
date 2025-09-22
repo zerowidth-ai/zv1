@@ -1,0 +1,146 @@
+[
+  {
+    "description": "Check for existing property",
+    "inputs": {
+      "object": {"name": "John", "age": 30, "city": "New York"},
+      "key": "name"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "name",
+      "value": "John"
+    }
+  },
+  {
+    "description": "Check for non-existing property",
+    "inputs": {
+      "object": {"name": "John", "age": 30},
+      "key": "email"
+    },
+    "expected": {
+      "has_property": false,
+      "key": "email",
+      "value": null
+    }
+  },
+  {
+    "description": "Check for property with null value",
+    "inputs": {
+      "object": {"name": "John", "email": null, "age": 30},
+      "key": "email"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "email",
+      "value": null
+    }
+  },
+  {
+    "description": "Check for property with undefined value",
+    "inputs": {
+      "object": {"name": "John", "email": null, "age": 30},
+      "key": "email"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "email",
+      "value": null
+    }
+  },
+  {
+    "description": "Check for property with empty string value",
+    "inputs": {
+      "object": {"name": "John", "email": "", "age": 30},
+      "key": "email"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "email",
+      "value": ""
+    }
+  },
+  {
+    "description": "Check for property with zero value",
+    "inputs": {
+      "object": {"name": "John", "count": 0, "age": 30},
+      "key": "count"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "count",
+      "value": 0
+    }
+  },
+  {
+    "description": "Check for property with false value",
+    "inputs": {
+      "object": {"name": "John", "active": false, "age": 30},
+      "key": "active"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "active",
+      "value": false
+    }
+  },
+  {
+    "description": "Check for property with array value",
+    "inputs": {
+      "object": {"name": "John", "tags": ["javascript", "nodejs"], "age": 30},
+      "key": "tags"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "tags",
+      "value": ["javascript", "nodejs"]
+    }
+  },
+  {
+    "description": "Check for property with object value",
+    "inputs": {
+      "object": {"name": "John", "profile": {"city": "NYC"}, "age": 30},
+      "key": "profile"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "profile",
+      "value": {"city": "NYC"}
+    }
+  },
+  {
+    "description": "Handle null object input",
+    "inputs": {
+      "object": null,
+      "key": "test"
+    },
+    "expected": {
+      "has_property": false,
+      "key": "test",
+      "value": null
+    }
+  },
+  {
+    "description": "Handle non-string key",
+    "inputs": {
+      "object": {"name": "John"},
+      "key": 123
+    },
+    "expected": {
+      "has_property": false,
+      "key": 123,
+      "value": null
+    }
+  },
+  {
+    "description": "Check for property with special characters in key",
+    "inputs": {
+      "object": {"user-name": "John", "user@email": "john@example.com"},
+      "key": "user-name"
+    },
+    "expected": {
+      "has_property": true,
+      "key": "user-name",
+      "value": "John"
+    }
+  }
+]

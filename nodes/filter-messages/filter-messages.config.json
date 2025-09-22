@@ -1,0 +1,52 @@
+{
+  "display_name": "Filter Messages",
+  "description": "Filter messages by custom criteria (length, content, role, etc.).",
+  "icon": "funnel",
+  "category": "messages",
+  "inputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array of message objects to filter",
+      "required": true
+    },
+    {
+      "name": "filter_type",
+      "display_name": "Filter Type",
+      "type": "string",
+      "description": "Type of filter to apply",
+      "required": true,
+      "options": [
+        "min_length",
+        "max_length",
+        "contains_text",
+        "starts_with",
+        "ends_with",
+        "role_equals",
+        "role_not_equals"
+      ]
+    },
+    {
+      "name": "filter_value",
+      "display_name": "Filter Value",
+      "type": "string or number",
+      "description": "Value to filter by (text for text filters, number for length filters)",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array containing filtered messages"
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Number of messages that match the filter"
+    }
+  ]
+}

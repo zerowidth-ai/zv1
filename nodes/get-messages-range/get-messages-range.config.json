@@ -1,0 +1,43 @@
+{
+  "display_name": "Get Messages Range",
+  "description": "Extract messages from a specific range (start index to end index).",
+  "icon": "arrows-horizontal",
+  "category": "messages",
+  "inputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array of message objects to extract from",
+      "required": true
+    },
+    {
+      "name": "start",
+      "display_name": "Start Index",
+      "type": "number",
+      "description": "Starting index (inclusive, 0-based)",
+      "required": true
+    },
+    {
+      "name": "end",
+      "display_name": "End Index",
+      "type": "number",
+      "description": "Ending index (exclusive, 0-based). Use -1 for end of array.",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array containing messages from the specified range"
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Number of messages in the range"
+    }
+  ]
+}

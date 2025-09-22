@@ -1,0 +1,37 @@
+{
+  "display_name": "Tokenizer",
+  "description": "Convert text, messages, or arrays of messages into arrays of token numbers using cl200k_base or cl100k_base tokenizers.",
+  "icon": "hash",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "input",
+      "display_name": "Input",
+      "type": "string or message or array",
+      "description": "Text string, Message object with {role, content}, or array of messages to tokenize.",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "tokens",
+      "display_name": "Tokens",
+      "type": "array",
+      "description": "Array of token numbers representing the input"
+    }
+  ],
+  "settings": [
+    {
+      "name": "tokenizer",
+      "display_name": "Tokenizer",
+      "type": "string",
+      "description": "The tokenizer to use for tokenization",
+      "default": "cl200k_base",
+      "options": [
+        "cl200k_base",
+        "cl100k_base"
+      ],
+      "required": true
+    }
+  ]
+}

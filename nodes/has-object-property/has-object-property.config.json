@@ -1,0 +1,53 @@
+{
+  "display_name": "Has Object Property",
+  "description": "Check if an object has a specific property/key.",
+  "icon": "fa-search",
+  "category": "data",
+  "inputs": [
+    {
+      "name": "object",
+      "display_name": "Object",
+      "type": "object",
+      "description": "The object to check for the property",
+      "required": true
+    },
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "The name of the property to check for",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "has_property",
+      "display_name": "Has Property",
+      "type": "boolean",
+      "description": "Whether the object has the specified property"
+    },
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "The key that was checked"
+    },
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The value of the property if it exists, null otherwise"
+    }
+  ],
+  "settings": [
+    {
+      "name": "check_own_properties",
+      "display_name": "Check Own Properties Only",
+      "type": "boolean",
+      "description": "If true, only check own properties (not inherited). If false, check the entire prototype chain.",
+      "default": true
+    }
+  ],
+  "timeout": 3000,
+  "retry_limit": 3
+}

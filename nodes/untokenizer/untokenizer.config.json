@@ -1,0 +1,37 @@
+{
+  "display_name": "Untokenizer",
+  "description": "Convert arrays of token numbers back into text strings using cl200k_base or cl100k_base tokenizers.",
+  "icon": "hash",
+  "category": "text",
+  "inputs": [
+    {
+      "name": "tokens",
+      "display_name": "Tokens",
+      "type": "array",
+      "description": "Array of token numbers to convert back to text.",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "type": "string",
+      "description": "The decoded text string from the token array"
+    }
+  ],
+  "settings": [
+    {
+      "name": "tokenizer",
+      "display_name": "Tokenizer",
+      "type": "string",
+      "description": "The tokenizer to use for untokenization",
+      "default": "cl200k_base",
+      "options": [
+        "cl200k_base",
+        "cl100k_base"
+      ],
+      "required": true
+    }
+  ]
+}

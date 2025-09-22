@@ -1,0 +1,102 @@
+{
+  "display_name": "Message Bus",
+  "description": "Combine messages from multiple sources into a single message array. Supports daisy-chaining and flexible input handling.",
+  "icon": "bus",
+  "category": "messages",
+  "inputs": [
+    {
+      "name": "input_1",
+      "display_name": "Input 1",
+      "type": "message or array or empty",
+      "description": "First message source",
+      "required": false
+    },
+    {
+      "name": "input_2",
+      "display_name": "Input 2",
+      "type": "message or array or empty",
+      "description": "Second message source",
+      "required": false
+    },
+    {
+      "name": "input_3",
+      "display_name": "Input 3",
+      "type": "message or array or empty",
+      "description": "Third message source",
+      "required": false
+    },
+    {
+      "name": "input_4",
+      "display_name": "Input 4",
+      "type": "message or array or empty",
+      "description": "Fourth message source",
+      "required": false
+    },
+    {
+      "name": "input_5",
+      "display_name": "Input 5",
+      "type": "message or array or empty",
+      "description": "Fifth message source",
+      "required": false
+    },
+    {
+      "name": "input_6",
+      "display_name": "Input 6",
+      "type": "message or array or empty",
+      "description": "Sixth message source",
+      "required": false
+    },
+    {
+      "name": "input_7",
+      "display_name": "Input 7",
+      "type": "message or array or empty",
+      "description": "Seventh message source",
+      "required": false
+    },
+    {
+      "name": "input_8",
+      "display_name": "Input 8",
+      "type": "message or array or empty",
+      "description": "Eighth message source",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Combined array of all messages from all inputs"
+    },
+    {
+      "name": "message_count",
+      "display_name": "Message Count",
+      "type": "number",
+      "description": "Total number of messages in the output"
+    },
+    {
+      "name": "inputs_used",
+      "display_name": "Inputs Used",
+      "type": "number",
+      "description": "Number of non-empty inputs that contributed messages"
+    }
+  ],
+  "settings": [
+    {
+      "name": "preserve_order",
+      "display_name": "Preserve Order",
+      "type": "boolean",
+      "description": "Whether to maintain the order of inputs when combining messages",
+      "default": true,
+      "required": true
+    },
+    {
+      "name": "filter_empty",
+      "display_name": "Filter Empty",
+      "type": "boolean",
+      "description": "Whether to filter out empty or invalid messages",
+      "default": true,
+      "required": true
+    }
+  ]
+}

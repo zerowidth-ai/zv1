@@ -1,0 +1,36 @@
+{
+  "display_name": "Get Messages by Role",
+  "description": "Filter messages by specific role (user, assistant, system, etc.).",
+  "icon": "filter",
+  "category": "messages",
+  "inputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array of message objects to filter",
+      "required": true
+    },
+    {
+      "name": "role",
+      "display_name": "Role",
+      "type": "string",
+      "description": "Role to filter by (user, assistant, system, etc.)",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array",
+      "description": "Array containing only messages with the specified role"
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Number of messages found with the specified role"
+    }
+  ]
+}

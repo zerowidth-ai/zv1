@@ -141,4 +141,4 @@ vite.config.ts.timestamp-*
 
 sdks/*/nodes/*
 sdks/*/types/*
-sdks/*/tests/*
+sdks/*/tests/flows/*

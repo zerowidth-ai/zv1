@@ -1,0 +1,184 @@
+[
+  {
+    "description": "Create response format from settings",
+    "inputs": {},
+    "expected": {
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "response",
+          "strict": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "response": {
+                "type": "string",
+                "description": "The model's response"
+              }
+            },
+            "required": ["response"],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Override name from input",
+    "inputs": {
+      "name": "weather_response"
+    },
+    "expected": {
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "weather_response",
+          "strict": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "response": {
+                "type": "string",
+                "description": "The model's response"
+              }
+            },
+            "required": ["response"],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Override strict mode from input",
+    "inputs": {
+      "strict": false
+    },
+    "expected": {
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "response",
+          "strict": false,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "response": {
+                "type": "string",
+                "description": "The model's response"
+              }
+            },
+            "required": ["response"],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Override schema from input",
+    "inputs": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "City or location name"
+          },
+          "temperature": {
+            "type": "number",
+            "description": "Temperature in Celsius"
+          },
+          "conditions": {
+            "type": "string",
+            "description": "Weather conditions description"
+          }
+        },
+        "required": ["location", "temperature", "conditions"],
+        "additionalProperties": false
+      }
+    },
+    "expected": {
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "response",
+          "strict": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "City or location name"
+              },
+              "temperature": {
+                "type": "number",
+                "description": "Temperature in Celsius"
+              },
+              "conditions": {
+                "type": "string",
+                "description": "Weather conditions description"
+              }
+            },
+            "required": ["location", "temperature", "conditions"],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Override all properties from input",
+    "inputs": {
+      "name": "weather_forecast",
+      "strict": false,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "forecast": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": {"type": "string"},
+                "temperature": {"type": "number"},
+                "condition": {"type": "string"}
+              },
+              "required": ["day", "temperature", "condition"]
+            }
+          }
+        },
+        "required": ["forecast"],
+        "additionalProperties": false
+      }
+    },
+    "expected": {
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "weather_forecast",
+          "strict": false,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "forecast": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "day": {"type": "string"},
+                    "temperature": {"type": "number"},
+                    "condition": {"type": "string"}
+                  },
+                  "required": ["day", "temperature", "condition"]
+                }
+              }
+            },
+            "required": ["forecast"],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  }
+]

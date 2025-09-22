@@ -204,7 +204,21 @@ The monorepo uses a **shared core, distributed execution** model:
    - `your-node-name.js` (Node.js)
    - `your-node-name.py` (Python - coming soon)
 4. Add tests: `your-node-name.tests.json`
-5. Run sync script: `python scripts/sync_sdks.py`
+5. Sync to SDKs using one of these methods:
+
+   **Option A: One-time sync**
+   ```bash
+   python scripts/sync_sdks.py
+   ```
+
+   **Option B: Auto-sync during development (recommended)**
+   ```bash
+   cd scripts
+   npm install
+   npm run dev  # Watches for changes and auto-syncs
+   ```
+
+   The auto-sync watcher monitors `/nodes`, `/types`, and `/tests` directories and automatically copies relevant files to language-specific SDKs in real-time.
 
 ## 🗺️ Roadmap
 

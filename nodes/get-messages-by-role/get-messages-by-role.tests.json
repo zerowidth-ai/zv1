@@ -1,0 +1,87 @@
+[
+  {
+    "description": "Filter user messages from mixed array",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "How are you?"},
+        {"role": "system", "content": "System message"},
+        {"role": "assistant", "content": "I'm doing well"}
+      ],
+      "role": "user"
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Filter assistant messages from mixed array",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "How are you?"},
+        {"role": "system", "content": "System message"},
+        {"role": "assistant", "content": "I'm doing well"}
+      ],
+      "role": "assistant"
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Filter system messages from mixed array",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "How are you?"},
+        {"role": "system", "content": "System message"},
+        {"role": "assistant", "content": "I'm doing well"}
+      ],
+      "role": "system"
+    },
+    "expected": {
+      "count": 1
+    }
+  },
+  {
+    "description": "Filter non-existent role",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there"}
+      ],
+      "role": "moderator"
+    },
+    "expected": {
+      "count": 0
+    }
+  },
+  {
+    "description": "Handle empty message array",
+    "inputs": {
+      "messages": [],
+      "role": "user"
+    },
+    "expected": {
+      "count": 0
+    }
+  },
+  {
+    "description": "Handle messages without role property",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"content": "No role message"},
+        {"role": "assistant", "content": "Hi there"}
+      ],
+      "role": "user"
+    },
+    "expected": {
+      "count": 1
+    }
+  }
+]
