@@ -1,0 +1,74 @@
+{
+  "display_name": "Semantic Search",
+  "description": "Search knowledge base using semantic similarity and vector embeddings",
+  "category": "knowledge",
+  "is_constant": false,
+  "is_plugin": true,
+  "is_output": false,
+  "needs_key_from": ["openai"],
+  "inputs": [
+    {
+      "name": "query",
+      "display_name": "Search Query",
+      "type": "string",
+      "description": "Text query to search for semantically similar content",
+      "required": true
+    },
+    {
+      "name": "limit",
+      "display_name": "Result Limit",
+      "type": "number",
+      "description": "Maximum number of results to return",
+      "default": 10
+    },
+    {
+      "name": "similarity_threshold",
+      "display_name": "Similarity Threshold",
+      "type": "number",
+      "description": "Minimum similarity score (0.0 to 1.0)",
+      "default": 0.7
+    },
+    {
+      "name": "document_id",
+      "display_name": "Document ID Filter",
+      "type": "string",
+      "description": "Optional: Filter results to specific document",
+      "default": null
+    }
+  ],
+  "outputs": [
+    {
+      "name": "results",
+      "display_name": "Search Results",
+      "type": "array",
+      "description": "Array of search results with similarity scores"
+    },
+    {
+      "name": "count",
+      "display_name": "Result Count",
+      "type": "number",
+      "description": "Number of results returned"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the search completed successfully"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if search failed"
+    }
+  ],
+  "settings": [
+    {
+      "name": "embedding_model",
+      "display_name": "Embedding Model",
+      "type": "string",
+      "description": "Override the default embedding model",
+      "default": null
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "description": "A Gemini calling a tool hopefully",
+  "inputs": {
+    "chat": [
+      {
+        "role": "user",
+        "content": "Using your tool what is 41241241241 + 41412841231? Respond ONLY with the result and always use your tool."
+      }
+    ]
+  },
+  "expected": {
+    "chat": [
+      {
+        "content": "82654082472\n",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ]
+  }
+}

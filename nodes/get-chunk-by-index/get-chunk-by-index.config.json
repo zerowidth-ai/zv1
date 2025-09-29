@@ -1,0 +1,44 @@
+{
+  "display_name": "Get Chunk by Index",
+  "description": "Retrieve a specific chunk from a knowledge base by document ID and chunk index",
+  "category": "knowledge",
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "document_id",
+      "display_name": "Document ID",
+      "type": "string",
+      "description": "The ID of the document to search in",
+      "required": true
+    },
+    {
+      "name": "chunk_index",
+      "display_name": "Chunk Index",
+      "type": "number",
+      "description": "The index of the chunk to retrieve (0-based)",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "chunk",
+      "display_name": "Chunk",
+      "type": "object",
+      "description": "The retrieved chunk data including content, metadata, and position information"
+    },
+    {
+      "name": "found",
+      "display_name": "Found",
+      "type": "boolean",
+      "description": "Whether the chunk was found"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if the operation failed"
+    }
+  ],
+  "settings": [],
+  "needs_key_from": ["openai"]
+}

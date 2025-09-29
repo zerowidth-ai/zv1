@@ -176,7 +176,7 @@ class NodeSyncWatcher {
         if (fs.existsSync(TEST_FLOWS_DIR)) {
             const testFiles = fs.readdirSync(TEST_FLOWS_DIR);
             for (const file of testFiles) {
-                if (file.endsWith('.json')) {
+                if (file.endsWith('.json') || file.endsWith('.test.json') || file.endsWith('.zv1')) {
                     const filePath = path.join(TEST_FLOWS_DIR, file);
                     this.syncTestFlowFile(file, filePath);
                 }

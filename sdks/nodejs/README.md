@@ -61,6 +61,112 @@ const result = await engine.run({
 });
 ```
 
+## Flow File Formats
+
+The zv1 engine supports two flow file formats:
+
+### New .zv1 Format (Recommended)
+
+The new `.zv1` format is a ZIP-based archive that supports hierarchical imports and modular flow design:
+
+```
+myflow.zv1
+├── orchestration.json          # Main flow definition
+├── imports/                    # Optional imports folder
+│   └── a1b2c3d4-e5f6-7890-abcd-ef1234567890/   # Import folder (importId only)
+│       ├── orchestration.json  # Import's flow definition
+│       ├── README.md           # Optional documentation
+│       └── imports/            # Optional nested imports
+│           └── b2c3d4e5-f6g7-8901-bcde-f12345678901/
+│               └── orchestration.json
+```
+
+**Benefits:**
+- **Modular Design**: Break complex flows into reusable components
+- **Version Control**: Track different versions of imports with snapshots
+- **Hierarchical Imports**: Support unlimited nesting depth
+- **Developer Friendly**: Can be renamed to `.zip` and explored manually
+- **Backward Compatible**: Legacy JSON flows still work
+
+**Import Naming Convention:**
+- **New Format**: `{importId}` (simplified)
+- **Example**: `a1b2c3d4-e5f6-7890-abcd-ef1234567890`
+- **Legacy Format**: `{displayName}.{snapshot}.{uniqueId}` (backward compatible)
+- **Version Info**: Stored in import's orchestration.json metadata
+- **Requested Range**: Stored in main orchestration.json imports object
+
+### Legacy JSON Format
+
+The legacy format is a single JSON file with an optional `imports` array:
+
+```json
+{
+  "nodes": [...],
+  "links": [...],
+  "imports": [
+    {
+      "id": "import-123",
+      "display_name": "My Import",
+      "nodes": [...],
+      "links": [...]
+    }
+  ]
+}
+```
+
+### Import Resolution
+
+The new .zv1 format supports two import declaration styles:
+
+**1. Imports Object (Recommended):**
+```json
+{
+  "metadata": {
+    "name": "My Flow",
+    "version": "1.0.0"
+  },
+  "nodes": [...],
+  "links": [...],
+  "imports": {
+    "a1b2c3d4-e5f6-7890-abcd-ef1234567890": "^1.2.3",
+    "b2c3d4e5-f6g7-8901-bcde-f12345678901": "~1.0.0",
+    "c3d4e5f6-g7h8-9012-cdef-123456789012": "2.1.0",
+    "d4e5f6g7-h8i9-0123-defg-234567890123": "latest"
+  }
+}
+```
+
+**Version Range Syntax:**
+- **Exact**: `"1.2.3"` - Use exactly this version
+- **Caret**: `"^1.2.3"` - Compatible with 1.x.x (allows 1.3.0, 1.9.9, but not 2.0.0)
+- **Tilde**: `"~1.2.3"` - Compatible with 1.2.x (allows 1.2.4, 1.2.9, but not 1.3.0)
+- **Greater**: `">=1.2.3"` - Version 1.2.3 or higher
+- **Latest**: `"latest"` - Use the highest available version
+- **Stable**: `"stable"` - Use the latest stable version
+
+**Import ID Format:**
+- Auto-generated UUIDs (e.g., `"a1b2c3d4-e5f6-7890-abcd-ef1234567890"`)
+- System maps to folder names like `uuid.1.2.3` (actual resolved version)
+- Tracks both requested range and resolved version
+
+**2. Legacy Imports Array (Backward Compatible):**
+```json
+{
+  "nodes": [...],
+  "links": [...],
+  "imports": [
+    {
+      "id": "import-123",
+      "display_name": "My Import",
+      "nodes": [...],
+      "links": [...]
+    }
+  ]
+}
+```
+
+**Migration:** Legacy JSON files are automatically converted to the new format when loaded.
+
 ## Core Concepts
 
 ### Nodes & Links
@@ -284,6 +390,36 @@ if (errorType === 'node' && retryCount < maxRetries) {
 }
 ```
 
+## Resource Management
+
+### Cleanup
+
+When using knowledge databases or complex flows with imports, it's important to clean up resources:
+
+```javascript
+const engine = await zv1.create('./myflow.zv1', config);
+
+try {
+  const result = await engine.run(inputs);
+  console.log(result);
+} finally {
+  // Always clean up to free memory and remove temporary files
+  await engine.cleanup();
+}
+```
+
+**What cleanup does:**
+- Closes all SQLite database connections
+- Removes temporary knowledge database files
+- Clears internal caches and timelines
+- Recursively cleans up imported engines
+
+**When to call cleanup:**
+- After completing a flow execution
+- Before creating a new engine instance
+- In error handling blocks
+- When the application is shutting down
+
 ## Advanced Features
 
 ### Plugin System
@@ -430,7 +566,7 @@ class zv1 {
   
   /**
    * Create a new zv1 instance (recommended)
-   * @param {Object} flow - The flow definition containing nodes and links
+   * @param {string|Object|Buffer} flow - File path (.zv1 or .json), flow definition object, or ZIP data (Buffer)
    * @param {Object} config - Configuration options and context for the engine
    * @returns {Promise<zv1>} Fully initialized zv1 instance
    */
@@ -444,21 +580,48 @@ class zv1 {
    */
   async run(inputs, timeout = 60000)
   
+  /**
+   * Clean up resources including knowledge databases and temporary files
+   * Call this when the engine is no longer needed to free up memory
+   * @returns {Promise<void>}
+   */
+  async cleanup()
+  
 }
 ```
 
 #### Creating Instances
 
 **Recommended: Use the static `create` method**
+
 ```javascript
-const engine = await zv1.create(flow, config);
+// Load from .zv1 file (new format)
+const engine = await zv1.create('./myflow.zv1', config);
+
+// Load from legacy JSON file
+const engine = await zv1.create('./legacy.json', config);
+
+// Load from flow object
+const engine = await zv1.create(flowObject, config);
+
+// Load from ZIP data in memory (Buffer)
+const zipBuffer = fs.readFileSync('./myflow.zv1');
+const engine = await zv1.create(zipBuffer, config);
+```
+
+**Important: Clean up resources when done**
+```javascript
+// Always call cleanup when the engine is no longer needed
+await engine.cleanup();
 ```
 
 The static `create` method:
-- Asynchronously loads all node definitions
-- Loads custom type definitions  
-- Loads integrations if not provided
-- Returns a fully initialized zv1 instance
+- **Auto-detects format**: Supports `.zv1` files, `.json` files, flow objects, and ZIP data (Buffer)
+- **Handles imports**: Loads hierarchical imports automatically
+- **Validates structure**: Ensures flow integrity before execution
+- **Loads dependencies**: Node definitions, custom types, and integrations
+- **Memory efficient**: Can load `.zv1` files directly from memory without writing to disk
+- **Returns ready instance**: Fully initialized and ready to run
 
 
 ### Configuration Options

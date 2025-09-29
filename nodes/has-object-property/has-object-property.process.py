@@ -33,3 +33,4 @@ async def process(inputs: Dict[str, Any], settings: Dict[str, Any], config: Dict
         "key": key,
         "value": value
     }
+

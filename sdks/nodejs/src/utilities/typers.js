@@ -157,11 +157,14 @@ export function convertImportToNodeType(importDef) {
       is_plugin: true,   // <-- Add this line to mark all imports as plugin-capable
       is_import: true,
       accepts_plugins: processedImportDef.nodes.some(node => node.type === 'input-plugins'),
+      // Store import metadata for reference
+      importId: processedImportDef.importId,
+      requestedSnapshot: processedImportDef.requestedSnapshot,
       inputs: inputNodes.map(node => {
         
         if (node.type === 'input-data') {
           return {
-            // name: node.id,
+            // Use the node's settings.key as the input name to match port connections
             name: node.settings?.key || 'data',
             display_name: `Data: ${node.settings?.key || 'value'}`,
             type: node.settings?.type || 'any',
@@ -171,7 +174,7 @@ export function convertImportToNodeType(importDef) {
           };
         } else if (node.type === 'input-chat') {
           return {
-            // name: node.id,
+            // Use the node's settings.key as the input name to match port connections
             name: node.settings?.key || 'chat',
             display_name: 'Chat',
             type: 'array of messages',
@@ -181,7 +184,7 @@ export function convertImportToNodeType(importDef) {
           };
         } else { // input-prompt
           return {
-            // name: node.id,
+            // Use the node's settings.key as the input name to match port connections
             name: node.settings?.key || 'prompt',
             display_name: 'Prompt',
             type: 'string',
@@ -230,9 +233,48 @@ export function convertImportToNodeType(importDef) {
       const startDate = new Date();
 
       // Create a new engine instance with the processed import definition
-      const importEngine = await zv1.create(processedImportDef, config);
+      // If the import has a knowledge database, add it to the config
+      let importConfig = { ...config };
+      if (processedImportDef.knowledgeDbPath) {
+        // Create SQLite integration for this import's knowledge database
+        const SQLiteIntegration = (await import('../integrations/sqlite.js')).default;
+        const sqliteIntegration = new SQLiteIntegration(processedImportDef.knowledgeDbPath, {
+          timeout: config.sqliteTimeout || 5000
+        });
+        
+        // Add to integrations
+        importConfig.integrations = {
+          ...config.integrations,
+          sqlite: sqliteIntegration
+        };
+        
+        this.logDebug(`[INFO] Created SQLite integration for import ${processedImportDef.id} with knowledge database:`, processedImportDef.knowledgeDbPath);
+      }
+      
+      const importEngine = await zv1.create(processedImportDef, importConfig);
 
-      const inputData = inputs;
+      // Map input port names to the data keys that the imported flow expects
+      const inputData = {};
+      const inputNodes = processedImportDef.nodes.filter(node => 
+        node.type === 'input-data' || node.type === 'input-chat' || node.type === 'input-prompt'
+      );
+      
+      this.logDebug(`Import node inputs received:`, inputs);
+      this.logDebug(`Import flow input nodes:`, inputNodes.map(n => ({ id: n.id, type: n.type, key: n.settings?.key })));
+      
+      for (const inputNode of inputNodes) {
+        const dataKey = inputNode.settings?.key || (inputNode.type === 'input-data' ? 'data' : 
+                                                    inputNode.type === 'input-chat' ? 'chat' : 'prompt');
+        this.logDebug(`Mapping input port '${dataKey}' to data key '${dataKey}'`);
+        if (inputs[dataKey] !== undefined) {
+          inputData[dataKey] = inputs[dataKey];
+          this.logDebug(`Mapped input '${dataKey}':`, inputs[dataKey]);
+        } else {
+          this.logDebug(`No input found for port '${dataKey}'`);
+        }
+      }
+      
+      this.logDebug(`Final input data for imported flow:`, inputData);
 
       // Run the imported flow
       const result = await importEngine.run(inputData);

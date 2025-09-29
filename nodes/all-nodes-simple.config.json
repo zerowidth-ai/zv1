@@ -170,9 +170,17 @@ DeepSeek-V3 Base is a 671B parameter open Mixture-of-Experts (MoE) language mode
 
 DeepSeek-V3 Base is the pre-trained model behind [DeepSeek V3](/deepseek/deepseek-chat-v3)
 delay,Delay,Waits for specified time before continuing
+delete-object-property,Delete Object Property,Remove a specific property from an object, returning a new object without that property.
 divide,Divide,Divides first number by second
 equals,Equals,Checks if two values are equal, with deep comparison for objects and arrays
+extract-text-content,Extract Text Content,Extract text content from messages, supporting multi-modal content and optional role prefixes.
+filter-messages,Filter Messages,Filter messages by custom criteria (length, content, role, etc.).
 floor,Floor,Rounds down to nearest integer
+get-first-n-messages,Get First N Messages,Extract the first N messages from an array of messages.
+get-last-n-messages,Get Last N Messages,Extract the most recent N messages from an array of messages.
+get-messages-by-role,Get Messages by Role,Filter messages by specific role (user, assistant, system, etc.).
+get-messages-range,Get Messages Range,Extract messages from a specific range (start index to end index).
+get-object-property,Get Object Property,Extract a specific property value from an object by key name.
 google-gemini-2-0-flash-001,Google: Gemini 2.0 Flash,Gemini Flash 2.0 offers a significantly faster time to first token (TTFT) compared to [Gemini Flash 1.5](/google/gemini-flash-1.5), while maintaining quality on par with larger models like [Gemini Pro 1.5](/google/gemini-pro-1.5). It introduces notable enhancements in multimodal understanding, coding capabilities, complex instruction following, and function calling. These advancements come together to deliver more seamless and robust agentic experiences.
 google-gemini-2-0-flash-exp-free,Google: Gemini 2.0 Flash Experimental (free),Gemini Flash 2.0 offers a significantly faster time to first token (TTFT) compared to [Gemini Flash 1.5](/google/gemini-flash-1.5), while maintaining quality on par with larger models like [Gemini Pro 1.5](/google/gemini-pro-1.5). It introduces notable enhancements in multimodal understanding, coding capabilities, complex instruction following, and function calling. These advancements come together to deliver more seamless and robust agentic experiences.
 google-gemini-2-0-flash-lite-001,Google: Gemini 2.0 Flash Lite,Gemini 2.0 Flash Lite offers a significantly faster time to first token (TTFT) compared to [Gemini Flash 1.5](/google/gemini-flash-1.5), while maintaining quality on par with larger models like [Gemini Pro 1.5](/google/gemini-pro-1.5), all at extremely economical token prices.
@@ -246,6 +254,7 @@ google-gemma-3n-e4b-it-free,Google: Gemma 3n 4B (free),Gemma 3n E4B-it is optimi
 This model supports a wide linguistic range (trained in over 140 languages) and features a flexible 32K token context window. Gemma 3n can selectively load parameters, optimizing memory and computational efficiency based on the task or device capabilities, making it well-suited for privacy-focused, offline-capable applications and on-device AI solutions. [Read more in the blog post](https://developers.googleblog.com/en/introducing-gemma-3n/)
 greater-than,Greater Than,Checks if the first number is greater than the second number
 greater-than-equal,Greater Than or Equal,Checks if the first number is greater than or equal to the second number
+has-object-property,Has Object Property,Check if an object has a specific property/key.
 histogram,Histogram,Groups numbers into bins and counts frequency
 histogram-fixed,Histogram Fixed Bins,Groups numbers into bins of fixed size
 http-request,HTTP Request,Makes HTTP requests (GET, POST, PUT, PATCH, DELETE, etc.) to a specified URL with optional headers, query parameters, and body.
@@ -270,7 +279,9 @@ LFM-7B is the world’s best-in-class multilingual language model in English, Ar
 See the [launch announcement](https://www.liquid.ai/lfm-7b) for benchmarks and more info.
 mean,Mean,Calculates arithmetic mean (average) of numbers
 median,Median,Finds the middle value of a sorted array of numbers
+merge-messages,Merge Messages,Combine consecutive messages from the same role into single messages.
 message,Message,Manually create a single message.
+message-bus,Message Bus,Combine messages from multiple sources into a single message array. Supports daisy-chaining and flexible input handling.
 mistralai-codestral-2501,Mistral: Codestral 2501,[Mistral](/mistralai)'s cutting-edge language model for coding. Codestral specializes in low-latency, high-frequency tasks such as fill-in-the-middle (FIM), code correction and test generation. 
 
 Learn more on their blog post: https://mistral.ai/news/codestral-2501/
@@ -525,6 +536,7 @@ perplexity-sonar-reasoning-pro,Perplexity: Sonar Reasoning Pro,Note: Sonar Pro p
 Sonar Reasoning Pro is a premier reasoning model powered by DeepSeek R1 with Chain of Thought (CoT). Designed for advanced use cases, it supports in-depth, multi-step queries with a larger context window and can surface more citations per search, enabling more comprehensive and extensible responses.
 power,Power,Raises first number to power of second
 quartiles,Quartiles,Calculates quartile values of a dataset
+query-knowledge-base,Query Knowledge Base,Execute SQL queries against the orchestration's knowledge database
 qwen-qwen-2-5-72b-instruct,Qwen2.5 72B Instruct,Qwen2.5 72B is the latest series of Qwen large language models. Qwen2.5 brings the following improvements upon Qwen2:
 
 - Significantly more knowledge and has greatly improved capabilities in coding and mathematics, thanks to our specialized expert models in these domains.
@@ -641,8 +653,11 @@ qwen-qwq-32b-preview,Qwen: QwQ 32B Preview,QwQ-32B-Preview is an experimental re
 random-error,Random Error,Randomly throws an error based on probability, useful for testing error handling and flow robustness.
 random-number,Random Number,Generates random numbers with configurable range and distribution
 range,Range,Calculates range statistics of numbers
+response-format,Response Format,Define a JSON Schema response format for structured outputs from LLMs.
 round,Round,Rounds a number to nearest integer
 self-healing-error,Self Healing Error,Throws an error initially but succeeds on retry, useful for testing retry logic and error recovery.
+semantic-search,Semantic Search,Search knowledge base using semantic similarity and vector embeddings
+set-object-property,Set Object Property,Set or add a key-value pair to an object, returning a new object with the property set. Can also create a new object from scratch if the input object is empty or null.
 standard-deviation,Standard Deviation,Calculates standard deviation of numbers
 string,String,A simple string node that outputs a string
 string-case,String Case Convert,Converts text to different letter cases
@@ -660,7 +675,12 @@ switch,Switch,Routes data based on a value matching cases
 system-prompt,System Prompt,Draft a text-based system prompt for an LLM, with configurable variables.
 throw-error,Throw Error,Throws an error with a custom message and optional context for testing error handling.
 token-count,Token Count,Count tokens in text, messages, or arrays of messages using the cl100k_base tokenizer (used by GPT-4, GPT-3.5-turbo, and other OpenAI models).
+tokenizer,Tokenizer,Convert text, messages, or arrays of messages into arrays of token numbers using cl200k_base or cl100k_base tokenizers.
 tool,Tool,Define a tool / function call for a LLM to use.
+truncate-by-tokens,Truncate by Tokens,Keep only the most recent messages that fit within the specified token limit.
+truncate-by-tokens-from-start,Truncate by Tokens from Start,Keep only the first messages that fit within the specified token limit.
+truncate-by-tokens-preserve-system,Truncate by Tokens Preserve System,Always keep system messages, truncate other messages to fit within the specified token limit.
+untokenizer,Untokenizer,Convert arrays of token numbers back into text strings using cl200k_base or cl100k_base tokenizers.
 x-ai-grok-2-1212,xAI: Grok 2 1212,Grok 2 1212 introduces significant enhancements to accuracy, instruction adherence, and multilingual support, making it a powerful and flexible choice for developers seeking a highly steerable, intelligent model.
 x-ai-grok-2-vision-1212,xAI: Grok 2 Vision 1212,Grok 2 Vision 1212 advances image-based AI with stronger visual comprehension, refined instruction-following, and multilingual support. From object recognition to style analysis, it empowers developers to build more intuitive, visually aware applications. Its enhanced steerability and reasoning establish a robust foundation for next-generation image solutions.
 

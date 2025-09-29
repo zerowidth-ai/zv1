@@ -39,3 +39,4 @@ export default async ({inputs, settings, config}) => {
     was_removed: was_removed
   };
 };
+

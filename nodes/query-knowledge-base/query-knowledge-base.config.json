@@ -1,0 +1,80 @@
+{
+  "display_name": "Query Knowledge Base",
+  "description": "Execute SQL queries against the orchestration's knowledge database",
+  "category": "knowledge",
+  "is_plugin": true,
+  "is_constant": false,
+  "is_output": false,
+  "inputs": [
+    {
+      "name": "query",
+      "display_name": "SQL Query",
+      "type": "string",
+      "description": "SQL query to execute against the knowledge database",
+      "required": true
+    },
+    {
+      "name": "params",
+      "display_name": "Parameters",
+      "type": "array",
+      "description": "Parameters for parameterized queries (prevents SQL injection)",
+      "default": []
+    },
+    {
+      "name": "operation",
+      "display_name": "Operation Type",
+      "type": "string",
+      "description": "Type of SQL operation (SELECT, INSERT, UPDATE, DELETE)",
+      "default": "SELECT",
+      "options": ["SELECT", "INSERT", "UPDATE", "DELETE"]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "data",
+      "display_name": "Query Results",
+      "type": "array or object",
+      "description": "Results from the SQL query"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the query executed successfully"
+    },
+    {
+      "name": "rowCount",
+      "display_name": "Row Count",
+      "type": "number",
+      "description": "Number of rows affected or returned"
+    },
+    {
+      "name": "operation",
+      "display_name": "Operation",
+      "type": "string",
+      "description": "The SQL operation that was executed"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if query failed"
+    }
+  ],
+  "settings": [
+    {
+      "name": "database_path",
+      "display_name": "Database Path",
+      "type": "string",
+      "description": "Path to the knowledge database file (relative to orchestration)",
+      "default": "knowledge.db"
+    },
+    {
+      "name": "timeout",
+      "display_name": "Query Timeout",
+      "type": "number",
+      "description": "Query timeout in milliseconds",
+      "default": 5000
+    }
+  ]
+}

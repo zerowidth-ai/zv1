@@ -6148,6 +6148,58 @@
         "id": "delay"
     },
     {
+        "display_name": "Delete Object Property",
+        "description": "Remove a specific property from an object, returning a new object without that property.",
+        "icon": "fa-trash",
+        "category": "data",
+        "inputs": [
+            {
+                "name": "object",
+                "display_name": "Object",
+                "type": "object",
+                "description": "The object to remove the property from",
+                "required": true
+            },
+            {
+                "name": "key",
+                "display_name": "Key",
+                "type": "string",
+                "description": "The name of the property to remove",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "object",
+                "display_name": "Object",
+                "type": "object",
+                "description": "The new object without the specified property"
+            },
+            {
+                "name": "key",
+                "display_name": "Key",
+                "type": "string",
+                "description": "The key that was removed"
+            },
+            {
+                "name": "removed_value",
+                "display_name": "Removed Value",
+                "type": "any",
+                "description": "The value that was removed (null if property didn't exist)"
+            },
+            {
+                "name": "was_removed",
+                "display_name": "Was Removed",
+                "type": "boolean",
+                "description": "Whether the property was actually removed (true) or didn't exist (false)"
+            }
+        ],
+        "settings": [],
+        "timeout": 3000,
+        "retry_limit": 3,
+        "id": "delete-object-property"
+    },
+    {
         "display_name": "Divide",
         "description": "Divides first number by second",
         "category": "math",
@@ -6211,6 +6263,115 @@
         "id": "equals"
     },
     {
+        "display_name": "Extract Text Content",
+        "description": "Extract text content from messages, supporting multi-modal content and optional role prefixes.",
+        "icon": "type",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "input",
+                "display_name": "Input",
+                "type": "string or message or array",
+                "description": "Text string, Message object with {role, content}, or array of messages to extract text from.",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "Extracted text content with optional role prefixes"
+            },
+            {
+                "name": "message_count",
+                "display_name": "Message Count",
+                "type": "number",
+                "description": "Number of messages processed"
+            }
+        ],
+        "settings": [
+            {
+                "name": "include_role",
+                "display_name": "Include Role",
+                "type": "boolean",
+                "description": "Whether to include role prefixes in the extracted text",
+                "default": false,
+                "required": true
+            },
+            {
+                "name": "role_format",
+                "display_name": "Role Format",
+                "type": "string",
+                "description": "Format for role prefixes (e.g., 'USER: ', 'User: ', '[user] '). Use {role} placeholder for the role name.",
+                "default": "{role}: ",
+                "required": true
+            },
+            {
+                "name": "separator",
+                "display_name": "Separator",
+                "type": "string",
+                "description": "Separator between messages when processing multiple messages",
+                "default": "\n\n",
+                "required": true
+            }
+        ],
+        "id": "extract-text-content"
+    },
+    {
+        "display_name": "Filter Messages",
+        "description": "Filter messages by custom criteria (length, content, role, etc.).",
+        "icon": "funnel",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to filter",
+                "required": true
+            },
+            {
+                "name": "filter_type",
+                "display_name": "Filter Type",
+                "type": "string",
+                "description": "Type of filter to apply",
+                "required": true,
+                "options": [
+                    "min_length",
+                    "max_length",
+                    "contains_text",
+                    "starts_with",
+                    "ends_with",
+                    "role_equals",
+                    "role_not_equals"
+                ]
+            },
+            {
+                "name": "filter_value",
+                "display_name": "Filter Value",
+                "type": "string or number",
+                "description": "Value to filter by (text for text filters, number for length filters)",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array containing filtered messages"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of messages that match the filter"
+            }
+        ],
+        "id": "filter-messages"
+    },
+    {
         "display_name": "Floor",
         "description": "Rounds down to nearest integer",
         "category": "math",
@@ -6232,6 +6393,215 @@
             }
         ],
         "id": "floor"
+    },
+    {
+        "display_name": "Get First N Messages",
+        "description": "Extract the first N messages from an array of messages.",
+        "icon": "arrow-up",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to extract from",
+                "required": true
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of first messages to extract",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array containing the first N messages"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Actual number of messages returned"
+            }
+        ],
+        "id": "get-first-n-messages"
+    },
+    {
+        "display_name": "Get Last N Messages",
+        "description": "Extract the most recent N messages from an array of messages.",
+        "icon": "arrow-down",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to extract from",
+                "required": true
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of recent messages to extract",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array containing the last N messages"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Actual number of messages returned"
+            }
+        ],
+        "id": "get-last-n-messages"
+    },
+    {
+        "display_name": "Get Messages by Role",
+        "description": "Filter messages by specific role (user, assistant, system, etc.).",
+        "icon": "filter",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to filter",
+                "required": true
+            },
+            {
+                "name": "role",
+                "display_name": "Role",
+                "type": "string",
+                "description": "Role to filter by (user, assistant, system, etc.)",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array containing only messages with the specified role"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of messages found with the specified role"
+            }
+        ],
+        "id": "get-messages-by-role"
+    },
+    {
+        "display_name": "Get Messages Range",
+        "description": "Extract messages from a specific range (start index to end index).",
+        "icon": "arrows-horizontal",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to extract from",
+                "required": true
+            },
+            {
+                "name": "start",
+                "display_name": "Start Index",
+                "type": "number",
+                "description": "Starting index (inclusive, 0-based)",
+                "required": true
+            },
+            {
+                "name": "end",
+                "display_name": "End Index",
+                "type": "number",
+                "description": "Ending index (exclusive, 0-based). Use -1 for end of array.",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array containing messages from the specified range"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of messages in the range"
+            }
+        ],
+        "id": "get-messages-range"
+    },
+    {
+        "display_name": "Get Object Property",
+        "description": "Extract a specific property value from an object by key name.",
+        "icon": "fa-key",
+        "category": "data",
+        "inputs": [
+            {
+                "name": "object",
+                "display_name": "Object",
+                "type": "object",
+                "description": "The object to extract the property from",
+                "required": true
+            },
+            {
+                "name": "key",
+                "display_name": "Key",
+                "type": "string",
+                "description": "The name of the property to extract",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "value",
+                "display_name": "Value",
+                "type": "any",
+                "description": "The value of the specified property"
+            },
+            {
+                "name": "exists",
+                "display_name": "Exists",
+                "type": "boolean",
+                "description": "Whether the property exists in the object"
+            },
+            {
+                "name": "key",
+                "display_name": "Key",
+                "type": "string",
+                "description": "The key that was accessed"
+            }
+        ],
+        "settings": [
+            {
+                "name": "default_value",
+                "display_name": "Default Value",
+                "type": "any",
+                "description": "Value to return if the property doesn't exist",
+                "default": null
+            }
+        ],
+        "timeout": 3000,
+        "retry_limit": 3,
+        "id": "get-object-property"
     },
     {
         "display_name": "Google: Gemini 2.0 Flash",
@@ -10591,6 +10961,60 @@
         "id": "greater-than-equal"
     },
     {
+        "display_name": "Has Object Property",
+        "description": "Check if an object has a specific property/key.",
+        "icon": "fa-search",
+        "category": "data",
+        "inputs": [
+            {
+                "name": "object",
+                "display_name": "Object",
+                "type": "object",
+                "description": "The object to check for the property",
+                "required": true
+            },
+            {
+                "name": "key",
+                "display_name": "Key",
+                "type": "string",
+                "description": "The name of the property to check for",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "has_property",
+                "display_name": "Has Property",
+                "type": "boolean",
+                "description": "Whether the object has the specified property"
+            },
+            {
+                "name": "key",
+                "display_name": "Key",
+                "type": "string",
+                "description": "The key that was checked"
+            },
+            {
+                "name": "value",
+                "display_name": "Value",
+                "type": "any",
+                "description": "The value of the property if it exists, null otherwise"
+            }
+        ],
+        "settings": [
+            {
+                "name": "check_own_properties",
+                "display_name": "Check Own Properties Only",
+                "type": "boolean",
+                "description": "If true, only check own properties (not inherited). If false, check the entire prototype chain.",
+                "default": true
+            }
+        ],
+        "timeout": 3000,
+        "retry_limit": 3,
+        "id": "has-object-property"
+    },
+    {
         "display_name": "Histogram",
         "description": "Groups numbers into bins and counts frequency",
         "category": "math",
@@ -11532,6 +11956,66 @@
         "id": "median"
     },
     {
+        "display_name": "Merge Messages",
+        "description": "Combine consecutive messages from the same role into single messages.",
+        "icon": "merge",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to merge",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array with consecutive same-role messages merged"
+            },
+            {
+                "name": "original_count",
+                "display_name": "Original Count",
+                "type": "number",
+                "description": "Number of messages before merging"
+            },
+            {
+                "name": "merged_count",
+                "display_name": "Merged Count",
+                "type": "number",
+                "description": "Number of messages after merging"
+            },
+            {
+                "name": "merges_performed",
+                "display_name": "Merges Performed",
+                "type": "number",
+                "description": "Number of merge operations performed"
+            }
+        ],
+        "settings": [
+            {
+                "name": "separator",
+                "display_name": "Separator",
+                "type": "string",
+                "description": "How to separate merged content within the same message",
+                "default": " ",
+                "required": true
+            },
+            {
+                "name": "preserve_structure",
+                "display_name": "Preserve Structure",
+                "type": "boolean",
+                "description": "Whether to preserve multi-modal content structure or flatten to text",
+                "default": true,
+                "required": true
+            }
+        ],
+        "id": "merge-messages"
+    },
+    {
         "display_name": "Message",
         "description": "Manually create a single message.",
         "icon": "fa-comment",
@@ -11587,6 +12071,109 @@
         "timeout": 3000,
         "retry_limit": 3,
         "id": "message"
+    },
+    {
+        "display_name": "Message Bus",
+        "description": "Combine messages from multiple sources into a single message array. Supports daisy-chaining and flexible input handling.",
+        "icon": "bus",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "input_1",
+                "display_name": "Input 1",
+                "type": "message or array or empty",
+                "description": "First message source",
+                "required": false
+            },
+            {
+                "name": "input_2",
+                "display_name": "Input 2",
+                "type": "message or array or empty",
+                "description": "Second message source",
+                "required": false
+            },
+            {
+                "name": "input_3",
+                "display_name": "Input 3",
+                "type": "message or array or empty",
+                "description": "Third message source",
+                "required": false
+            },
+            {
+                "name": "input_4",
+                "display_name": "Input 4",
+                "type": "message or array or empty",
+                "description": "Fourth message source",
+                "required": false
+            },
+            {
+                "name": "input_5",
+                "display_name": "Input 5",
+                "type": "message or array or empty",
+                "description": "Fifth message source",
+                "required": false
+            },
+            {
+                "name": "input_6",
+                "display_name": "Input 6",
+                "type": "message or array or empty",
+                "description": "Sixth message source",
+                "required": false
+            },
+            {
+                "name": "input_7",
+                "display_name": "Input 7",
+                "type": "message or array or empty",
+                "description": "Seventh message source",
+                "required": false
+            },
+            {
+                "name": "input_8",
+                "display_name": "Input 8",
+                "type": "message or array or empty",
+                "description": "Eighth message source",
+                "required": false
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Combined array of all messages from all inputs"
+            },
+            {
+                "name": "message_count",
+                "display_name": "Message Count",
+                "type": "number",
+                "description": "Total number of messages in the output"
+            },
+            {
+                "name": "inputs_used",
+                "display_name": "Inputs Used",
+                "type": "number",
+                "description": "Number of non-empty inputs that contributed messages"
+            }
+        ],
+        "settings": [
+            {
+                "name": "preserve_order",
+                "display_name": "Preserve Order",
+                "type": "boolean",
+                "description": "Whether to maintain the order of inputs when combining messages",
+                "default": true,
+                "required": true
+            },
+            {
+                "name": "filter_empty",
+                "display_name": "Filter Empty",
+                "type": "boolean",
+                "description": "Whether to filter out empty or invalid messages",
+                "default": true,
+                "required": true
+            }
+        ],
+        "id": "message-bus"
     },
     {
         "display_name": "Mistral: Codestral 2501",
@@ -27045,6 +27632,92 @@
         "id": "quartiles"
     },
     {
+        "display_name": "Query Knowledge Base",
+        "description": "Execute SQL queries against the orchestration's knowledge database",
+        "category": "data",
+        "is_plugin": true,
+        "is_constant": false,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "query",
+                "display_name": "SQL Query",
+                "type": "string",
+                "description": "SQL query to execute against the knowledge database",
+                "required": true
+            },
+            {
+                "name": "params",
+                "display_name": "Parameters",
+                "type": "array",
+                "description": "Parameters for parameterized queries (prevents SQL injection)",
+                "default": []
+            },
+            {
+                "name": "operation",
+                "display_name": "Operation Type",
+                "type": "string",
+                "description": "Type of SQL operation (SELECT, INSERT, UPDATE, DELETE)",
+                "default": "SELECT",
+                "options": [
+                    "SELECT",
+                    "INSERT",
+                    "UPDATE",
+                    "DELETE"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "name": "data",
+                "display_name": "Query Results",
+                "type": "array or object",
+                "description": "Results from the SQL query"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the query executed successfully"
+            },
+            {
+                "name": "rowCount",
+                "display_name": "Row Count",
+                "type": "number",
+                "description": "Number of rows affected or returned"
+            },
+            {
+                "name": "operation",
+                "display_name": "Operation",
+                "type": "string",
+                "description": "The SQL operation that was executed"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if query failed"
+            }
+        ],
+        "settings": [
+            {
+                "name": "database_path",
+                "display_name": "Database Path",
+                "type": "string",
+                "description": "Path to the knowledge database file (relative to orchestration)",
+                "default": "knowledge.db"
+            },
+            {
+                "name": "timeout",
+                "display_name": "Query Timeout",
+                "type": "number",
+                "description": "Query timeout in milliseconds",
+                "default": 5000
+            }
+        ],
+        "id": "query-knowledge-base"
+    },
+    {
         "display_name": "Qwen2.5 72B Instruct",
         "description": "Qwen2.5 72B is the latest series of Qwen large language models. Qwen2.5 brings the following improvements upon Qwen2:\n\n- Significantly more knowledge and has greatly improved capabilities in coding and mathematics, thanks to our specialized expert models in these domains.\n\n- Significant improvements in instruction following, generating long texts (over 8K tokens), understanding structured data (e.g, tables), and generating structured outputs especially JSON. More resilient to the diversity of system prompts, enhancing role-play implementation and condition-setting for chatbots.\n\n- Long-context Support up to 128K tokens and can generate up to 8K tokens.\n\n- Multilingual support for over 29 languages, including Chinese, English, French, Spanish, Portuguese, German, Italian, Russian, Japanese, Korean, Vietnamese, Thai, Arabic, and more.\n\nUsage of this model is subject to [Tongyi Qianwen LICENSE AGREEMENT](https://huggingface.co/Qwen/Qwen1.5-110B-Chat/blob/main/LICENSE).",
         "category": "llm",
@@ -33184,6 +33857,68 @@
         "id": "range"
     },
     {
+        "display_name": "Response Format",
+        "description": "Define a JSON Schema response format for structured outputs from LLMs.",
+        "icon": "fa-code",
+        "category": "prompting",
+        "custom_render_height": 200,
+        "is_constant": true,
+        "is_resizable": true,
+        "inputs": [
+            {
+                "name": "name",
+                "display_name": "Name",
+                "type": "string",
+                "description": "Optional override for the name of the response format, used to identify the schema."
+            },
+            {
+                "name": "strict",
+                "display_name": "Strict",
+                "type": "boolean",
+                "description": "Optional override for strict mode. When true, the model must follow the schema exactly."
+            },
+            {
+                "name": "schema",
+                "display_name": "Schema",
+                "type": "object",
+                "description": "Optional override for the JSON Schema definition that the model response must follow."
+            }
+        ],
+        "outputs": [
+            {
+                "name": "response_format",
+                "display_name": "Response Format",
+                "type": "object",
+                "description": "The response format object definition for structured outputs."
+            }
+        ],
+        "settings": [
+            {
+                "name": "name",
+                "display_name": "Name",
+                "type": "string",
+                "description": "The name of the response format, used to identify the schema.",
+                "default": "response"
+            },
+            {
+                "name": "strict",
+                "display_name": "Strict",
+                "type": "boolean",
+                "description": "When true, the model must follow the schema exactly. When false, the model can be more flexible.",
+                "default": true
+            },
+            {
+                "name": "schema",
+                "display_name": "Schema",
+                "type": "object",
+                "description": "The JSON Schema definition that the model response must follow."
+            }
+        ],
+        "timeout": 3000,
+        "retry_limit": 3,
+        "id": "response-format"
+    },
+    {
         "display_name": "Round",
         "description": "Rounds a number to nearest integer",
         "category": "math",
@@ -33248,6 +33983,150 @@
         "timeout": 3000,
         "retry_limit": 3,
         "id": "self-healing-error"
+    },
+    {
+        "display_name": "Semantic Search",
+        "description": "Search knowledge base using semantic similarity and vector embeddings",
+        "category": "data",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "needs_key_from": [
+            "openai"
+        ],
+        "inputs": [
+            {
+                "name": "query",
+                "display_name": "Search Query",
+                "type": "string",
+                "description": "Text query to search for semantically similar content",
+                "required": true
+            },
+            {
+                "name": "limit",
+                "display_name": "Result Limit",
+                "type": "number",
+                "description": "Maximum number of results to return",
+                "default": 10
+            },
+            {
+                "name": "similarity_threshold",
+                "display_name": "Similarity Threshold",
+                "type": "number",
+                "description": "Minimum similarity score (0.0 to 1.0)",
+                "default": 0.7
+            },
+            {
+                "name": "document_id",
+                "display_name": "Document ID Filter",
+                "type": "string",
+                "description": "Optional: Filter results to specific document",
+                "default": null
+            }
+        ],
+        "outputs": [
+            {
+                "name": "results",
+                "display_name": "Search Results",
+                "type": "array",
+                "description": "Array of search results with similarity scores"
+            },
+            {
+                "name": "count",
+                "display_name": "Result Count",
+                "type": "number",
+                "description": "Number of results returned"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the search completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if search failed"
+            }
+        ],
+        "settings": [
+            {
+                "name": "embedding_model",
+                "display_name": "Embedding Model",
+                "type": "string",
+                "description": "Override the default embedding model",
+                "default": null
+            }
+        ],
+        "id": "semantic-search"
+    },
+    {
+        "display_name": "Set Object Property",
+        "description": "Set or add a key-value pair to an object, returning a new object with the property set. Can also create a new object from scratch if the input object is empty or null.",
+        "icon": "fa-edit",
+        "category": "data",
+        "inputs": [
+            {
+                "name": "object",
+                "display_name": "Object",
+                "type": "object",
+                "description": "The object to set the property on (can be null/empty to create a new object)",
+                "required": true
+            },
+            {
+                "name": "key",
+                "display_name": "Key",
+                "type": "string",
+                "description": "The name of the property to set",
+                "required": true
+            },
+            {
+                "name": "value",
+                "display_name": "Value",
+                "type": "any",
+                "description": "The value to set for the property",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "object",
+                "display_name": "Object",
+                "type": "object",
+                "description": "The new object with the property set"
+            },
+            {
+                "name": "key",
+                "display_name": "Key",
+                "type": "string",
+                "description": "The key that was set"
+            },
+            {
+                "name": "value",
+                "display_name": "Value",
+                "type": "any",
+                "description": "The value that was set"
+            },
+            {
+                "name": "was_new",
+                "display_name": "Was New",
+                "type": "boolean",
+                "description": "Whether this was a new property (true) or overwrote an existing one (false)"
+            }
+        ],
+        "settings": [
+            {
+                "name": "overwrite",
+                "display_name": "Overwrite",
+                "type": "boolean",
+                "description": "Whether to overwrite existing properties (true) or only set if property doesn't exist (false)",
+                "default": true
+            }
+        ],
+        "timeout": 3000,
+        "retry_limit": 3,
+        "id": "set-object-property"
     },
     {
         "display_name": "Standard Deviation",
@@ -33923,6 +34802,44 @@
         "id": "token-count"
     },
     {
+        "display_name": "Tokenizer",
+        "description": "Convert text, messages, or arrays of messages into arrays of token numbers using cl200k_base or cl100k_base tokenizers.",
+        "icon": "hash",
+        "category": "text",
+        "inputs": [
+            {
+                "name": "input",
+                "display_name": "Input",
+                "type": "string or message or array",
+                "description": "Text string, Message object with {role, content}, or array of messages to tokenize.",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "tokens",
+                "display_name": "Tokens",
+                "type": "array",
+                "description": "Array of token numbers representing the input"
+            }
+        ],
+        "settings": [
+            {
+                "name": "tokenizer",
+                "display_name": "Tokenizer",
+                "type": "string",
+                "description": "The tokenizer to use for tokenization",
+                "default": "cl200k_base",
+                "options": [
+                    "cl200k_base",
+                    "cl100k_base"
+                ],
+                "required": true
+            }
+        ],
+        "id": "tokenizer"
+    },
+    {
         "display_name": "Tool",
         "description": "Define a tool / function call for a LLM to use.",
         "icon": "fa-comment",
@@ -33981,6 +34898,229 @@
         "timeout": 3000,
         "retry_limit": 3,
         "id": "tool"
+    },
+    {
+        "display_name": "Truncate by Tokens",
+        "description": "Keep only the most recent messages that fit within the specified token limit.",
+        "icon": "scissors",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to truncate",
+                "required": true
+            },
+            {
+                "name": "max_tokens",
+                "display_name": "Max Tokens",
+                "type": "number",
+                "description": "Maximum number of tokens to keep",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array containing messages that fit within the token limit"
+            },
+            {
+                "name": "token_count",
+                "display_name": "Token Count",
+                "type": "number",
+                "description": "Total number of tokens in the truncated messages"
+            },
+            {
+                "name": "truncated",
+                "display_name": "Truncated",
+                "type": "boolean",
+                "description": "Whether any messages were removed due to token limit"
+            }
+        ],
+        "settings": [
+            {
+                "name": "tokenizer",
+                "display_name": "Tokenizer",
+                "type": "string",
+                "description": "The tokenizer to use for counting tokens",
+                "default": "cl200k_base",
+                "options": [
+                    "cl200k_base",
+                    "cl100k_base"
+                ],
+                "required": true
+            }
+        ],
+        "id": "truncate-by-tokens"
+    },
+    {
+        "display_name": "Truncate by Tokens from Start",
+        "description": "Keep only the first messages that fit within the specified token limit.",
+        "icon": "scissors",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to truncate",
+                "required": true
+            },
+            {
+                "name": "max_tokens",
+                "display_name": "Max Tokens",
+                "type": "number",
+                "description": "Maximum number of tokens to keep",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array containing messages that fit within the token limit"
+            },
+            {
+                "name": "token_count",
+                "display_name": "Token Count",
+                "type": "number",
+                "description": "Total number of tokens in the truncated messages"
+            },
+            {
+                "name": "truncated",
+                "display_name": "Truncated",
+                "type": "boolean",
+                "description": "Whether any messages were removed due to token limit"
+            }
+        ],
+        "settings": [
+            {
+                "name": "tokenizer",
+                "display_name": "Tokenizer",
+                "type": "string",
+                "description": "The tokenizer to use for counting tokens",
+                "default": "cl200k_base",
+                "options": [
+                    "cl200k_base",
+                    "cl100k_base"
+                ],
+                "required": true
+            }
+        ],
+        "id": "truncate-by-tokens-from-start"
+    },
+    {
+        "display_name": "Truncate by Tokens Preserve System",
+        "description": "Always keep system messages, truncate other messages to fit within the specified token limit.",
+        "icon": "shield",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array of message objects to truncate",
+                "required": true
+            },
+            {
+                "name": "max_tokens",
+                "display_name": "Max Tokens",
+                "type": "number",
+                "description": "Maximum number of tokens to keep",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array",
+                "description": "Array containing system messages and other messages that fit within the token limit"
+            },
+            {
+                "name": "token_count",
+                "display_name": "Token Count",
+                "type": "number",
+                "description": "Total number of tokens in the truncated messages"
+            },
+            {
+                "name": "truncated",
+                "display_name": "Truncated",
+                "type": "boolean",
+                "description": "Whether any non-system messages were removed due to token limit"
+            },
+            {
+                "name": "system_count",
+                "display_name": "System Count",
+                "type": "number",
+                "description": "Number of system messages preserved"
+            }
+        ],
+        "settings": [
+            {
+                "name": "tokenizer",
+                "display_name": "Tokenizer",
+                "type": "string",
+                "description": "The tokenizer to use for counting tokens",
+                "default": "cl200k_base",
+                "options": [
+                    "cl200k_base",
+                    "cl100k_base"
+                ],
+                "required": true
+            },
+            {
+                "name": "count_system",
+                "display_name": "Count System",
+                "type": "boolean",
+                "description": "Whether system messages count toward the token limit (false = always include system messages)",
+                "default": false,
+                "required": true
+            }
+        ],
+        "id": "truncate-by-tokens-preserve-system"
+    },
+    {
+        "display_name": "Untokenizer",
+        "description": "Convert arrays of token numbers back into text strings using cl200k_base or cl100k_base tokenizers.",
+        "icon": "hash",
+        "category": "text",
+        "inputs": [
+            {
+                "name": "tokens",
+                "display_name": "Tokens",
+                "type": "array",
+                "description": "Array of token numbers to convert back to text.",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "The decoded text string from the token array"
+            }
+        ],
+        "settings": [
+            {
+                "name": "tokenizer",
+                "display_name": "Tokenizer",
+                "type": "string",
+                "description": "The tokenizer to use for untokenization",
+                "default": "cl200k_base",
+                "options": [
+                    "cl200k_base",
+                    "cl100k_base"
+                ],
+                "required": true
+            }
+        ],
+        "id": "untokenizer"
     },
     {
         "display_name": "xAI: Grok 2 1212",

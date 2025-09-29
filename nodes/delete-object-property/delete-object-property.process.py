@@ -40,3 +40,4 @@ async def process(inputs: Dict[str, Any], settings: Dict[str, Any], config: Dict
         "removed_value": removed_value,
         "was_removed": was_removed
     }
+

@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import assert from "assert";
 import Ajv from "ajv";
+import dotenv from "dotenv";
+dotenv.config();
 
 // utils/paths.js
 import { fileURLToPath } from 'url';
@@ -18,14 +20,61 @@ export function getDirname(metaUrl) {
 // import the zv1 engine locally
 import zv1 from "../src/index.js";
 
+/**
+ * Flow Test Runner
+ * 
+ * Supports two test file formats:
+ * 
+ * 1. Legacy JSON format (embedded flow):
+ *    - File: flow.combined-testing.json
+ *    - Structure: { "flow": {...}, "inputs": {...}, "expected": {...} }
+ * 
+ * 2. New .zv1 format (separate test metadata):
+ *    - File: flow.zv1-test.zv1 (the actual .zv1 file)
+ *    - Metadata: flow.zv1-test.test.json (test configuration)
+ *    - Structure: { "inputs": {...}, "expected": {...}, "expectedSchema": {...} }
+ * 
+ * The test runner automatically detects the format and loads accordingly.
+ */
+
 async function runFlowTest(testFile) {
   const testPath = path.join(getDirname(import.meta.url), "./flows", testFile);
-  const testData = JSON.parse(fs.readFileSync(testPath, "utf-8"));
-
-  const { flow, inputs, expected, expectedSchema, expectedError } = testData;
+  
+  let testData, flow, inputs, expected, expectedSchema, expectedError;
+  
+  // Check if this is a .zv1 file with companion .test.json
+  if (testFile.endsWith('.zv1')) {
+    const testMetadataPath = testPath.replace('.zv1', '.test.json');
+    
+    if (!fs.existsSync(testMetadataPath)) {
+      console.log(`[SKIP] No test metadata found for ${testFile}, skipping...`);
+      return;
+    }
+    
+    // Load test metadata
+    testData = JSON.parse(fs.readFileSync(testMetadataPath, "utf-8"));
+    flow = testPath; // Use the .zv1 file path directly
+    inputs = testData.inputs;
+    expected = testData.expected;
+    expectedSchema = testData.expectedSchema;
+    expectedError = testData.expectedError;
+  } else {
+    // Legacy JSON format with embedded flow
+    testData = JSON.parse(fs.readFileSync(testPath, "utf-8"));
+    flow = testData.flow;
+    inputs = testData.inputs;
+    expected = testData.expected;
+    expectedSchema = testData.expectedSchema;
+    expectedError = testData.expectedError;
+  }
 
   console.log(`[INFO] Testing flow: ${testFile} with inputs: ${JSON.stringify(inputs)}`);
-  const engine = await zv1.create(flow, { debug: true }); // Enable debug mode
+  const engine = await zv1.create(flow, { 
+    debug: false,
+    keys: {
+      openrouter: process.env.OPENROUTER_KEY
+    }
+  }); // Enable debug mode
   
   try {
     const result = await engine.run(inputs);
@@ -38,7 +87,7 @@ async function runFlowTest(testFile) {
     }
     
     if(expected){
-      assert.deepStrictEqual(result, expected, `  [FAIL] Output mismatch for ${testFile}`);
+      assert.deepStrictEqual(result.outputs, expected, `  [FAIL] Output mismatch for ${testFile}`);
     } else if(expectedSchema){
       // compare the result with the expected schema to see if it matches the overall shape but not the values
       const ajv = new Ajv();
@@ -97,7 +146,13 @@ async function runFlowTest(testFile) {
 
 async function runAllTests() {
   const testDir = path.join(getDirname(import.meta.url), "./flows");
-  const testFiles = fs.readdirSync(testDir).filter((file) => file.endsWith(".json"));
+  const allFiles = fs.readdirSync(testDir);
+  
+  // Get all test files: .json files (legacy) and .zv1 files (new format)
+  // Skip .test.json files as they are metadata files, not flows
+  const testFiles = allFiles.filter((file) => 
+    (file.endsWith(".json") && !file.endsWith(".test.json")) || file.endsWith(".zv1")
+  );
 
   let passed = 0;
   let failed = 0;

@@ -1,0 +1,20 @@
+{
+  "description": "A simon says use of Gemini",
+  "inputs": {
+    "chat": [
+      {
+        "role": "user",
+        "content": "Repeat these words and only these words back to me: \"Simon says, 'Hello'\""
+      }
+    ]
+  },
+  "expected": {
+    "chat": [
+      {
+        "role": "assistant",
+        "content": "Simon says, 'Hello'\n",
+        "tool_calls": []
+      }
+    ]
+  }
+}

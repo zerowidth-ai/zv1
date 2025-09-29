@@ -1,0 +1,71 @@
+{
+  "flow": {
+    "nodes": [
+      {
+        "id": "gm019aA1j7d2qAO0wBhAo",
+        "type": "add"
+      },
+      {
+        "id": "_nk9O23ApUXGxYNhoqfo-",
+        "type": "input-data",
+        "settings": {
+          "default_value": "1",
+          "key": "a",
+          "type": "number"
+        }
+      },
+      {
+        "id": "fpn8PFirMLFfg4ZGXE06Z",
+        "type": "input-data",
+        "settings": {
+          "default_value": "1",
+          "key": "b",
+          "type": "number"
+        }
+      },
+      {
+        "id": "X9TcBuQCDHVGAqu4eQ9_6",
+        "type": "output-data"
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "_nk9O23ApUXGxYNhoqfo-",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "gm019aA1j7d2qAO0wBhAo",
+          "port_name": "a"
+        }
+      },
+      {
+        "from": {
+          "node_id": "fpn8PFirMLFfg4ZGXE06Z",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "gm019aA1j7d2qAO0wBhAo",
+          "port_name": "b"
+        }
+      },
+      {
+        "from": {
+          "node_id": "gm019aA1j7d2qAO0wBhAo",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "X9TcBuQCDHVGAqu4eQ9_6",
+          "port_name": "value"
+        }
+      }
+    ]
+  },
+  "inputs": {
+    "a": 3,
+    "b": 2
+  },
+  "expected": {
+    "data": 5
+  }
+} 

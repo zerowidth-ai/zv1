@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import ErrorManager from "./classes/ErrorManager.js";
 
 import { callMCPTool, fetchMCPToolSchema } from "./utilities/mcp.js";
-import { loadNodes, loadIntegrations } from "./utilities/loaders.js";
+import { loadNodes, loadIntegrations, detectAndLoadFlow } from "./utilities/loaders.js";
 import { validateKeys, validateFlow, validateInputs } from "./utilities/validators.js";
 import { loadCustomTypes, typeCheck } from "./utilities/typers.js";
 import { createSafeToolName, isRemoteMCPTool, isManualToolNode, mapTypeToJSONSchema, getDirname } from "./utilities/helpers.js";
@@ -57,7 +57,7 @@ export default class zv1 {
     const compiledCustomTypes = await this.loadCustomTypes();
 
     if(!this.config.integrations) {
-      this.config.integrations = await this.loadIntegrations(this.config);
+      this.config.integrations = await this.loadIntegrations(this.config, this.flow);
     }
 
     this.nodes = nodes;
@@ -96,21 +96,49 @@ export default class zv1 {
 
   /**
    * Create a new zv1 instance
-   * @param {Object} flow - The flow definition containing nodes and links  
+   * Supports both legacy JSON files and new .zv1 files with hierarchical imports
+   * 
+   * @param {string|Object} flow - File path (string) or flow definition object
    * @param {Object} config - Configuration options and context for the engine
+   * @returns {Promise<zv1>} Fully initialized zv1 instance
+   * @throws {Error} If flow cannot be loaded or is invalid
+   * 
+   * @example
+   * // Load from .zv1 file
+   * const engine = await zv1.create('./myflow.zv1', { keys: { openrouter: 'sk-...' } });
+   * 
+   * // Load from legacy JSON file
+   * const engine = await zv1.create('./legacy.json', { keys: { openrouter: 'sk-...' } });
+   * 
+   * // Load from flow object
+   * const engine = await zv1.create(flowObject, { keys: { openrouter: 'sk-...' } });
    */
   static async create(flow, config = {}) {
+    try {
+      // Use the new unified loader to detect and load the flow
+      // This handles both legacy JSON files and new .zv1 files
+      const loadedFlow = await detectAndLoadFlow(flow);
+      
+      // Create engine instance with the loaded flow
+      const engine = new zv1(loadedFlow, config);
 
-    // if flow is a string, import it as a json file
-    if(typeof flow === 'string') {
-      flow = JSON.parse(fs.readFileSync(flow, 'utf8'));
+      // Initialize the engine (loads nodes, validates flow, etc.)
+      await engine.initialize();
+      
+      return engine;
+    } catch (error) {
+      console.error(error);
+      // Provide more context for common errors
+      if (error.message.includes('not found')) {
+        throw new Error(`Flow file not found: ${error.message}`);
+      } else if (error.message.includes('Invalid JSON')) {
+        throw new Error(`Invalid JSON in flow file: ${error.message}`);
+      } else if (error.message.includes('Missing required')) {
+        throw new Error(`Invalid flow structure: ${error.message}`);
+      } else {
+        throw new Error(`Failed to create zv1 instance: ${error.message}`);
+      }
     }
-    
-    const engine = new zv1(flow, config);
-
-    // Initialize the engine
-    await engine.initialize();
-    return engine;
   }
 
   /**
@@ -409,6 +437,17 @@ export default class zv1 {
       for (const downstreamNode of downstreamNodes) {
         if (!downstreamNode) continue;
   
+        // Skip plugin nodes that are actually connected as plugins - they should only run when called by LLM
+        const isPluginNode = this.nodes[downstreamNode.type]?.config?.is_plugin;
+        const isConnectedAsPlugin = this.flow.links.some(link => 
+          link.to.node_id === downstreamNode.id && link.type === "plugin"
+        );
+        
+        if (isPluginNode && isConnectedAsPlugin) {
+          this.logDebug(`Skipping plugin node [${downstreamNode.id}] during propagation - will only run when called by LLM`);
+          continue;
+        }
+  
         // Check if the downstream node is ready
         const isReady = this.flow.links
           .filter((link) => link.to.node_id === downstreamNode.id)
@@ -421,18 +460,18 @@ export default class zv1 {
             const inputName = link.to.port_name;
             
             const inputDef = this.nodes[downstreamNode.type].config.inputs.find((i) => i.name === inputName);
-  
+
             const key = `${link.from.node_id}:${link.from.port_name}`;
             this.logDebug(`Checking if input [${inputName}] is ready, cache key: ${key}`);
             
             const isValueReady = key in this.cache;
             
             this.logDebug(`Value ready: ${isValueReady}, required: ${inputDef.required}`);
-  
+
             if (inputDef?.required) {
               return isValueReady; // Required inputs must have a value
             }
-  
+
             // Optional inputs can have null
             return isValueReady || this.cache[key] === null;
           });
@@ -457,6 +496,56 @@ export default class zv1 {
   }
   
   
+  /**
+   * Clean up resources including knowledge databases and temporary files
+   * This should be called when the engine is no longer needed to free up memory
+   * @returns {Promise<void>}
+   */
+  async cleanup() {
+    this.logDebug('Starting cleanup process...');
+    
+    try {
+      // Clean up main orchestration knowledge base integration
+      if (this.config.integrations?.knowledgeBase) {
+        this.logDebug('Cleaning up main knowledge base integration...');
+        await this.config.integrations.knowledgeBase.disconnect();
+        delete this.config.integrations.knowledgeBase;
+      }
+      
+      // Also clean up legacy sqlite integration for backward compatibility
+      if (this.config.integrations?.sqlite) {
+        this.logDebug('Cleaning up legacy SQLite integration...');
+        await this.config.integrations.sqlite.disconnect();
+        delete this.config.integrations.sqlite;
+      }
+      
+      // Clean up any imported engines that were created
+      // These are stored in the cache when import nodes are processed
+      const importEngines = Object.values(this.cache).filter(item => 
+        item && typeof item === 'object' && item.constructor?.name === 'zv1'
+      );
+      
+      for (const importEngine of importEngines) {
+        if (importEngine.cleanup) {
+          this.logDebug('Cleaning up imported engine...');
+          await importEngine.cleanup();
+        }
+      }
+      
+      // Clear the cache
+      this.cache = {};
+      
+      // Clear timeline
+      this.timeline = [];
+      
+      this.logDebug('Cleanup completed successfully');
+      
+    } catch (error) {
+      console.warn('[WARN] Error during cleanup:', error.message);
+      // Don't throw - cleanup should be best effort
+    }
+  }
+
   /**
    * Run the flow and return the final output of the flow
    * @param {Object} inputData - Data to inject into input nodes
@@ -503,7 +592,16 @@ export default class zv1 {
           }
           
           if(inputNode.type === "input-data") {
-            let variable_value = inputData[inputNode.settings?.key || 'data'];
+            const inputKey = inputNode.settings?.key || 'data';
+            let variable_value = inputData[inputKey];
+
+            // If the specific key is not found, try to map from the main 'data' key
+            // This handles cases where .zv1 files have input-data nodes with specific keys
+            // but the main flow is passing input with key 'data'
+            if(variable_value === undefined && inputData.data !== undefined && inputKey !== 'data') {
+              this.logDebug(`Mapping input 'data' to input-data node key '${inputKey}'`);
+              variable_value = inputData.data;
+            }
 
             if(variable_value === undefined) {
               variable_value = inputNode.settings.default_value;
@@ -869,12 +967,47 @@ export default class zv1 {
         
         if (hasChatInput) {
           toolRunners[schema.name] = async (args) => {
-            return await this.processImportedChatNode(pluginNode, args);
+            // Merge LLM args with static inputs
+            const staticInputs = this.collectStaticInputs(pluginNode);
+            const mergedInputs = { ...staticInputs, ...args };
+            this.logDebug(`Merged inputs for chat plugin [${pluginNode.id}]:`, mergedInputs);
+            
+            // Execute the plugin node
+            const outputs = await this.processImportedChatNode(pluginNode, mergedInputs);
+            
+            // Store outputs in cache for downstream propagation
+            this.logDebug(`Storing plugin outputs in cache for downstream propagation:`, outputs);
+            for (const [key, value] of Object.entries(outputs)) {
+              const cacheKey = `${pluginNode.id}:${key}`;
+              this.cache[cacheKey] = value;
+            }
+            
+            // Propagate outputs downstream (if any downstream connections exist)
+            await this.propagate(pluginNode.id);
+            
+            return outputs;
           };
         } else {
           toolRunners[schema.name] = async (args) => {
-            // When the LLM calls the tool, process the node with the provided args
-            return await this.processNodeWithArgs(pluginNode, args);
+            // Merge LLM args with static inputs
+            const staticInputs = this.collectStaticInputs(pluginNode);
+            const mergedInputs = { ...staticInputs, ...args };
+            this.logDebug(`Merged inputs for plugin [${pluginNode.id}]:`, mergedInputs);
+            
+            // Execute the plugin node
+            const outputs = await this.processNodeWithArgs(pluginNode, mergedInputs);
+            
+            // Store outputs in cache for downstream propagation
+            this.logDebug(`Storing plugin outputs in cache for downstream propagation:`, outputs);
+            for (const [key, value] of Object.entries(outputs)) {
+              const cacheKey = `${pluginNode.id}:${key}`;
+              this.cache[cacheKey] = value;
+            }
+            
+            // Propagate outputs downstream (if any downstream connections exist)
+            await this.propagate(pluginNode.id);
+            
+            return outputs;
           };
         }
       } else if (isRemoteMCPTool(pluginNode)) {
@@ -1025,6 +1158,79 @@ export default class zv1 {
     return true;
   }
 
+  /**
+   * Collect statically connected inputs for a plugin node
+   * @param {Object} node - The plugin node to collect inputs for
+   * @returns {Object} The statically connected inputs
+   */
+  collectStaticInputs(node) {
+    const config = this.nodes[node.type]?.config || {};
+    const staticInputs = {};
+    
+    // Find all statically connected inputs (non-plugin links)
+    const staticLinks = this.flow.links.filter(link => 
+      link.to.node_id === node.id && link.type !== "plugin"
+    );
+    
+    this.logDebug(`Collecting static inputs for plugin node [${node.id}]:`, staticLinks.map(l => `${l.from.node_id}:${l.from.port_name} -> ${l.to.port_name}`));
+    
+    staticLinks.forEach(link => {
+      const inputName = link.to.port_name;
+      const inputDef = config.inputs?.find(input => input.name === inputName);
+      
+      if (!inputDef) {
+        this.logDebug(`Warning: No input definition found for static input ${inputName}`);
+        return;
+      }
+      
+      const cacheKey = `${link.from.node_id}:${link.from.port_name}`;
+      const value = this.cache[cacheKey];
+      
+      if (value !== undefined) {
+        if (inputDef.allow_multiple) {
+          // Initialize or reset the array for this run
+          if (!staticInputs[inputName]) {
+            staticInputs[inputName] = [];
+          }
+          
+          // Get the value and validate its type
+          const itemType = inputDef.type || "any";
+          
+          // Validate individual item type
+          if (this.typeCheck(value, itemType)) {
+            staticInputs[inputName].push(value);
+          } else {
+            this.logDebug(`Type mismatch for static input [${inputName}]: Expected ${itemType}`);
+          }
+        } else {
+          staticInputs[inputName] = value;
+        }
+        
+        this.logDebug(`Collected static input [${inputName}]:`, value);
+      } else {
+        this.logDebug(`Warning: No value found for static input [${inputName}]`);
+      }
+    });
+    
+    // Handle unconnected inputs with default values
+    config.inputs?.forEach(inputDef => {
+      const inputName = inputDef.name;
+      
+      // Skip if already has a value from static connections
+      if (staticInputs[inputName] !== undefined) {
+        return;
+      }
+      
+      // Apply default value for unconnected inputs if available
+      if (inputDef.default !== undefined) {
+        staticInputs[inputName] = inputDef.default;
+        this.logDebug(`Applied default value for static input [${inputName}]:`, inputDef.default);
+      }
+    });
+    
+    return staticInputs;
+  }
+
   generateToolSchema(node) {
     // Get the node config and settings
     const config = this.nodes[node.type]?.config || {};
@@ -1036,10 +1242,23 @@ export default class zv1 {
 
     const description = settings.description || config.description || "";
 
-    // Build JSON Schema properties for each input
+    // Find which inputs are statically connected (not available to LLM)
+    const staticallyConnectedInputs = new Set();
+    this.flow.links.forEach(link => {
+      if (link.to.node_id === node.id && link.type !== "plugin") {
+        staticallyConnectedInputs.add(link.to.port_name);
+      }
+    });
+
+    // Build JSON Schema properties for each input that is NOT statically connected
     const properties = {};
     const required = [];
     (config.inputs || []).forEach(input => {
+      // Skip inputs that are statically connected - LLM shouldn't see these
+      if (staticallyConnectedInputs.has(input.name)) {
+        return;
+      }
+
       if(config.is_import){
         if(input.is_data_input){
           properties[input.name] = {
@@ -1210,6 +1429,9 @@ export default class zv1 {
     // For regular nodes, same signature
     // We'll use node.settings or an empty object
     const settings = node.settings || {};
+    
+    // Validate the merged inputs against the node configuration
+    this.validateInputs(nodeDefinition.config, args);
     
     // Execute using the shared core logic
     const outputs = await this._executeNodeCore(node, args, settings, nodeDefinition);

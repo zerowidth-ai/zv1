@@ -1,11 +1,14 @@
 {
   "name": "zv1",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "dependencies": {
+    "adm-zip": "^0.5.16",
     "ajv": "^8.17.1",
     "axios": "^1.9.0",
     "js-tiktoken": "^1.0.21",
     "openai": "^4.92.1",
+    "sqlite-vec": "^0.1.7-alpha.2",
+    "sqlite3": "^5.1.7",
     "tiktoken": "^1.0.22",
     "uuid": "^11.1.0"
   },
@@ -13,7 +16,7 @@
   "description": "The zv1 SDK for making processing flows created via zv1.ai, by ZeroWidth",
   "main": "./src/index.js",
   "devDependencies": {
-    "dotenv": "^17.2.1"
+    "dotenv": "^17.2.2"
   },
   "scripts": {
     "test-nodes": "node tests/test.all-nodes.js",

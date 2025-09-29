@@ -1,0 +1,161 @@
+{
+  "flow": {
+    "nodes": [
+      {
+        "id": "JhOa4bmmLG-eFB8aj8182",
+        "type": "google-gemini-2-0-flash-001"
+      },
+      {
+        "id": "iaoHrFyawco3mEI-85Qya",
+        "type": "imported-smxmNoWr-gXXf3m15LkDe"
+      },
+      {
+        "id": "4wHC8g7uMlZ-yUd7K-fqb",
+        "type": "input-chat"
+      },
+      {
+        "id": "O4PTTk4jEUL6VAR1kNzWH",
+        "type": "output-chat"
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "iaoHrFyawco3mEI-85Qya"
+        },
+        "to": {
+          "node_id": "JhOa4bmmLG-eFB8aj8182"
+        },
+        "type": "plugin"
+      },
+      {
+        "from": {
+          "node_id": "4wHC8g7uMlZ-yUd7K-fqb",
+          "port_name": "messages"
+        },
+        "to": {
+          "node_id": "JhOa4bmmLG-eFB8aj8182",
+          "port_name": "messages"
+        }
+      },
+      {
+        "from": {
+          "node_id": "JhOa4bmmLG-eFB8aj8182",
+          "port_name": "message"
+        },
+        "to": {
+          "node_id": "O4PTTk4jEUL6VAR1kNzWH",
+          "port_name": "message"
+        }
+      }
+    ],
+    "imports": [
+      {
+        "display_name": "Tests: Addition",
+        "groups": [],
+        "id": "imported-smxmNoWr-gXXf3m15LkDe",
+        "imports": [],
+        "linked_id": "W3lLafmFtecqpw5bvSyT",
+        "links": [
+          {
+            "from": {
+              "node_id": "imported-smxmNoWr-gXXf3m15LkDe-Ja8GVbCCnz9cvK97nVSdu",
+              "port_name": "value"
+            },
+            "to": {
+              "node_id": "imported-smxmNoWr-gXXf3m15LkDe-YlbWCEf6Mlk6Dt-RbWMzA",
+              "port_name": "a"
+            }
+          },
+          {
+            "from": {
+              "node_id": "imported-smxmNoWr-gXXf3m15LkDe--typGCL3tN4NB6FB6eHbW",
+              "port_name": "value"
+            },
+            "to": {
+              "node_id": "imported-smxmNoWr-gXXf3m15LkDe-YlbWCEf6Mlk6Dt-RbWMzA",
+              "port_name": "b"
+            }
+          },
+          {
+            "from": {
+              "node_id": "imported-smxmNoWr-gXXf3m15LkDe-YlbWCEf6Mlk6Dt-RbWMzA",
+              "port_name": "result"
+            },
+            "to": {
+              "node_id": "imported-smxmNoWr-gXXf3m15LkDe-RRhCEwMtQTa8HMij0Qu2i",
+              "port_name": "value"
+            }
+          }
+        ],
+        "nodes": [
+          {
+            "height": 75,
+            "id": "imported-smxmNoWr-gXXf3m15LkDe-YlbWCEf6Mlk6Dt-RbWMzA",
+            "settings": {},
+            "type": "add",
+            "width": 180,
+            "x": -1500,
+            "y": -1005
+          },
+          {
+            "color": "",
+            "display_name": "Input Data",
+            "height": 165,
+            "id": "imported-smxmNoWr-gXXf3m15LkDe-Ja8GVbCCnz9cvK97nVSdu",
+            "settings": {
+              "default_value": "1",
+              "key": "a",
+              "type": "number"
+            },
+            "type": "input-data",
+            "width": 450,
+            "x": -2070,
+            "y": -1230
+          },
+          {
+            "color": "",
+            "display_name": "Input Data",
+            "height": 210,
+            "id": "imported-smxmNoWr-gXXf3m15LkDe--typGCL3tN4NB6FB6eHbW",
+            "settings": {
+              "default_value": "1",
+              "key": "b",
+              "type": "number"
+            },
+            "type": "input-data",
+            "width": 450,
+            "x": -2085,
+            "y": -975
+          },
+          {
+            "height": 120,
+            "id": "imported-smxmNoWr-gXXf3m15LkDe-RRhCEwMtQTa8HMij0Qu2i",
+            "settings": {},
+            "type": "output-data",
+            "width": 180,
+            "x": -1215,
+            "y": -1035
+          }
+        ]
+      }
+    ]
+  },
+  "inputs": {
+    "chat": [
+      {
+        "role": "user",
+        "content": "Using your tool what is 41241241241 + 41412841231? Respond ONLY with the result and always use your tool."
+      }
+    ]
+  },
+  "expected": {
+    "chat": [
+      {
+        "content": "82654082472\n",
+        "role": "assistant",
+        "tool_calls": []
+      }
+    ]
+  }
+} 
