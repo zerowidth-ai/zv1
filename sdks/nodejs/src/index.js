@@ -38,6 +38,9 @@ export default class zv1 {
         ...config
     };
 
+    // Track knowledge base files that need cleanup
+    this.knowledgeFilesToCleanup = new Set();
+
   }
     
   async initialize() {
@@ -92,6 +95,9 @@ export default class zv1 {
     // Ensure the flow can even be run
     this.validateFlow(this.flow);
     this.initializePluginMappings();
+
+    // Track knowledge base files for cleanup
+    this._trackKnowledgeFiles();
   }
 
   /**
@@ -537,6 +543,9 @@ export default class zv1 {
       
       // Clear timeline
       this.timeline = [];
+      
+      // Clean up any remaining temporary knowledge base files
+      await this._cleanupTempKnowledgeFiles();
       
       this.logDebug('Cleanup completed successfully');
       
@@ -1504,5 +1513,138 @@ export default class zv1 {
       total, 
       itemized
     };
+  }
+
+  /**
+   * Track a knowledge base file for cleanup
+   * @param {string} filePath - Path to the knowledge base file
+   */
+  trackKnowledgeFile(filePath) {
+    if (filePath && filePath.includes('knowledge_')) {
+      this.knowledgeFilesToCleanup.add(filePath);
+      this.logDebug(`Tracking knowledge file for cleanup: ${filePath}`);
+    }
+  }
+
+  /**
+   * Track all knowledge base files that need cleanup
+   * @private
+   */
+  _trackKnowledgeFiles() {
+    // Track main flow's knowledge base file
+    if (this.flow.knowledgeDbPath) {
+      this.trackKnowledgeFile(this.flow.knowledgeDbPath);
+    }
+
+    // Track import knowledge base files
+    if (this.flow.imports) {
+      for (const importDef of this.flow.imports) {
+        if (importDef.knowledgeDbPath) {
+          this.trackKnowledgeFile(importDef.knowledgeDbPath);
+        }
+      }
+    }
+  }
+
+  /**
+   * Clean up temporary knowledge base files for this specific engine instance
+   * @private
+   */
+  async _cleanupTempKnowledgeFiles() {
+    
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      
+      const tempDir = path.join(process.cwd(), '.temp');
+      if (!fs.existsSync(tempDir)) {
+        return; // No temp directory exists
+      }
+
+      // Clean up tracked knowledge files first
+      for (const filePath of this.knowledgeFilesToCleanup) {
+        try {
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+            this.logDebug(`Cleaned up tracked knowledge file: ${filePath}`);
+          }
+          
+          // Also clean up any lock files
+          const lockPath = `${filePath}.lock`;
+          if (fs.existsSync(lockPath)) {
+            fs.unlinkSync(lockPath);
+            this.logDebug(`Cleaned up lock file: ${lockPath}`);
+          }
+        } catch (error) {
+          console.warn(`[WARN] Failed to cleanup tracked knowledge file ${filePath}:`, error.message);
+        }
+      }
+
+      // Get the flow ID to identify our specific temporary files
+      const flowId = this.flow.id || this.flow.metadata?.id;
+      if (!flowId) {
+        this.logDebug('No flow ID found, skipping additional knowledge file cleanup');
+        return;
+      }
+
+      // Look for any remaining knowledge files that match our flow ID pattern
+      const files = fs.readdirSync(tempDir);
+      const knowledgeFiles = files.filter(file => file === `knowledge_${flowId}.db`);
+
+
+      for (const file of knowledgeFiles) {
+        const filePath = path.join(tempDir, file);
+        const lockPath = `${filePath}.lock`;
+        
+        try {
+          fs.unlinkSync(filePath);
+          this.logDebug(`Cleaned up additional temporary knowledge file: ${filePath}`);
+        } catch (error) {
+          console.warn(`[WARN] Failed to cleanup additional temporary knowledge file ${filePath}:`, error.message);
+        }
+        
+        // Also clean up any lock files
+        try {
+          if (fs.existsSync(lockPath)) {
+            fs.unlinkSync(lockPath);
+            this.logDebug(`Cleaned up lock file: ${lockPath}`);
+          }
+        } catch (error) {
+          // Ignore lock file cleanup errors
+        }
+      }
+
+      // Also clean up any knowledge files that are older than 1 hour (safety cleanup)
+      const oneHourAgo = Date.now() - (60 * 60 * 1000);
+      const allKnowledgeFiles = files.filter(file => file.startsWith('knowledge_') && file.endsWith('.db'));
+      
+      for (const file of allKnowledgeFiles) {
+        const filePath = path.join(tempDir, file);
+        try {
+          const stats = fs.statSync(filePath);
+          if (stats.mtime.getTime() < oneHourAgo) {
+            fs.unlinkSync(filePath);
+            this.logDebug(`Cleaned up old temporary knowledge file: ${filePath}`);
+          }
+        } catch (error) {
+          // Ignore errors for old file cleanup
+        }
+      }
+
+      // If temp directory is now empty, remove it
+      try {
+        const remainingFiles = fs.readdirSync(tempDir);
+        if (remainingFiles.length === 0) {
+          fs.rmdirSync(tempDir);
+          this.logDebug('Removed empty temporary directory');
+        }
+      } catch (error) {
+        // Ignore errors for directory cleanup
+      }
+
+    } catch (error) {
+      console.warn('[WARN] Error during temporary knowledge file cleanup:', error.message);
+      // Don't throw - cleanup should be best effort
+    }
   }
 }

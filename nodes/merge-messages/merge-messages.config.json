@@ -7,7 +7,7 @@
     {
       "name": "messages",
       "display_name": "Messages",
-      "type": "array",
+      "type": "array of messages",
       "description": "Array of message objects to merge",
       "required": true
     }
@@ -16,7 +16,7 @@
     {
       "name": "messages",
       "display_name": "Messages",
-      "type": "array",
+      "type": "array of messages",
       "description": "Array with consecutive same-role messages merged"
     },
     {

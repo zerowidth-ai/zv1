@@ -6,7 +6,6 @@ export default async ({inputs, settings, config}) => {
   // find the text content for the most recent message
   // first get the most recent message
   
-  
   let messageText;
 
   if(settings.messages.length > 0) {
@@ -36,6 +35,7 @@ export default async ({inputs, settings, config}) => {
     delete message.timestamp;
     return message;
   });
+
 
   return {
     messages: settings.messages,

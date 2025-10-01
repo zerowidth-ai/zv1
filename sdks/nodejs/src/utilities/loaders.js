@@ -69,9 +69,7 @@ export async function loadNodes(flow) {
 
   // Load imports as node types
   if (flow.imports) {
-    console.log(`[DEBUG] Processing ${flow.imports.length} imports`);
     flow.imports.forEach(importDef => { 
-      console.log(`[DEBUG] Converting import ${importDef.id} to node type`);
       const nodeType = this.convertImportToNodeType(importDef);
       // Store with both the import ID and the prefixed name for backward compatibility
       nodes[importDef.id] = nodeType;
@@ -111,7 +109,7 @@ export async function loadIntegrations(config, flow = null) {
   const knowledgeBaseConfig = config.knowledgeBase || {};
   
   if (flow?.knowledgeDbPath || knowledgeBaseConfig.enabled !== false) {
-      console.log(`[INFO] Loading ${knowledgeBaseType} knowledge base integration`);
+      
       
       try {
           // Load the appropriate knowledge base integration
@@ -126,11 +124,11 @@ export async function loadIntegrations(config, flow = null) {
           
           if (knowledgeBaseType === 'sqlite' && flow?.knowledgeDbPath) {
               integrations.knowledgeBase = new KnowledgeBaseIntegration(flow.knowledgeDbPath, integrationOptions);
-              console.log('[INFO] SQLite knowledge base integration loaded:', flow.knowledgeDbPath);
+              
           } else if (knowledgeBaseType !== 'sqlite') {
               // For other knowledge base types, pass the config directly
               integrations.knowledgeBase = new KnowledgeBaseIntegration(knowledgeBaseConfig, integrationOptions);
-              console.log(`[INFO] ${knowledgeBaseType} knowledge base integration loaded`);
+              
           }
           
           // Also keep the old sqlite key for backward compatibility
@@ -153,7 +151,7 @@ export async function loadIntegrations(config, flow = null) {
           integrations.openai = new OpenAIIntegration(config.keys.openai, {
               timeout: config.openaiTimeout || 30000
           });
-          console.log('[INFO] OpenAI integration loaded');
+          
       } catch (error) {
           console.warn('[WARN] Failed to load OpenAI integration:', error.message);
           // Don't throw error - OpenAI is optional
@@ -172,7 +170,6 @@ export async function loadIntegrations(config, flow = null) {
  * @throws {Error} If file doesn't exist, is not a valid ZIP, or missing orchestration.json
  */
 export async function loadZv1File(filePath) {
-  console.log('[INFO] Loading .zv1 file:', filePath);
   
   // Validate file exists
   if (!fs.existsSync(filePath)) {
@@ -222,11 +219,9 @@ export async function loadZv1File(filePath) {
     if (orchestrationData.imports) {
       if (Array.isArray(orchestrationData.imports)) {
         // Legacy format: imports as array (backward compatibility)
-        console.log('[INFO] Loading legacy imports array format');
         imports = orchestrationData.imports;
       } else if (typeof orchestrationData.imports === 'object') {
         // New format: imports as object { "import-id": "snapshot" }
-        console.log('[INFO] Loading new imports object format');
         imports = await loadZv1ImportsFromObject(orchestrationData.imports, zipEntries);
       }
     }
@@ -238,7 +233,7 @@ export async function loadZv1File(filePath) {
       entry.entryName === './knowledge.db'
     );
 
-    console.log('[INFO] Knowledge database entry:', knowledgeDbEntry);
+    
 
     if (knowledgeDbEntry) {
       // Extract knowledge.db to a temporary location
@@ -247,11 +242,46 @@ export async function loadZv1File(filePath) {
         fs.mkdirSync(tempDir, { recursive: true });
       }
       
-      knowledgeDbPath = path.join(tempDir, `knowledge_${Date.now()}.db`);
-      fs.writeFileSync(knowledgeDbPath, knowledgeDbEntry.getData());
-      console.log('[INFO] Extracted knowledge.db to:', knowledgeDbPath);
-      console.log('[INFO] File exists after write:', fs.existsSync(knowledgeDbPath));
-      console.log('[INFO] File size:', fs.statSync(knowledgeDbPath).size);
+      knowledgeDbPath = path.join(tempDir, `knowledge_${orchestrationData.id}.db`);
+      
+      // Use file locking to prevent conflicts between multiple engine instances
+      const lockPath = `${knowledgeDbPath}.lock`;
+      const maxRetries = 10;
+      const retryDelay = 100; // ms
+      
+      let retries = 0;
+      while (retries < maxRetries) {
+        try {
+          // Try to create lock file atomically
+          fs.writeFileSync(lockPath, process.pid.toString(), { flag: 'wx' });
+          break; // Success, we got the lock
+        } catch (error) {
+          if (error.code === 'EEXIST') {
+            // Lock file exists, wait and retry
+            retries++;
+            if (retries < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, retryDelay));
+              continue;
+            } else {
+              throw new Error(`Could not acquire lock for knowledge database after ${maxRetries} retries`);
+            }
+          } else {
+            throw error;
+          }
+        }
+      }
+      
+      try {
+        fs.writeFileSync(knowledgeDbPath, knowledgeDbEntry.getData());
+      } finally {
+        // Always release the lock
+        try {
+          fs.unlinkSync(lockPath);
+        } catch (error) {
+          // Ignore lock cleanup errors
+        }
+      }
+    
     }
 
     // Return unified flow structure
@@ -349,7 +379,6 @@ function findImportFolder(importId, versionRange, importFolders) {
   // Strategy 2: Look for any folder that contains this import ID anywhere in the name
   for (const folderName of importFolders.keys()) {
     if (folderName.includes(importId)) {
-      console.log(`[WARN] Using folder containing '${importId}' (${folderName}) instead of exact match`);
       return folderName;
     }
   }
@@ -392,39 +421,13 @@ async function loadZv1ImportFolder(folderName, folderEntries) {
   }
 
   // Parse folder name - now just the import ID
-  const importId = folderName;
-  
-  // For backward compatibility, check if it's old format (contains dots)
-  let uniqueId, displayName, snapshot;
-  if (folderName.includes('.')) {
-    const folderNameParts = folderName.split('.');
-    if (folderNameParts.length >= 3) {
-      // Old format: displayName.snapshot.uniqueId
-      uniqueId = folderNameParts[folderNameParts.length - 1];
-      snapshot = folderNameParts[folderNameParts.length - 2];
-      displayName = folderNameParts.slice(0, -2).join('.');
-      
-      // Use the old format values
-      return {
-        id: `imported-${uniqueId}`,
-        display_name: displayName,
-        snapshot: snapshot,
-        unique_id: uniqueId,
-        folder_name: folderName,
-        nodes: orchestrationData.nodes,
-        links: orchestrationData.links,
-        imports: nestedImports,
-        // Preserve any additional metadata from orchestration.json
-        ...orchestrationData
-      };
-    }
-  }
+  const importId = orchestrationData.id;
   
   // New simplified format: just importId
   // Generate a unique ID from the import ID for backward compatibility
-  uniqueId = importId.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
-  displayName = importId; // Use import ID as display name
-  snapshot = orchestrationData.metadata?.version || 'unknown'; // Get version from metadata
+  // uniqueId = importId.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
+  let displayName = orchestrationData.metadata?.display_name || importId; // Use import ID as display name
+  let snapshot = orchestrationData.metadata?.snapshot || 'unknown'; // Get version from metadata
 
   // Look for knowledge.db file in this import folder (optional)
   let knowledgeDbPath = null;
@@ -436,9 +439,8 @@ async function loadZv1ImportFolder(folderName, folderEntries) {
       fs.mkdirSync(tempDir, { recursive: true });
     }
     
-    knowledgeDbPath = path.join(tempDir, `knowledge_${uniqueId}_${Date.now()}.db`);
+    knowledgeDbPath = path.join(tempDir, `knowledge_${importId}.db`);
     fs.writeFileSync(knowledgeDbPath, knowledgeDbEntry.getData());
-    console.log(`[INFO] Extracted knowledge.db for import ${uniqueId} to:`, knowledgeDbPath);
   }
 
   // Look for nested imports in this folder
@@ -480,10 +482,10 @@ async function loadZv1ImportFolder(folderName, folderEntries) {
 
   // Return import definition with metadata
   return {
-    id: `imported-${uniqueId}`,
+    id: `imported-${importId}`,
     display_name: displayName,
     snapshot: snapshot,
-    unique_id: uniqueId,
+    unique_id: importId,
     folder_name: folderName,
     nodes: orchestrationData.nodes,
     links: orchestrationData.links,
@@ -541,10 +543,10 @@ export function convertLegacyImports(legacyImports) {
  * @throws {Error} If input format is unsupported or file cannot be loaded
  */
 export async function detectAndLoadFlow(input) {
-  console.log('[INFO] Detecting and loading flow:', input);
+  
   // If input is already an object, it's either a legacy flow or already processed
   if (typeof input === 'object' && input !== null && !Buffer.isBuffer(input)) {
-    console.log('[INFO] Loading flow from object');
+  
     // Check if it's already in the new format (has imports array)
     if (Array.isArray(input.imports)) {
       return input;
@@ -564,21 +566,17 @@ export async function detectAndLoadFlow(input) {
 
   // If input is a Buffer, treat it as raw ZIP data (.zv1 file in memory)
   if (Buffer.isBuffer(input)) {
-    console.log('[INFO] Loading .zv1 from buffer');
     return await loadZv1FromBuffer(input);
   }
 
   // Input is a string - treat as file path
   if (typeof input === 'string') {
-    console.log('[INFO] Loading .zv1 from file path:', input);
     const filePath = path.resolve(input);
     
     // Check file extension to determine format
     if (filePath.endsWith('.zv1')) {
-      console.log('[INFO] Loading .zv1 from file path:', filePath);
       return await loadZv1File(filePath);
     } else if (filePath.endsWith('.json')) {
-      console.log('[INFO] Loading legacy JSON file:', filePath);
       // Load legacy JSON file
       const fileContent = fs.readFileSync(filePath, 'utf8');
       const flowData = JSON.parse(fileContent);
@@ -654,11 +652,9 @@ export async function loadZv1FromBuffer(zipBuffer) {
     if (orchestrationData.imports) {
       if (Array.isArray(orchestrationData.imports)) {
         // Legacy format: imports as array (backward compatibility)
-        console.log('[INFO] Loading legacy imports array format from buffer');
         imports = orchestrationData.imports;
       } else if (typeof orchestrationData.imports === 'object') {
         // New format: imports as object { "import-id": "snapshot" }
-        console.log('[INFO] Loading new imports object format from buffer');
         imports = await loadZv1ImportsFromObject(orchestrationData.imports, zipEntries);
       }
     }
@@ -670,7 +666,6 @@ export async function loadZv1FromBuffer(zipBuffer) {
       entry.entryName === './knowledge.db'
     );
 
-    console.log('[INFO] Knowledge database entry:', knowledgeDbEntry);
 
     if (knowledgeDbEntry) {
       // Extract knowledge.db to a temporary location
@@ -679,11 +674,8 @@ export async function loadZv1FromBuffer(zipBuffer) {
         fs.mkdirSync(tempDir, { recursive: true });
       }
       
-      knowledgeDbPath = path.join(tempDir, `knowledge_buffer_${Date.now()}.db`);
+      knowledgeDbPath = path.join(tempDir, `knowledge_${orchestrationData.id}.db`);
       fs.writeFileSync(knowledgeDbPath, knowledgeDbEntry.getData());
-      console.log('[INFO] Extracted knowledge.db from buffer to:', knowledgeDbPath);
-      console.log('[INFO] File exists after write:', fs.existsSync(knowledgeDbPath));
-      console.log('[INFO] File size:', fs.statSync(knowledgeDbPath).size);
     }
 
     // Return unified flow structure

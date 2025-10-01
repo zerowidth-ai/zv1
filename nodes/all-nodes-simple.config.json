@@ -76,6 +76,7 @@ array-unique,Array Unique,Removes duplicate elements from an array
 boolean,Boolean Switch,A simple switch node that outputs true or false
 boolean-inverter,Boolean Inverter,Inverts the input boolean value
 ceil,Ceil,Rounds up to nearest integer
+combine-document-chunks,Combine Document Chunks,Retrieve all chunks for a document and combine them into a single markdown content string
 csv-parser,CSV Parser,Parses a CSV string into an array of objects or arrays
 csv-stringifier,CSV Stringifier,Converts an array of objects or arrays into a CSV string
 date-formatter,Date Formatter,Formats a date or timestamp into a string using various formats
@@ -176,6 +177,7 @@ equals,Equals,Checks if two values are equal, with deep comparison for objects a
 extract-text-content,Extract Text Content,Extract text content from messages, supporting multi-modal content and optional role prefixes.
 filter-messages,Filter Messages,Filter messages by custom criteria (length, content, role, etc.).
 floor,Floor,Rounds down to nearest integer
+get-chunk-by-index,Get Chunk by Index,Retrieve a specific chunk from a knowledge base by document ID and chunk index
 get-first-n-messages,Get First N Messages,Extract the first N messages from an array of messages.
 get-last-n-messages,Get Last N Messages,Extract the most recent N messages from an array of messages.
 get-messages-by-role,Get Messages by Role,Filter messages by specific role (user, assistant, system, etc.).

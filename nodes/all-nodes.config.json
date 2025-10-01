@@ -2559,6 +2559,66 @@
         "id": "ceil"
     },
     {
+        "display_name": "Combine Document Chunks",
+        "description": "Retrieve all chunks for a document and combine them into a single markdown content string",
+        "category": "knowledge",
+        "is_plugin": true,
+        "inputs": [
+            {
+                "name": "document_id",
+                "display_name": "Document ID",
+                "type": "string",
+                "description": "The ID of the document to combine chunks for",
+                "required": true
+            },
+            {
+                "name": "include_metadata",
+                "display_name": "Include Metadata",
+                "type": "boolean",
+                "description": "Whether to include chunk metadata in the output",
+                "default": false
+            },
+            {
+                "name": "separator",
+                "display_name": "Separator",
+                "type": "string",
+                "description": "String to use as separator between chunks",
+                "default": "\n\n---\n\n"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "content",
+                "display_name": "Content",
+                "type": "string",
+                "description": "The combined markdown content of all chunks"
+            },
+            {
+                "name": "chunk_count",
+                "display_name": "Chunk Count",
+                "type": "number",
+                "description": "Number of chunks that were combined"
+            },
+            {
+                "name": "document_info",
+                "display_name": "Document Info",
+                "type": "object",
+                "description": "Information about the document (name, type, etc.)"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if the operation failed"
+            }
+        ],
+        "settings": [],
+        "needs_key_from": [
+            "openai"
+        ],
+        "id": "combine-document-chunks"
+    },
+    {
         "display_name": "CSV Parser",
         "description": "Parses a CSV string into an array of objects or arrays",
         "icon": "table",
@@ -6327,7 +6387,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array of message objects to filter",
                 "required": true
             },
@@ -6359,7 +6419,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array containing filtered messages"
             },
             {
@@ -6395,6 +6455,53 @@
         "id": "floor"
     },
     {
+        "display_name": "Get Chunk by Index",
+        "description": "Retrieve a specific chunk from a knowledge base by document ID and chunk index",
+        "category": "knowledge",
+        "is_plugin": true,
+        "inputs": [
+            {
+                "name": "document_id",
+                "display_name": "Document ID",
+                "type": "string",
+                "description": "The ID of the document to search in",
+                "required": true
+            },
+            {
+                "name": "chunk_index",
+                "display_name": "Chunk Index",
+                "type": "number",
+                "description": "The index of the chunk to retrieve (0-based)",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "chunk",
+                "display_name": "Chunk",
+                "type": "object",
+                "description": "The retrieved chunk data including content, metadata, and position information"
+            },
+            {
+                "name": "found",
+                "display_name": "Found",
+                "type": "boolean",
+                "description": "Whether the chunk was found"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if the operation failed"
+            }
+        ],
+        "settings": [],
+        "needs_key_from": [
+            "openai"
+        ],
+        "id": "get-chunk-by-index"
+    },
+    {
         "display_name": "Get First N Messages",
         "description": "Extract the first N messages from an array of messages.",
         "icon": "arrow-up",
@@ -6403,7 +6510,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array of message objects to extract from",
                 "required": true
             },
@@ -6419,7 +6526,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array containing the first N messages"
             },
             {
@@ -6440,7 +6547,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array of message objects to extract from",
                 "required": true
             },
@@ -6456,7 +6563,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array containing the last N messages"
             },
             {
@@ -6477,7 +6584,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array of message objects to filter",
                 "required": true
             },
@@ -6493,7 +6600,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array containing only messages with the specified role"
             },
             {
@@ -6514,7 +6621,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array of message objects to extract from",
                 "required": true
             },
@@ -6537,7 +6644,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array containing messages from the specified range"
             },
             {
@@ -11964,7 +12071,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array of message objects to merge",
                 "required": true
             }
@@ -11973,7 +12080,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Array with consecutive same-role messages merged"
             },
             {
@@ -12081,56 +12188,56 @@
             {
                 "name": "input_1",
                 "display_name": "Input 1",
-                "type": "message or array or empty",
+                "type": "message or array of messages",
                 "description": "First message source",
                 "required": false
             },
             {
                 "name": "input_2",
                 "display_name": "Input 2",
-                "type": "message or array or empty",
+                "type": "message or array of messages",
                 "description": "Second message source",
                 "required": false
             },
             {
                 "name": "input_3",
                 "display_name": "Input 3",
-                "type": "message or array or empty",
+                "type": "message or array of messages",
                 "description": "Third message source",
                 "required": false
             },
             {
                 "name": "input_4",
                 "display_name": "Input 4",
-                "type": "message or array or empty",
+                "type": "message or array of messages",
                 "description": "Fourth message source",
                 "required": false
             },
             {
                 "name": "input_5",
                 "display_name": "Input 5",
-                "type": "message or array or empty",
+                "type": "message or array of messages",
                 "description": "Fifth message source",
                 "required": false
             },
             {
                 "name": "input_6",
                 "display_name": "Input 6",
-                "type": "message or array or empty",
+                "type": "message or array of messages",
                 "description": "Sixth message source",
                 "required": false
             },
             {
                 "name": "input_7",
                 "display_name": "Input 7",
-                "type": "message or array or empty",
+                "type": "message or array of messages",
                 "description": "Seventh message source",
                 "required": false
             },
             {
                 "name": "input_8",
                 "display_name": "Input 8",
-                "type": "message or array or empty",
+                "type": "message or array of messages",
                 "description": "Eighth message source",
                 "required": false
             }
@@ -12139,7 +12246,7 @@
             {
                 "name": "messages",
                 "display_name": "Messages",
-                "type": "array",
+                "type": "array of messages",
                 "description": "Combined array of all messages from all inputs"
             },
             {
@@ -27634,7 +27741,7 @@
     {
         "display_name": "Query Knowledge Base",
         "description": "Execute SQL queries against the orchestration's knowledge database",
-        "category": "data",
+        "category": "knowledge",
         "is_plugin": true,
         "is_constant": false,
         "is_output": false,
@@ -33987,7 +34094,7 @@
     {
         "display_name": "Semantic Search",
         "description": "Search knowledge base using semantic similarity and vector embeddings",
-        "category": "data",
+        "category": "knowledge",
         "is_constant": false,
         "is_plugin": true,
         "is_output": false,
@@ -34014,7 +34121,7 @@
                 "display_name": "Similarity Threshold",
                 "type": "number",
                 "description": "Minimum similarity score (0.0 to 1.0)",
-                "default": 0.7
+                "default": 0
             },
             {
                 "name": "document_id",

@@ -79,11 +79,10 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
     }
     
     // Clean up temporary file if it exists
-    if (this.dbPath && this.dbPath.includes('.temp')) {
+    if (this.dbPath && (this.dbPath.includes('.temp') || this.dbPath.includes('knowledge_'))) {
       try {
         if (fs.existsSync(this.dbPath)) {
           fs.unlinkSync(this.dbPath);
-          console.log(`[INFO] Cleaned up temporary knowledge database: ${this.dbPath}`);
         }
       } catch (error) {
         console.warn(`[WARN] Failed to cleanup temporary file ${this.dbPath}:`, error.message);

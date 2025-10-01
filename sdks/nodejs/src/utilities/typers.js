@@ -133,6 +133,7 @@ export function convertImportToNodeType(importDef) {
     // Add the nested import nodes to the flow
     processedImportDef.nodes = [...processedImportDef.nodes, ...nestedNodes];
   }
+  processedImportDef.nodes = processedImportDef.nodes.filter(node => !node.debug_only);
 
   // Rest of the existing code...
   const inputNodes = processedImportDef.nodes.filter(node => 
@@ -161,7 +162,6 @@ export function convertImportToNodeType(importDef) {
       importId: processedImportDef.importId,
       requestedSnapshot: processedImportDef.requestedSnapshot,
       inputs: inputNodes.map(node => {
-        
         if (node.type === 'input-data') {
           return {
             // Use the node's settings.key as the input name to match port connections
@@ -278,6 +278,10 @@ export function convertImportToNodeType(importDef) {
 
       // Run the imported flow
       const result = await importEngine.run(inputData);
+
+      // cleanup the import engine
+      await importEngine.cleanup();
+
       const endDate = new Date();
       if(result.outputs) {
         timelineEntry.outputs = JSON.parse(JSON.stringify(result.outputs));
@@ -296,37 +300,64 @@ export function convertImportToNodeType(importDef) {
 
       // Map outputs back to the outer flow's format
       const outputs = result.outputs || {};
-      // outputNodes.forEach(node => {
-      //   if (node.type === 'output-data') {
-      //     if(node.settings?.key) {
-      //       outputs[node.id] = result.outputs[node.settings?.key];
-      //     } else {
-      //       outputs[node.id] = result.outputs.data
-      //     }
-      //   } else if (node.type === 'output-chat') {
-      //     if(node.settings?.key) {
-      //       outputs[node.id] = result.outputs[node.settings?.key];
-      //     } else {
-      //       outputs[node.id] = result.outputs.chat;
-      //     }
-      //   }
-      // });
 
-
-      // --- Add outputs for all terminal nodes in the imported flow ---
-      const nodesWithOutgoingLinks = new Set(processedImportDef.links.map(link => link.from.node_id));
-      const terminalNodes = processedImportDef.nodes.filter(node => !nodesWithOutgoingLinks.has(node.id));
-      for (const terminalNode of terminalNodes) {
-        if (terminalNode.type === 'output-data' || terminalNode.type === 'output-chat') continue;
-        // Look up config for this node type
-        const nodeConfig = this.nodes[terminalNode.type]?.config;
-        if (!nodeConfig || !Array.isArray(nodeConfig.outputs)) continue;
-        for (const output of nodeConfig.outputs) {
-          const key = `${terminalNode.id}_${output.name}`;
-          const cacheKey = `${terminalNode.id}:${output.name}`;
-          const value = importEngine.cache[cacheKey];
-          if (value !== undefined) {
-            outputs[key] = value;
+      // --- Handle terminal nodes from the imported flow ---
+      if (result.terminalNodes && Array.isArray(result.terminalNodes)) {
+        this.logDebug(`Processing ${result.terminalNodes.length} terminal nodes from imported flow`);
+        
+        // Create a mapping of terminal node IDs to their expected output port names
+        // by looking at the original flow's output nodes and their settings
+        const terminalNodeOutputMapping = {};
+        const originalOutputNodes = processedImportDef.nodes.filter(node => 
+          (node.type === 'output-data' || node.type === 'output-chat') && !node.debug_only
+        );
+        
+        // For each original output node, map it to the terminal node that should provide its data
+        for (const outputNode of originalOutputNodes) {
+          const outputKey = outputNode.settings?.key || (outputNode.type === 'output-data' ? 'data' : 'chat');
+          // Find which terminal node this output node was connected to
+          const outputLinks = processedImportDef.links.filter(link => link.to.node_id === outputNode.id);
+          for (const link of outputLinks) {
+            const sourceNodeId = link.from.node_id;
+            if (!terminalNodeOutputMapping[sourceNodeId]) {
+              terminalNodeOutputMapping[sourceNodeId] = {};
+            }
+            terminalNodeOutputMapping[sourceNodeId][link.from.port_name] = outputKey;
+          }
+        }
+        
+        this.logDebug(`Terminal node output mapping:`, terminalNodeOutputMapping);
+        
+        for (const terminalNode of result.terminalNodes) {
+          if (terminalNode.outputs) {
+            const nodeMapping = terminalNodeOutputMapping[terminalNode.node_id] || {};
+            for (const [outputName, outputValue] of Object.entries(terminalNode.outputs)) {
+              // Use the mapped output key if available, otherwise fall back to the original name
+              const mappedKey = nodeMapping[outputName] || outputName;
+              // Use the full node ID prefix format that the parent flow expects
+              // The node ID format should be: imported-{flowId}-{nodeId}_{outputKey}
+              const fullKey = `imported-${processedImportDef.id}-${terminalNode.node_id}_${mappedKey}`;
+              outputs[fullKey] = outputValue;
+              this.logDebug(`Added terminal output: ${fullKey} = ${JSON.stringify(outputValue)} (from ${terminalNode.node_id}:${outputName})`);
+            }
+          }
+        }
+      } else {
+        // Fallback: Add outputs for all terminal nodes in the imported flow using cache
+        const nodesWithOutgoingLinks = new Set(processedImportDef.links.map(link => link.from.node_id));
+        const terminalNodes = processedImportDef.nodes.filter(node => !nodesWithOutgoingLinks.has(node.id));
+        for (const terminalNode of terminalNodes) {
+          if (terminalNode.type === 'output-data' || terminalNode.type === 'output-chat') continue;
+          // Look up config for this node type
+          const nodeConfig = this.nodes[terminalNode.type]?.config;
+          if (!nodeConfig || !Array.isArray(nodeConfig.outputs)) continue;
+          for (const output of nodeConfig.outputs) {
+            const key = `${terminalNode.id}_${output.name}`;
+            const cacheKey = `${terminalNode.id}:${output.name}`;
+            const value = importEngine.cache[cacheKey];
+            if (value !== undefined) {
+              outputs[key] = value;
+            }
           }
         }
       }
