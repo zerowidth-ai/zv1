@@ -1,0 +1,84 @@
+{
+  "display_name": "Extract URLs",
+  "description": "Extract all URLs from text using regex patterns",
+  "category": "text",
+  "is_macro": true,
+  "is_plugin": true,
+  "macro_flow": {
+    "nodes": [
+      {
+        "id": "input_text",
+        "type": "input-data",
+        "settings": {
+          "key": "text"
+        }
+      },
+      {
+        "id": "match",
+        "type": "string-match",
+        "settings": {
+          "case_sensitive": false,
+          "global": true
+        }
+      },
+      {
+        "id": "url_pattern",
+        "type": "string",
+        "settings": {
+          "value": "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
+        }
+      },
+      {
+        "id": "filter_empty",
+        "type": "array-filter",
+        "settings": {
+          "condition": "not_equals",
+          "value": ""
+        }
+      },
+      {
+        "id": "output_urls",
+        "type": "output-data",
+        "settings": {
+          "key": "urls"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "input_text", "port_name": "value" },
+        "to": { "node_id": "match", "port_name": "text" }
+      },
+      {
+        "from": { "node_id": "url_pattern", "port_name": "value" },
+        "to": { "node_id": "match", "port_name": "pattern" }
+      },
+      {
+        "from": { "node_id": "match", "port_name": "matches" },
+        "to": { "node_id": "filter_empty", "port_name": "array" }
+      },
+      {
+        "from": { "node_id": "filter_empty", "port_name": "array" },
+        "to": { "node_id": "output_urls", "port_name": "value" }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "type": "string",
+      "description": "The text to extract URLs from",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "urls",
+      "display_name": "URLs",
+      "type": "array of strings",
+      "description": "Array of extracted URLs"
+    }
+  ],
+  "settings": []
+}

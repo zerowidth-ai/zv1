@@ -1,0 +1,74 @@
+[
+  {
+    "description": "Basic latest news request with query",
+    "inputs": {
+      "q": "artificial intelligence"
+    },
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Latest news with country filter (string input)",
+    "inputs": {
+      "q": "technology",
+      "countries": "us,ca"
+    },
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Latest news with country filter (array input)",
+    "inputs": {
+      "q": "technology",
+      "countries": ["us", "ca", "gb"]
+    },
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Latest news with categories and languages",
+    "inputs": {
+      "q": "climate change",
+      "categories": "environment,science",
+      "languages": "en,es"
+    },
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Latest news with no inputs (should still work)",
+    "inputs": {},
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  }
+]

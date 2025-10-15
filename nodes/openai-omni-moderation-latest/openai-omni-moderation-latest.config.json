@@ -5,7 +5,7 @@
   "category": "moderation",
   "provider": "openai",
   "model_id": "openai/omni-moderation-latest",
-  "needs_key_from": "openai",
+  "needs_key_from": ["openai"],
   "inputs": [
     {
       "name": "input",

@@ -6323,6 +6323,333 @@
         "id": "equals"
     },
     {
+        "display_name": "Extract Emails",
+        "description": "Extract all email addresses from text using regex patterns",
+        "category": "macro",
+        "is_macro": true,
+        "is_plugin": true,
+        "macro_flow": {
+            "nodes": [
+                {
+                    "id": "input_text",
+                    "type": "input-data",
+                    "settings": {
+                        "key": "text"
+                    }
+                },
+                {
+                    "id": "match",
+                    "type": "string-match",
+                    "settings": {
+                        "case_sensitive": false,
+                        "global": true
+                    }
+                },
+                {
+                    "id": "email_pattern",
+                    "type": "string",
+                    "settings": {
+                        "value": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b"
+                    }
+                },
+                {
+                    "id": "filter_empty",
+                    "type": "array-filter",
+                    "settings": {
+                        "condition": "not_equals",
+                        "value": ""
+                    }
+                },
+                {
+                    "id": "output_emails",
+                    "type": "output-data",
+                    "settings": {
+                        "key": "emails"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "from": {
+                        "node_id": "input_text",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "text"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "email_pattern",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "pattern"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "match",
+                        "port_name": "matches"
+                    },
+                    "to": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    },
+                    "to": {
+                        "node_id": "output_emails",
+                        "port_name": "value"
+                    }
+                }
+            ]
+        },
+        "inputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "The text to extract emails from",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "emails",
+                "display_name": "Emails",
+                "type": "array of strings",
+                "description": "Array of extracted email addresses"
+            }
+        ],
+        "settings": [],
+        "id": "extract-emails"
+    },
+    {
+        "display_name": "Extract Hashtags",
+        "description": "Extract all hashtags from text",
+        "category": "macro",
+        "is_macro": true,
+        "is_plugin": true,
+        "macro_flow": {
+            "nodes": [
+                {
+                    "id": "input_text",
+                    "type": "input-data",
+                    "settings": {
+                        "key": "text"
+                    }
+                },
+                {
+                    "id": "match",
+                    "type": "string-match",
+                    "settings": {
+                        "case_sensitive": false,
+                        "global": true
+                    }
+                },
+                {
+                    "id": "hashtag_pattern",
+                    "type": "string",
+                    "settings": {
+                        "value": "#[a-zA-Z0-9_]+"
+                    }
+                },
+                {
+                    "id": "filter_empty",
+                    "type": "array-filter",
+                    "settings": {
+                        "condition": "not_equals",
+                        "value": ""
+                    }
+                },
+                {
+                    "id": "output_hashtags",
+                    "type": "output-data",
+                    "settings": {
+                        "key": "hashtags"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "from": {
+                        "node_id": "input_text",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "text"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "hashtag_pattern",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "pattern"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "match",
+                        "port_name": "matches"
+                    },
+                    "to": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    },
+                    "to": {
+                        "node_id": "output_hashtags",
+                        "port_name": "value"
+                    }
+                }
+            ]
+        },
+        "inputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "The text to extract hashtags from",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "hashtags",
+                "display_name": "Hashtags",
+                "type": "array of strings",
+                "description": "Array of extracted hashtags"
+            }
+        ],
+        "settings": [],
+        "id": "extract-hashtags"
+    },
+    {
+        "display_name": "Extract Mentions",
+        "description": "Extract all @mentions from text",
+        "category": "macro",
+        "is_macro": true,
+        "is_plugin": true,
+        "macro_flow": {
+            "nodes": [
+                {
+                    "id": "input_text",
+                    "type": "input-data",
+                    "settings": {
+                        "key": "text"
+                    }
+                },
+                {
+                    "id": "match",
+                    "type": "string-match",
+                    "settings": {
+                        "case_sensitive": false,
+                        "global": true
+                    }
+                },
+                {
+                    "id": "mention_pattern",
+                    "type": "string",
+                    "settings": {
+                        "value": "@[a-zA-Z0-9_]+"
+                    }
+                },
+                {
+                    "id": "filter_empty",
+                    "type": "array-filter",
+                    "settings": {
+                        "condition": "not_equals",
+                        "value": ""
+                    }
+                },
+                {
+                    "id": "output_mentions",
+                    "type": "output-data",
+                    "settings": {
+                        "key": "mentions"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "from": {
+                        "node_id": "input_text",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "text"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "mention_pattern",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "pattern"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "match",
+                        "port_name": "matches"
+                    },
+                    "to": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    },
+                    "to": {
+                        "node_id": "output_mentions",
+                        "port_name": "value"
+                    }
+                }
+            ]
+        },
+        "inputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "The text to extract mentions from",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "mentions",
+                "display_name": "Mentions",
+                "type": "array of strings",
+                "description": "Array of extracted mentions"
+            }
+        ],
+        "settings": [],
+        "id": "extract-mentions"
+    },
+    {
         "display_name": "Extract Text Content",
         "description": "Extract text content from messages, supporting multi-modal content and optional role prefixes.",
         "icon": "type",
@@ -6379,6 +6706,116 @@
         "id": "extract-text-content"
     },
     {
+        "display_name": "Extract URLs",
+        "description": "Extract all URLs from text using regex patterns",
+        "category": "macro",
+        "provider": "internal",
+        "is_macro": true,
+        "is_plugin": true,
+        "macro_flow": {
+            "nodes": [
+                {
+                    "id": "input_text",
+                    "type": "input-data",
+                    "settings": {
+                        "key": "text"
+                    }
+                },
+                {
+                    "id": "match",
+                    "type": "string-match",
+                    "settings": {
+                        "case_sensitive": false,
+                        "global": true
+                    }
+                },
+                {
+                    "id": "url_pattern",
+                    "type": "string",
+                    "settings": {
+                        "value": "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
+                    }
+                },
+                {
+                    "id": "filter_empty",
+                    "type": "array-filter",
+                    "settings": {
+                        "condition": "not_equals",
+                        "value": ""
+                    }
+                },
+                {
+                    "id": "output_urls",
+                    "type": "output-data",
+                    "settings": {
+                        "key": "urls"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "from": {
+                        "node_id": "input_text",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "text"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "url_pattern",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "pattern"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "match",
+                        "port_name": "matches"
+                    },
+                    "to": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    },
+                    "to": {
+                        "node_id": "output_urls",
+                        "port_name": "value"
+                    }
+                }
+            ]
+        },
+        "inputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "The text to extract URLs from",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "urls",
+                "display_name": "URLs",
+                "type": "array of strings",
+                "description": "Array of extracted URLs"
+            }
+        ],
+        "settings": [],
+        "id": "extract-urls"
+    },
+    {
         "display_name": "Filter Messages",
         "description": "Filter messages by custom criteria (length, content, role, etc.).",
         "icon": "funnel",
@@ -6430,6 +6867,183 @@
             }
         ],
         "id": "filter-messages"
+    },
+    {
+        "display_name": "Firecrawl: Scrape URL",
+        "description": "Scrape content from any URL with advanced options including format selection, content filtering, mobile emulation, and more",
+        "category": "third-party",
+        "provider": "firecrawl",
+        "needs_key_from": [
+            "firecrawl"
+        ],
+        "is_plugin": true,
+        "inputs": [
+            {
+                "name": "url",
+                "display_name": "URL",
+                "type": "string",
+                "description": "The URL to scrape",
+                "required": true
+            },
+            {
+                "name": "formats",
+                "display_name": "Output Formats",
+                "type": "string or array of strings",
+                "description": "Output formats to include (markdown, html, rawHtml, links, screenshot, summary, json). Can be comma-separated string or array",
+                "default": "markdown"
+            },
+            {
+                "name": "only_main_content",
+                "display_name": "Only Main Content",
+                "type": "boolean",
+                "description": "Only return the main content excluding headers, navs, footers, etc.",
+                "default": true
+            },
+            {
+                "name": "include_tags",
+                "display_name": "Include Tags",
+                "type": "string or array of strings",
+                "description": "HTML tags to include in the output. Can be comma-separated string or array"
+            },
+            {
+                "name": "exclude_tags",
+                "display_name": "Exclude Tags",
+                "type": "string or array of strings",
+                "description": "HTML tags to exclude from the output. Can be comma-separated string or array"
+            },
+            {
+                "name": "max_age",
+                "display_name": "Max Age (ms)",
+                "type": "number",
+                "description": "Returns cached version if younger than this age in milliseconds (default: 2 days)",
+                "default": 172800000
+            },
+            {
+                "name": "wait_for",
+                "display_name": "Wait For (ms)",
+                "type": "number",
+                "description": "Delay in milliseconds before fetching content to allow page to load",
+                "default": 0
+            },
+            {
+                "name": "mobile_device",
+                "display_name": "Mobile Device",
+                "type": "boolean",
+                "description": "Emulate scraping from a mobile device",
+                "default": false
+            },
+            {
+                "name": "skip_tls_verification",
+                "display_name": "Skip TLS Verification",
+                "type": "boolean",
+                "description": "Skip TLS certificate verification when making requests",
+                "default": true
+            },
+            {
+                "name": "timeout",
+                "display_name": "Timeout (ms)",
+                "type": "number",
+                "description": "Timeout in milliseconds for the request"
+            },
+            {
+                "name": "remove_base64_images",
+                "display_name": "Remove Base64 Images",
+                "type": "boolean",
+                "description": "Remove base64 images from output (keeps alt text)",
+                "default": true
+            },
+            {
+                "name": "block_ads",
+                "display_name": "Block Ads",
+                "type": "boolean",
+                "description": "Enable ad-blocking and cookie popup blocking",
+                "default": true
+            },
+            {
+                "name": "proxy",
+                "display_name": "Proxy Type",
+                "type": "string",
+                "description": "Type of proxy to use",
+                "options": [
+                    "basic",
+                    "stealth",
+                    "auto"
+                ],
+                "default": "auto"
+            },
+            {
+                "name": "store_in_cache",
+                "display_name": "Store in Cache",
+                "type": "boolean",
+                "description": "Store the page in Firecrawl index and cache",
+                "default": true
+            },
+            {
+                "name": "zero_data_retention",
+                "display_name": "Zero Data Retention",
+                "type": "boolean",
+                "description": "Enable zero data retention for this scrape",
+                "default": false
+            }
+        ],
+        "outputs": [
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the scraping operation was successful"
+            },
+            {
+                "name": "markdown",
+                "display_name": "Markdown",
+                "type": "string",
+                "description": "Markdown version of the scraped content"
+            },
+            {
+                "name": "html",
+                "display_name": "HTML",
+                "type": "string",
+                "description": "HTML version of the content"
+            },
+            {
+                "name": "raw_html",
+                "display_name": "Raw HTML",
+                "type": "string",
+                "description": "Raw HTML content of the page"
+            },
+            {
+                "name": "links",
+                "display_name": "Links",
+                "type": "array of strings",
+                "description": "List of links found on the page"
+            },
+            {
+                "name": "screenshot",
+                "display_name": "Screenshot URL",
+                "type": "string",
+                "description": "URL of the page screenshot"
+            },
+            {
+                "name": "summary",
+                "display_name": "Summary",
+                "type": "string",
+                "description": "AI-generated summary of the page content"
+            },
+            {
+                "name": "metadata",
+                "display_name": "Metadata",
+                "type": "object",
+                "description": "Extracted metadata including title, description, keywords, etc."
+            },
+            {
+                "name": "warning",
+                "display_name": "Warning",
+                "type": "string",
+                "description": "Warning message if any issues occurred during scraping"
+            }
+        ],
+        "settings": [],
+        "id": "firecrawl-scrape"
     },
     {
         "display_name": "Floor",
@@ -18995,6 +19609,361 @@
         "id": "nand-gate"
     },
     {
+        "display_name": "NewsData.io: Archive News",
+        "description": "Fetch historical news from the archive (7+ years) with date range filtering and rich search options",
+        "category": "third-party",
+        "provider": "newsdata_io",
+        "needs_key_from": [
+            "newsdata_io"
+        ],
+        "is_plugin": true,
+        "inputs": [
+            {
+                "name": "q",
+                "display_name": "Search Query",
+                "type": "string",
+                "description": "Keyword or phrase to search for in articles"
+            },
+            {
+                "name": "from_date",
+                "display_name": "From Date",
+                "type": "string",
+                "description": "Start date in YYYY-MM-DD format",
+                "required": true
+            },
+            {
+                "name": "to_date",
+                "display_name": "To Date",
+                "type": "string",
+                "description": "End date in YYYY-MM-DD format",
+                "required": true
+            },
+            {
+                "name": "timezone",
+                "display_name": "Timezone",
+                "type": "string",
+                "description": "Timezone for date interpretation (e.g., 'Asia/Dubai', 'America/New_York')"
+            },
+            {
+                "name": "countries",
+                "display_name": "Countries",
+                "type": "string or array of strings",
+                "description": "ISO 2-letter country codes (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "regions",
+                "display_name": "Regions",
+                "type": "string or array of strings",
+                "description": "AI-classified regions (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "categories",
+                "display_name": "Categories",
+                "type": "string or array of strings",
+                "description": "News categories to include (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "exclude_categories",
+                "display_name": "Exclude Categories",
+                "type": "string or array of strings",
+                "description": "News categories to exclude (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "languages",
+                "display_name": "Languages",
+                "type": "string or array of strings",
+                "description": "Language codes (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "domains",
+                "display_name": "Domains",
+                "type": "string or array of strings",
+                "description": "Source domains to include (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "exclude_domains",
+                "display_name": "Exclude Domains",
+                "type": "string or array of strings",
+                "description": "Domains to exclude. Can be comma-separated string or array"
+            },
+            {
+                "name": "priority_domain",
+                "display_name": "Priority Domain",
+                "type": "string",
+                "description": "Source quality filter",
+                "options": [
+                    "top",
+                    "medium",
+                    "low"
+                ]
+            },
+            {
+                "name": "full_content",
+                "display_name": "Full Content",
+                "type": "boolean",
+                "description": "Include full article text"
+            },
+            {
+                "name": "image",
+                "display_name": "Has Image",
+                "type": "boolean",
+                "description": "Filter for articles with images"
+            },
+            {
+                "name": "video",
+                "display_name": "Has Video",
+                "type": "boolean",
+                "description": "Filter for articles with videos"
+            },
+            {
+                "name": "remove_duplicate",
+                "display_name": "Remove Duplicates",
+                "type": "boolean",
+                "description": "Remove duplicate articles"
+            },
+            {
+                "name": "exclude_fields",
+                "display_name": "Exclude Fields",
+                "type": "string or array of strings",
+                "description": "Fields to exclude from response. Can be comma-separated string or array"
+            },
+            {
+                "name": "size",
+                "display_name": "Page Size",
+                "type": "number",
+                "description": "Number of articles per request (10 for free, 50 for paid plans)",
+                "default": 10
+            }
+        ],
+        "outputs": [
+            {
+                "name": "articles",
+                "display_name": "Articles",
+                "type": "array of objects",
+                "description": "Array of article objects with metadata"
+            },
+            {
+                "name": "total_results",
+                "display_name": "Total Results",
+                "type": "number",
+                "description": "Total number of available results"
+            },
+            {
+                "name": "next_page",
+                "display_name": "Next Page Token",
+                "type": "string",
+                "description": "Token for pagination to get next page of results"
+            }
+        ],
+        "settings": [],
+        "id": "newsdata-io-archive"
+    },
+    {
+        "display_name": "NewsData.io: Latest News",
+        "description": "Fetch latest headlines from the last 48 hours with rich filtering options including keywords, countries, regions, categories, and more",
+        "category": "third-party",
+        "provider": "newsdata_io",
+        "needs_key_from": [
+            "newsdata_io"
+        ],
+        "is_plugin": true,
+        "inputs": [
+            {
+                "name": "q",
+                "display_name": "Search Query",
+                "type": "string",
+                "description": "Keyword or phrase to search for in articles"
+            },
+            {
+                "name": "q_in_title",
+                "display_name": "Query in Title",
+                "type": "string",
+                "description": "Search only in article titles"
+            },
+            {
+                "name": "q_in_meta",
+                "display_name": "Query in Meta",
+                "type": "string",
+                "description": "Search in URL, meta title, and meta description"
+            },
+            {
+                "name": "countries",
+                "display_name": "Countries",
+                "type": "string or array of strings",
+                "description": "ISO 2-letter country codes (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "regions",
+                "display_name": "Regions",
+                "type": "string or array of strings",
+                "description": "AI-classified regions (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "categories",
+                "display_name": "Categories",
+                "type": "string or array of strings",
+                "description": "News categories to include (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "exclude_categories",
+                "display_name": "Exclude Categories",
+                "type": "string or array of strings",
+                "description": "News categories to exclude (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "languages",
+                "display_name": "Languages",
+                "type": "string or array of strings",
+                "description": "Language codes (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "domains",
+                "display_name": "Domains",
+                "type": "string or array of strings",
+                "description": "Source domains to include (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "exclude_domains",
+                "display_name": "Exclude Domains",
+                "type": "string or array of strings",
+                "description": "Domains to exclude. Can be comma-separated string or array"
+            },
+            {
+                "name": "priority_domain",
+                "display_name": "Priority Domain",
+                "type": "string",
+                "description": "Source quality filter",
+                "options": [
+                    "top",
+                    "medium",
+                    "low"
+                ]
+            },
+            {
+                "name": "timeframe",
+                "display_name": "Timeframe",
+                "type": "string",
+                "description": "Time window in hours (1-48) or minutes (1-2880m). Examples: '6', '24', '420m'"
+            },
+            {
+                "name": "full_content",
+                "display_name": "Full Content",
+                "type": "boolean",
+                "description": "Include full article text"
+            },
+            {
+                "name": "image",
+                "display_name": "Has Image",
+                "type": "boolean",
+                "description": "Filter for articles with images"
+            },
+            {
+                "name": "video",
+                "display_name": "Has Video",
+                "type": "boolean",
+                "description": "Filter for articles with videos"
+            },
+            {
+                "name": "remove_duplicate",
+                "display_name": "Remove Duplicates",
+                "type": "boolean",
+                "description": "Remove duplicate articles"
+            },
+            {
+                "name": "exclude_fields",
+                "display_name": "Exclude Fields",
+                "type": "string or array of strings",
+                "description": "Fields to exclude from response. Can be comma-separated string or array"
+            },
+            {
+                "name": "size",
+                "display_name": "Page Size",
+                "type": "number",
+                "description": "Number of articles per request (10 for free, 50 for paid plans)",
+                "default": 10
+            }
+        ],
+        "outputs": [
+            {
+                "name": "articles",
+                "display_name": "Articles",
+                "type": "array of objects",
+                "description": "Array of article objects with metadata"
+            },
+            {
+                "name": "total_results",
+                "display_name": "Total Results",
+                "type": "number",
+                "description": "Total number of available results"
+            },
+            {
+                "name": "next_page",
+                "display_name": "Next Page Token",
+                "type": "string",
+                "description": "Token for pagination to get next page of results"
+            }
+        ],
+        "settings": [],
+        "id": "newsdata-io-latest"
+    },
+    {
+        "display_name": "NewsData.io: Sources",
+        "description": "Get list of source domains filtered by country, category, language, and priority",
+        "category": "third-party",
+        "provider": "newsdata_io",
+        "needs_key_from": [
+            "newsdata_io"
+        ],
+        "is_plugin": true,
+        "inputs": [
+            {
+                "name": "countries",
+                "display_name": "Countries",
+                "type": "string or array of strings",
+                "description": "ISO 2-letter country codes (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "categories",
+                "display_name": "Categories",
+                "type": "string or array of strings",
+                "description": "News categories (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "languages",
+                "display_name": "Languages",
+                "type": "string or array of strings",
+                "description": "Language codes (up to 5). Can be comma-separated string or array"
+            },
+            {
+                "name": "priority_domain",
+                "display_name": "Priority Domain",
+                "type": "string",
+                "description": "Source quality filter",
+                "options": [
+                    "top",
+                    "medium",
+                    "low"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "name": "sources",
+                "display_name": "Sources",
+                "type": "array of objects",
+                "description": "Array of source domain objects"
+            },
+            {
+                "name": "total_sources",
+                "display_name": "Total Sources",
+                "type": "number",
+                "description": "Total number of available sources"
+            }
+        ],
+        "settings": [],
+        "id": "newsdata-io-sources"
+    },
+    {
         "display_name": "NOR Gate",
         "description": "A logic gate that outputs true only if both inputs are false",
         "category": "logic",
@@ -26409,7 +27378,9 @@
         "category": "moderation",
         "provider": "openai",
         "model_id": "openai/omni-moderation-latest",
-        "needs_key_from": "openai",
+        "needs_key_from": [
+            "openai"
+        ],
         "inputs": [
             {
                 "name": "input",
@@ -33962,6 +34933,65 @@
             }
         ],
         "id": "range"
+    },
+    {
+        "display_name": "Read Website",
+        "description": "Simple website reader - scrapes content and extracts main text",
+        "category": "macro",
+        "provider": "firecrawl",
+        "needs_key_from": [
+            "firecrawl"
+        ],
+        "is_macro": true,
+        "is_plugin": true,
+        "macro_flow": {
+            "nodes": [
+                {
+                    "id": "scrape",
+                    "type": "firecrawl-scrape"
+                },
+                {
+                    "id": "formats",
+                    "type": "string",
+                    "settings": {
+                        "value": "markdown"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "from": {
+                        "node_id": "formats",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "scrape",
+                        "port_name": "formats"
+                    }
+                }
+            ]
+        },
+        "inputs": [
+            {
+                "name": "url",
+                "display_name": "Website URL",
+                "type": "string",
+                "description": "The website to read",
+                "required": true,
+                "connects_to": "scrape.url"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "content",
+                "display_name": "Content",
+                "type": "string",
+                "description": "The main text content of the website",
+                "connects_to": "scrape.markdown"
+            }
+        ],
+        "settings": [],
+        "id": "read-website"
     },
     {
         "display_name": "Response Format",

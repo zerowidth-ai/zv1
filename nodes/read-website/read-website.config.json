@@ -1,0 +1,70 @@
+{
+  "display_name": "Read Website (beta)",
+  "description": "Simple website reader - scrapes content and extracts main text",
+  "category": "third-party",
+  "provider": "firecrawl",
+  "needs_key_from": ["firecrawl"],
+  "is_macro": true,
+  "is_plugin": true,
+  "macro_flow": {
+    "nodes": [
+      {
+        "id": "input_url",
+        "type": "input-data",
+        "settings": {
+          "key": "url"
+        }
+      },
+      {
+        "id": "scrape",
+        "type": "firecrawl-scrape"
+      },
+      {
+        "id": "formats",
+        "type": "string",
+        "settings": {
+          "value": "markdown"
+        }
+      },
+      {
+        "id": "output_content",
+        "type": "output-data",
+        "settings": {
+          "key": "content"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "input_url", "port_name": "value" },
+        "to": { "node_id": "scrape", "port_name": "url" }
+      },
+      {
+        "from": { "node_id": "formats", "port_name": "value" },
+        "to": { "node_id": "scrape", "port_name": "formats" }
+      },
+      {
+        "from": { "node_id": "scrape", "port_name": "markdown" },
+        "to": { "node_id": "output_content", "port_name": "value" }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "name": "url",
+      "display_name": "Website URL",
+      "type": "string",
+      "description": "The website to read",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "content",
+      "display_name": "Content",
+      "type": "string",
+      "description": "The main text content of the website"
+    }
+  ],
+  "settings": []
+}

@@ -1,0 +1,170 @@
+{
+  "display_name": "Firecrawl: Scrape URL",
+  "description": "Scrape content from any URL with advanced options including format selection, content filtering, mobile emulation, and more",
+  "category": "third-party",
+  "provider": "firecrawl",
+  "needs_key_from": ["firecrawl"],
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "url",
+      "display_name": "URL",
+      "type": "string",
+      "description": "The URL to scrape",
+      "required": true
+    },
+    {
+      "name": "formats",
+      "display_name": "Output Formats",
+      "type": "string or array of strings",
+      "description": "Output formats to include (markdown, html, rawHtml, links, screenshot, summary, json). Can be comma-separated string or array",
+      "default": "markdown"
+    },
+    {
+      "name": "only_main_content",
+      "display_name": "Only Main Content",
+      "type": "boolean",
+      "description": "Only return the main content excluding headers, navs, footers, etc.",
+      "default": true
+    },
+    {
+      "name": "include_tags",
+      "display_name": "Include Tags",
+      "type": "string or array of strings",
+      "description": "HTML tags to include in the output. Can be comma-separated string or array"
+    },
+    {
+      "name": "exclude_tags",
+      "display_name": "Exclude Tags",
+      "type": "string or array of strings",
+      "description": "HTML tags to exclude from the output. Can be comma-separated string or array"
+    },
+    {
+      "name": "max_age",
+      "display_name": "Max Age (ms)",
+      "type": "number",
+      "description": "Returns cached version if younger than this age in milliseconds (default: 2 days)",
+      "default": 172800000
+    },
+    {
+      "name": "wait_for",
+      "display_name": "Wait For (ms)",
+      "type": "number",
+      "description": "Delay in milliseconds before fetching content to allow page to load",
+      "default": 0
+    },
+    {
+      "name": "mobile_device",
+      "display_name": "Mobile Device",
+      "type": "boolean",
+      "description": "Emulate scraping from a mobile device",
+      "default": false
+    },
+    {
+      "name": "skip_tls_verification",
+      "display_name": "Skip TLS Verification",
+      "type": "boolean",
+      "description": "Skip TLS certificate verification when making requests",
+      "default": true
+    },
+    {
+      "name": "timeout",
+      "display_name": "Timeout (ms)",
+      "type": "number",
+      "description": "Timeout in milliseconds for the request"
+    },
+    {
+      "name": "remove_base64_images",
+      "display_name": "Remove Base64 Images",
+      "type": "boolean",
+      "description": "Remove base64 images from output (keeps alt text)",
+      "default": true
+    },
+    {
+      "name": "block_ads",
+      "display_name": "Block Ads",
+      "type": "boolean",
+      "description": "Enable ad-blocking and cookie popup blocking",
+      "default": true
+    },
+    {
+      "name": "proxy",
+      "display_name": "Proxy Type",
+      "type": "string",
+      "description": "Type of proxy to use",
+      "options": ["basic", "stealth", "auto"],
+      "default": "auto"
+    },
+    {
+      "name": "store_in_cache",
+      "display_name": "Store in Cache",
+      "type": "boolean",
+      "description": "Store the page in Firecrawl index and cache",
+      "default": true
+    },
+    {
+      "name": "zero_data_retention",
+      "display_name": "Zero Data Retention",
+      "type": "boolean",
+      "description": "Enable zero data retention for this scrape",
+      "default": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the scraping operation was successful"
+    },
+    {
+      "name": "markdown",
+      "display_name": "Markdown",
+      "type": "string",
+      "description": "Markdown version of the scraped content"
+    },
+    {
+      "name": "html",
+      "display_name": "HTML",
+      "type": "string",
+      "description": "HTML version of the content"
+    },
+    {
+      "name": "raw_html",
+      "display_name": "Raw HTML",
+      "type": "string",
+      "description": "Raw HTML content of the page"
+    },
+    {
+      "name": "links",
+      "display_name": "Links",
+      "type": "array of strings",
+      "description": "List of links found on the page"
+    },
+    {
+      "name": "screenshot",
+      "display_name": "Screenshot URL",
+      "type": "string",
+      "description": "URL of the page screenshot"
+    },
+    {
+      "name": "summary",
+      "display_name": "Summary",
+      "type": "string",
+      "description": "AI-generated summary of the page content"
+    },
+    {
+      "name": "metadata",
+      "display_name": "Metadata",
+      "type": "object",
+      "description": "Extracted metadata including title, description, keywords, etc."
+    },
+    {
+      "name": "warning",
+      "display_name": "Warning",
+      "type": "string",
+      "description": "Warning message if any issues occurred during scraping"
+    }
+  ],
+  "settings": []
+}

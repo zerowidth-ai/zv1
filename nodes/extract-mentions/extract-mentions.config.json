@@ -1,0 +1,84 @@
+{
+  "display_name": "Extract Mentions",
+  "description": "Extract all @mentions from text",
+  "category": "text",
+  "is_macro": true,
+  "is_plugin": true,
+  "macro_flow": {
+    "nodes": [
+      {
+        "id": "input_text",
+        "type": "input-data",
+        "settings": {
+          "key": "text"
+        }
+      },
+      {
+        "id": "match",
+        "type": "string-match",
+        "settings": {
+          "case_sensitive": false,
+          "global": true
+        }
+      },
+      {
+        "id": "mention_pattern",
+        "type": "string",
+        "settings": {
+          "value": "@[a-zA-Z0-9_]+"
+        }
+      },
+      {
+        "id": "filter_empty",
+        "type": "array-filter",
+        "settings": {
+          "condition": "not_equals",
+          "value": ""
+        }
+      },
+      {
+        "id": "output_mentions",
+        "type": "output-data",
+        "settings": {
+          "key": "mentions"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "input_text", "port_name": "value" },
+        "to": { "node_id": "match", "port_name": "text" }
+      },
+      {
+        "from": { "node_id": "mention_pattern", "port_name": "value" },
+        "to": { "node_id": "match", "port_name": "pattern" }
+      },
+      {
+        "from": { "node_id": "match", "port_name": "matches" },
+        "to": { "node_id": "filter_empty", "port_name": "array" }
+      },
+      {
+        "from": { "node_id": "filter_empty", "port_name": "array" },
+        "to": { "node_id": "output_mentions", "port_name": "value" }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "type": "string",
+      "description": "The text to extract mentions from",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "mentions",
+      "display_name": "Mentions",
+      "type": "array of strings",
+      "description": "Array of extracted mentions"
+    }
+  ],
+  "settings": []
+}

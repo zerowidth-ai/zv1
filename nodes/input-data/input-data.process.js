@@ -19,7 +19,7 @@ export default async ({inputs, settings, config}) => {
   return {
     value: value,
     data: {
-      [settings.key]: value
+      [settings.key || 'data']: value
     }
   };
 };

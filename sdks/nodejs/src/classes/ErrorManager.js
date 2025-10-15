@@ -48,6 +48,7 @@ export default class ErrorManager {
    */
   createErrorEvent(errorType, errorDetails, originalError) {
     const baseEvent = {
+      event: 'error',
       type: errorType,
       error: originalError || new Error(errorDetails.message || 'Unknown error'),
       errorDetails: {

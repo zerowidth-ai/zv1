@@ -1,0 +1,64 @@
+{
+  "display_name": "Simple Agent (beta)",
+  "description": "A simple AI agent that accepts tools and processes messages. Perfect template for creating starter agents.",
+  "category": "ai",
+  "is_macro": true,
+  "is_plugin": true,
+  "accepts_plugins": true,
+  "macro_flow": {
+    "nodes": [
+      {
+        "id": "input_messages",
+        "type": "input-data",
+        "settings": {
+          "key": "messages"
+        }
+      },
+      {
+        "id": "llm",
+        "type": "openai-gpt-4-1-nano"
+      },
+      {
+        "id": "output_message",
+        "type": "output-data",
+        "settings": {
+          "key": "message"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "input_messages", "port_name": "value" },
+        "to": { "node_id": "llm", "port_name": "messages" }
+      },
+      {
+        "from": { "node_id": "llm", "port_name": "message" },
+        "to": { "node_id": "output_message", "port_name": "value" }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "array of messages or message or string",
+      "description": "Chat messages to process",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "message",
+      "display_name": "Message",
+      "type": "message",
+      "description": "The agent's response message"
+    }
+  ],
+  "plugins": [
+    {
+      "connects_to": "llm"
+    }
+  ],
+  "settings": []
+}
+

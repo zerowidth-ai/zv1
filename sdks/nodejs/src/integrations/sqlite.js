@@ -375,7 +375,7 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
                 WHERE c.embedding IS NOT NULL
                     AND c.embedding_model = ?
                     AND c.embedding_dimensions = ?
-                    AND vec_distance_cosine(c.embedding, ?) <= ?
+                    AND vec_distance_cosine(c.embedding, ?) >= ?
             `;
 
             const params = [queryEmbeddingString, modelToUse, embeddingDimensions, queryEmbeddingString, similarity_threshold];

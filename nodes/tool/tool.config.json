@@ -2,7 +2,7 @@
   "display_name": "Tool",
   "description": "Define a tool / function call for a LLM to use.",
   "icon": "fa-comment",
-  "category": "prompting",
+  "category": "messages",
   "custom_render_height": 200,
   "is_constant": true,
   "is_resizable": true,

@@ -8,8 +8,7 @@
       "name": "object",
       "display_name": "Object",
       "type": "object",
-      "description": "The object to set the property on (can be null/empty to create a new object)",
-      "required": true
+      "description": "The object to set the property on (can be null/empty to create a new object)"
     },
     {
       "name": "key",

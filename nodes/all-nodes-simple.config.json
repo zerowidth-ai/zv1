@@ -174,8 +174,13 @@ delay,Delay,Waits for specified time before continuing
 delete-object-property,Delete Object Property,Remove a specific property from an object, returning a new object without that property.
 divide,Divide,Divides first number by second
 equals,Equals,Checks if two values are equal, with deep comparison for objects and arrays
+extract-emails,Extract Emails,Extract all email addresses from text using regex patterns
+extract-hashtags,Extract Hashtags,Extract all hashtags from text
+extract-mentions,Extract Mentions,Extract all @mentions from text
 extract-text-content,Extract Text Content,Extract text content from messages, supporting multi-modal content and optional role prefixes.
+extract-urls,Extract URLs,Extract all URLs from text using regex patterns
 filter-messages,Filter Messages,Filter messages by custom criteria (length, content, role, etc.).
+firecrawl-scrape,Firecrawl: Scrape URL,Scrape content from any URL with advanced options including format selection, content filtering, mobile emulation, and more
 floor,Floor,Rounds down to nearest integer
 get-chunk-by-index,Get Chunk by Index,Retrieve a specific chunk from a knowledge base by document ID and chunk index
 get-first-n-messages,Get First N Messages,Extract the first N messages from an array of messages.
@@ -389,6 +394,9 @@ mode,Mode,Finds most frequent value(s) in array of numbers
 modulo,Modulo,Returns remainder of division
 multiply,Multiply,Multiplies two numbers together
 nand-gate,NAND Gate,A logic gate that outputs false only if both inputs are true
+newsdata-io-archive,NewsData.io: Archive News,Fetch historical news from the archive (7+ years) with date range filtering and rich search options
+newsdata-io-latest,NewsData.io: Latest News,Fetch latest headlines from the last 48 hours with rich filtering options including keywords, countries, regions, categories, and more
+newsdata-io-sources,NewsData.io: Sources,Get list of source domains filtered by country, category, language, and priority
 nor-gate,NOR Gate,A logic gate that outputs true only if both inputs are false
 not-equals,Not Equals,Checks if two values are not equal, with deep comparison for objects and arrays
 null-bomb,Null Bomb,Randomly returns null/undefined based on probability, useful for testing null handling in flows.
@@ -655,6 +663,7 @@ qwen-qwq-32b-preview,Qwen: QwQ 32B Preview,QwQ-32B-Preview is an experimental re
 random-error,Random Error,Randomly throws an error based on probability, useful for testing error handling and flow robustness.
 random-number,Random Number,Generates random numbers with configurable range and distribution
 range,Range,Calculates range statistics of numbers
+read-website,Read Website,Simple website reader - scrapes content and extracts main text
 response-format,Response Format,Define a JSON Schema response format for structured outputs from LLMs.
 round,Round,Rounds a number to nearest integer
 self-healing-error,Self Healing Error,Throws an error initially but succeeds on retry, useful for testing retry logic and error recovery.

@@ -1,0 +1,143 @@
+{
+  "display_name": "NewsData.io: Archive News",
+  "description": "Fetch historical news from the archive (7+ years) with date range filtering and rich search options",
+  "category": "third-party",
+  "provider": "newsdata_io",
+  "needs_key_from": ["newsdata_io"],
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "q",
+      "display_name": "Search Query",
+      "type": "string",
+      "description": "Keyword or phrase to search for in articles"
+    },
+    {
+      "name": "from_date",
+      "display_name": "From Date",
+      "type": "string",
+      "description": "Start date in YYYY-MM-DD format",
+      "required": true
+    },
+    {
+      "name": "to_date",
+      "display_name": "To Date",
+      "type": "string",
+      "description": "End date in YYYY-MM-DD format",
+      "required": true
+    },
+    {
+      "name": "timezone",
+      "display_name": "Timezone",
+      "type": "string",
+      "description": "Timezone for date interpretation (e.g., 'Asia/Dubai', 'America/New_York')"
+    },
+    {
+      "name": "countries",
+      "display_name": "Countries",
+      "type": "string or array of strings",
+      "description": "ISO 2-letter country codes (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "regions",
+      "display_name": "Regions",
+      "type": "string or array of strings",
+      "description": "AI-classified regions (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "categories",
+      "display_name": "Categories",
+      "type": "string or array of strings",
+      "description": "News categories to include (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "exclude_categories",
+      "display_name": "Exclude Categories",
+      "type": "string or array of strings",
+      "description": "News categories to exclude (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "languages",
+      "display_name": "Languages",
+      "type": "string or array of strings",
+      "description": "Language codes (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "domains",
+      "display_name": "Domains",
+      "type": "string or array of strings",
+      "description": "Source domains to include (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "exclude_domains",
+      "display_name": "Exclude Domains",
+      "type": "string or array of strings",
+      "description": "Domains to exclude. Can be comma-separated string or array"
+    },
+    {
+      "name": "priority_domain",
+      "display_name": "Priority Domain",
+      "type": "string",
+      "description": "Source quality filter",
+      "options": ["top", "medium", "low"]
+    },
+    {
+      "name": "full_content",
+      "display_name": "Full Content",
+      "type": "boolean",
+      "description": "Include full article text"
+    },
+    {
+      "name": "image",
+      "display_name": "Has Image",
+      "type": "boolean",
+      "description": "Filter for articles with images"
+    },
+    {
+      "name": "video",
+      "display_name": "Has Video",
+      "type": "boolean",
+      "description": "Filter for articles with videos"
+    },
+    {
+      "name": "remove_duplicate",
+      "display_name": "Remove Duplicates",
+      "type": "boolean",
+      "description": "Remove duplicate articles"
+    },
+    {
+      "name": "exclude_fields",
+      "display_name": "Exclude Fields",
+      "type": "string or array of strings",
+      "description": "Fields to exclude from response. Can be comma-separated string or array"
+    },
+    {
+      "name": "size",
+      "display_name": "Page Size",
+      "type": "number",
+      "description": "Number of articles per request (10 for free, 50 for paid plans)",
+      "default": 10
+    }
+  ],
+  "outputs": [
+    {
+      "name": "articles",
+      "display_name": "Articles",
+      "type": "array of objects",
+      "description": "Array of article objects with metadata"
+    },
+    {
+      "name": "total_results",
+      "display_name": "Total Results",
+      "type": "number",
+      "description": "Total number of available results"
+    },
+    {
+      "name": "next_page",
+      "display_name": "Next Page Token",
+      "type": "string",
+      "description": "Token for pagination to get next page of results"
+    }
+  ],
+  "settings": []
+}

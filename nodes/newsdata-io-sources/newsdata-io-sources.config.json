@@ -1,0 +1,50 @@
+{
+  "display_name": "NewsData.io: Sources",
+  "description": "Get list of source domains filtered by country, category, language, and priority",
+  "category": "third-party",
+  "provider": "newsdata_io",
+  "needs_key_from": ["newsdata_io"],
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "countries",
+      "display_name": "Countries",
+      "type": "string or array of strings",
+      "description": "ISO 2-letter country codes (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "categories",
+      "display_name": "Categories",
+      "type": "string or array of strings",
+      "description": "News categories (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "languages",
+      "display_name": "Languages",
+      "type": "string or array of strings",
+      "description": "Language codes (up to 5). Can be comma-separated string or array"
+    },
+    {
+      "name": "priority_domain",
+      "display_name": "Priority Domain",
+      "type": "string",
+      "description": "Source quality filter",
+      "options": ["top", "medium", "low"]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "sources",
+      "display_name": "Sources",
+      "type": "array of objects",
+      "description": "Array of source domain objects"
+    },
+    {
+      "name": "total_sources",
+      "display_name": "Total Sources",
+      "type": "number",
+      "description": "Total number of available sources"
+    }
+  ],
+  "settings": []
+}

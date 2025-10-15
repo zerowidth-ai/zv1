@@ -2,7 +2,7 @@
   "display_name": "System Prompt",
   "description": "Draft a text-based system prompt for an LLM, with configurable variables.",
   "icon": "fa-comment",
-  "category": "prompting",
+  "category": "messages",
   "custom_render_height": 450,
   "width": 450,
   "is_constant": true,
@@ -15,6 +15,13 @@
       "type": "object",
       "allow_multiple": true,
       "description": "Connect key-value pairs to inject into any matched {{key}} in the text content."
+    },
+    {
+      "name": "chain",
+      "display_name": "Chain",
+      "type": "string or message",
+      "description": "Connect another system prompt to chain them together. The content from this input will be prepended to the current prompt.",
+      "required": false
     }
   ],
   "outputs": [

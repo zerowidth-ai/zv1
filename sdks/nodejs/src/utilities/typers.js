@@ -251,6 +251,52 @@ export function convertImportToNodeType(importDef) {
         this.logDebug(`[INFO] Created SQLite integration for import ${processedImportDef.id} with knowledge database:`, processedImportDef.knowledgeDbPath);
       }
       
+      // If this import accepts plugins, create tool runners for parent context execution
+      // Note: We need to access the parent engine (this) to find connected plugins
+      let tools = {};
+      if (nodeConfig.accepts_plugins && this.flow && this.flow.links) {
+        this.logDebug(`Import [${nodeConfig.id}] accepts plugins, creating tool runners for parent context execution`);
+        
+        // Find the current node in the parent flow to get its plugin connections
+        const currentNode = this.flow.nodes.find(n => n.type === nodeConfig.id || n.type === `imported-${nodeConfig.id}`);
+        
+        if (currentNode) {
+          // Find all plugin nodes connected to this import in the parent flow
+          const externalPluginNodeIds = this.flow.links
+            .filter(link => link.type === "plugin" && link.to.node_id === currentNode.id)
+            .map(link => link.from.node_id);
+          
+          this.logDebug(`Found ${externalPluginNodeIds.length} external plugins connected to import [${currentNode.id}]`);
+          
+          // Create tool definitions for each external plugin
+          for (const externalPluginNodeId of externalPluginNodeIds) {
+            const externalPluginNode = this.flow.nodes.find(n => n.id === externalPluginNodeId);
+            if (externalPluginNode) {
+              // Generate the tool schema from the parent context
+              const schema = this.generateToolSchema(externalPluginNode);
+              
+              // Create a tool runner that executes in PARENT context
+              const toolRunner = async (args) => {
+                this.logDebug(`Tool runner called for [${schema.name}] from internal import engine`);
+                return await this.executePluginInParentContext(externalPluginNode, args);
+              };
+              
+              tools[schema.name] = {
+                schema: schema,
+                process: toolRunner
+              };
+              
+              this.logDebug(`Created tool runner for plugin [${externalPluginNode.id}] -> [${schema.name}]`);
+            }
+          }
+        }
+      }
+      
+      // Add tools to import config if any were created
+      if (Object.keys(tools).length > 0) {
+        importConfig.tools = tools;
+      }
+      
       const importEngine = await zv1.create(processedImportDef, importConfig);
 
       // Map input port names to the data keys that the imported flow expects

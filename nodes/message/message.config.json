@@ -2,7 +2,7 @@
   "display_name": "Message",
   "description": "Manually create a single message.",
   "icon": "fa-comment",
-  "category": "prompting",
+  "category": "messages",
   "custom_render_height": 200,
   "is_constant": true,
   "is_resizable": true,

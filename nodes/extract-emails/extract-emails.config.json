@@ -1,0 +1,84 @@
+{
+  "display_name": "Extract Emails",
+  "description": "Extract all email addresses from text using regex patterns",
+  "category": "text",
+  "is_macro": true,
+  "is_plugin": true,
+  "macro_flow": {
+    "nodes": [
+      {
+        "id": "input_text",
+        "type": "input-data",
+        "settings": {
+          "key": "text"
+        }
+      },
+      {
+        "id": "match",
+        "type": "string-match",
+        "settings": {
+          "case_sensitive": false,
+          "global": true
+        }
+      },
+      {
+        "id": "email_pattern",
+        "type": "string",
+        "settings": {
+          "value": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b"
+        }
+      },
+      {
+        "id": "filter_empty",
+        "type": "array-filter",
+        "settings": {
+          "condition": "not_equals",
+          "value": ""
+        }
+      },
+      {
+        "id": "output_emails",
+        "type": "output-data",
+        "settings": {
+          "key": "emails"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "input_text", "port_name": "value" },
+        "to": { "node_id": "match", "port_name": "text" }
+      },
+      {
+        "from": { "node_id": "email_pattern", "port_name": "value" },
+        "to": { "node_id": "match", "port_name": "pattern" }
+      },
+      {
+        "from": { "node_id": "match", "port_name": "matches" },
+        "to": { "node_id": "filter_empty", "port_name": "array" }
+      },
+      {
+        "from": { "node_id": "filter_empty", "port_name": "array" },
+        "to": { "node_id": "output_emails", "port_name": "value" }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "type": "string",
+      "description": "The text to extract emails from",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "emails",
+      "display_name": "Emails",
+      "type": "array of strings",
+      "description": "Array of extracted email addresses"
+    }
+  ],
+  "settings": []
+}

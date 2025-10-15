@@ -1,0 +1,68 @@
+[
+  {
+    "description": "Basic archive news request with date range",
+    "inputs": {
+      "q": "election results",
+      "from_date": "2024-11-01",
+      "to_date": "2024-11-15"
+    },
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Archive news with country filter (string input)",
+    "inputs": {
+      "q": "technology",
+      "from_date": "2024-01-01",
+      "to_date": "2024-01-31",
+      "countries": "us,ca"
+    },
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Archive news with country filter (array input)",
+    "inputs": {
+      "q": "technology",
+      "from_date": "2024-01-01",
+      "to_date": "2024-01-31",
+      "countries": ["us", "ca", "gb"]
+    },
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Archive news with no query (date range only)",
+    "inputs": {
+      "from_date": "2024-10-01",
+      "to_date": "2024-10-31",
+      "countries": "us"
+    },
+    "expectedSchema": {
+      "articles": "array",
+      "total_results": "number",
+      "next_page": "string or null",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  }
+]

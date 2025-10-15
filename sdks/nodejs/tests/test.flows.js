@@ -72,7 +72,7 @@ async function runFlowTest(testFile) {
   const engine = await zv1.create(flow, { 
     debug: false,
     keys: {
-      openrouter: process.env.OPENROUTER_KEY
+      openrouter: process.env.OPENROUTER_API_KEY
     }
   }); // Enable debug mode
   

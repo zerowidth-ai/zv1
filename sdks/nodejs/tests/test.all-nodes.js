@@ -313,7 +313,8 @@ async function runTests() {
 
   const integrations = await loadIntegrations({
     keys: {
-      openrouter: process.env.OPENROUTER_API_KEY
+      openrouter: process.env.OPENROUTER_API_KEY,
+      newsdata_io: process.env.NEWSDATA_IO_API_KEY
     }
   });
 

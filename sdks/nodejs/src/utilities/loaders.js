@@ -14,14 +14,14 @@ export async function loadNodes(flow) {
 
   this.convertImportToNodeType = convertImportToNodeType.bind(this);
 
-  // create a new flattened array of node types used in this flow and in any imports
+  // First, create a flattened array of node types used in this flow and in any imports
   const nodeTypes = new Set();
 
   const findNodeTypes = (flow) => {
     flow.nodes.forEach(node => {
       nodeTypes.add(node.type);
     });
-    if (flow.imports) {
+    if (flow.imports && Array.isArray(flow.imports)) {
       flow.imports.forEach(findNodeTypes);
     }
   }
@@ -41,34 +41,46 @@ export async function loadNodes(flow) {
     const configPath = path.join(nodePath, `${type}.config.json`);
     const processPath = path.join(nodePath, `${type}.process.js`);
 
-    if (fs.existsSync(configPath) && fs.existsSync(processPath)) {
+    // Check if config file exists
+    if (fs.existsSync(configPath)) {
       try {
-        // Convert paths to file:// URLs for dynamic imports
+        // Convert path to file:// URL for dynamic import
         const configFileUrl = `file://${path.resolve(configPath)}`;
-        const processFileUrl = `file://${path.resolve(processPath)}`;
+        const configModule = await import(configFileUrl, { with: { type: "json" } });
         
-        const [configModule, processModule] = await Promise.all([
-          import(configFileUrl, { with: { type: "json" } }),
-          import(processFileUrl)
-        ]);
-        
-        nodes[type] = {
-          config: configModule.default,
-          process: processModule.default || processModule,
-        };
+        // Check if this is a macro node (no process file needed)
+        if (configModule.default.is_macro) {
+          nodes[type] = {
+            config: configModule.default,
+            process: null, // Macro nodes don't have process functions
+          };
+        } else if (fs.existsSync(processPath)) {
+          // Regular node - needs both config and process
+          const processFileUrl = `file://${path.resolve(processPath)}`;
+          const processModule = await import(processFileUrl);
+          
+          nodes[type] = {
+            config: configModule.default,
+            process: processModule.default || processModule,
+          };
+        } else {
+          console.warn(`Missing process file for regular node ${type}:`, { processPath });
+        }
       } catch (error) {
         console.error(`Failed to load node ${type}:`, error);
       }
     } else {
-      console.warn(`Missing files for node ${type}:`, { configPath, processPath });
+      console.warn(`Missing config file for node ${type}:`, { configPath });
     }
   });
 
   // Wait for all nodes to load
   await Promise.all(nodeLoadPromises);
 
+  console.log('Loaded node types:', Object.keys(nodes));
+
   // Load imports as node types
-  if (flow.imports) {
+  if (flow.imports && Array.isArray(flow.imports)) {
     flow.imports.forEach(importDef => { 
       const nodeType = this.convertImportToNodeType(importDef);
       // Store with both the import ID and the prefixed name for backward compatibility
@@ -109,8 +121,7 @@ export async function loadIntegrations(config, flow = null) {
   const knowledgeBaseConfig = config.knowledgeBase || {};
   
   if (flow?.knowledgeDbPath || knowledgeBaseConfig.enabled !== false) {
-      
-      
+    
       try {
           // Load the appropriate knowledge base integration
           const knowledgeBasePath = path.join(getDirname(import.meta.url), '../integrations', `${knowledgeBaseType}.js`);
@@ -142,21 +153,53 @@ export async function loadIntegrations(config, flow = null) {
           // Don't throw error - knowledge base is optional
       }
   }
-  
-  // Load OpenAI integration if API key is provided
-  if (config.keys?.openai) {
-      const openaiPath = path.join(getDirname(import.meta.url), '../integrations', 'openai.js');
+
+  // map of basic keys that share a integrationformat and implementation
+  const basicKeyIntegrations = ['firecrawl', 'newsdata_io', 'openai'];
+
+  // Load basic integrations in parallel
+  await Promise.all(basicKeyIntegrations.map(async integration => {
+    if (config.keys?.[integration]) {
+      const integrationPath = path.join(getDirname(import.meta.url), '../integrations', `${integration}.js`);
       try {
-          const OpenAIIntegration = await import(openaiPath).then(module => module.default);
-          integrations.openai = new OpenAIIntegration(config.keys.openai, {
-              timeout: config.openaiTimeout || 30000
-          });
-          
+        const Integration = await import(integrationPath).then(module => module.default);
+        integrations[integration] = new Integration(config.keys[integration]);
       } catch (error) {
-          console.warn('[WARN] Failed to load OpenAI integration:', error.message);
-          // Don't throw error - OpenAI is optional
+        console.warn(`[WARN] Failed to load ${integration} integration:`, error.message);
+        // Don't throw error - integration is optional
       }
-  }
+    }
+  }));
+  
+  // // Load OpenAI integration if API key is provided
+  // if (config.keys?.openai) {
+  //     const openaiPath = path.join(getDirname(import.meta.url), '../integrations', 'openai.js');
+  //     try {
+  //         const OpenAIIntegration = await import(openaiPath).then(module => module.default);
+  //         integrations.openai = new OpenAIIntegration(config.keys.openai, {
+  //             timeout: config.openaiTimeout || 30000
+  //         });
+          
+  //     } catch (error) {
+  //         console.warn('[WARN] Failed to load OpenAI integration:', error.message);
+  //         // Don't throw error - OpenAI is optional
+  //     }
+  // }
+  
+  // // Load NewsData.io integration if API key is provided
+  // if (config.keys?.newsdata) {
+  //     const newsdataPath = path.join(getDirname(import.meta.url), '../integrations', 'newsdata.js');
+  //     try {
+  //         const NewsDataIntegration = await import(newsdataPath).then(module => module.default);
+  //         integrations.newsdata = new NewsDataIntegration(config.keys.newsdata, {
+  //             timeout: config.newsdataTimeout || 30000
+  //         });
+          
+  //     } catch (error) {
+  //         console.warn('[WARN] Failed to load NewsData.io integration:', error.message);
+  //         // Don't throw error - NewsData.io is optional
+  //     }
+  // }
   
   return integrations;
 }
@@ -691,4 +734,149 @@ export async function loadZv1FromBuffer(zipBuffer) {
     }
     throw new Error(`Failed to load .zv1 from buffer: ${error.message}`);
   }
+}
+
+/**
+ * Expand macros in a flow by replacing macro nodes with their internal flows
+ * @param {Object} flow - The flow containing nodes and links
+ * @param {Object} nodeConfigs - Map of node types to their configurations
+ * @returns {Object} Flow with macros expanded into regular nodes
+ */
+export function expandMacrosInFlow(flow, nodeConfigs = {}) {
+  const expandedNodes = [];
+  const expandedLinks = [];
+  
+  // First, collect all macro node IDs that will be expanded
+  const macroNodeIds = new Set();
+  for (const node of flow.nodes) {
+    // Check if this node type is a macro by looking at its config
+    const nodeConfig = nodeConfigs[node.type];
+    if (nodeConfig && nodeConfig.is_macro) {
+      macroNodeIds.add(node.id);
+    }
+  }
+  
+  // Filter out links that connect to/from macro nodes (they'll be replaced)
+  const nonMacroLinks = flow.links.filter(link => 
+    !macroNodeIds.has(link.from.node_id) && !macroNodeIds.has(link.to.node_id)
+  );
+  
+  // Process each node
+  for (const node of flow.nodes) {
+    const nodeConfig = nodeConfigs[node.type];
+    if (nodeConfig && nodeConfig.is_macro) {
+      // Expand the macro
+      const expanded = expandMacro(node, flow, nodeConfig);
+      expandedNodes.push(...expanded.nodes);
+      expandedLinks.push(...expanded.links);
+    } else {
+      expandedNodes.push(node);
+    }
+  }
+  
+  return {
+    ...flow,
+    nodes: expandedNodes,
+    links: [...nonMacroLinks, ...expandedLinks]
+  };
+}
+
+/**
+ * Expand a macro node into its internal flow
+ * @param {Object} macroNode - The macro node from the flow
+ * @param {Object} flow - The parent flow containing the macro
+ * @param {Object} nodeConfig - The macro node's configuration
+ * @returns {Object} Expanded flow with nodes and links
+ */
+function expandMacro(macroNode, flow, nodeConfig) {
+  const { macro_flow, inputs, outputs } = nodeConfig;
+  
+  // Create internal nodes with unique IDs and macro metadata
+  const internalNodes = macro_flow.nodes.map(node => ({
+    ...node,
+    id: `${macroNode.id}_${node.id}`, // e.g., "read-website_scrape"
+    // Add macro metadata
+    macroMetadata: {
+      originalMacroId: macroNode.id,        // "read-website"
+      originalMacroType: macroNode.type,    // "read-website"
+      originalNodeId: node.id,              // "scrape"
+      isMacroInternal: true
+    }
+  }));
+  
+  // Process internal links to use new node IDs
+  const internalLinks = macro_flow.links.map(link => ({
+    ...link,
+    from: {
+      ...link.from,
+      node_id: `${macroNode.id}_${link.from.node_id}`
+    },
+    to: {
+      ...link.to,
+      node_id: `${macroNode.id}_${link.to.node_id}`
+    }
+  }));
+  
+  // Create input links: connect external nodes to internal nodes
+  const inputLinks = [];
+  for (const input of inputs) {
+    const connectsTo = input.connects_to; // e.g., "scrape.url"
+    if (!connectsTo) continue;
+    
+    const [targetNodeId, targetPort] = connectsTo.split('.');
+    if (!targetNodeId || !targetPort) continue;
+
+    // Find links in the parent flow that connect TO this macro node's input port
+    const incomingLinks = flow.links.filter(link => 
+      link.to.node_id === macroNode.id && link.to.port_name === input.name
+    );
+    
+    // Create new links from external nodes to internal nodes
+    for (const incomingLink of incomingLinks) {
+      inputLinks.push({
+        from: { 
+          node_id: incomingLink.from.node_id, 
+          port_name: incomingLink.from.port_name 
+        },
+        to: { 
+          node_id: `${macroNode.id}_${targetNodeId}`, 
+          port_name: targetPort 
+        }
+      });
+    }
+  }
+  
+  // Create output links: connect internal nodes to external nodes
+  const outputLinks = [];
+  for (const output of outputs) {
+    const connectsTo = output.connects_to; // e.g., "scrape.markdown"
+    if (!connectsTo) continue;
+    
+    const [sourceNodeId, sourcePort] = connectsTo.split('.');
+    if (!sourceNodeId || !sourcePort) continue;
+
+    // Find links in the parent flow that connect FROM this macro node's output port
+    const outgoingLinks = flow.links.filter(link => 
+      link.from.node_id === macroNode.id && link.from.port_name === output.name
+    );
+    
+    // Create new links from internal nodes to external nodes
+    for (const outgoingLink of outgoingLinks) {
+      outputLinks.push({
+        from: { 
+          node_id: `${macroNode.id}_${sourceNodeId}`, 
+          port_name: sourcePort 
+        },
+        to: { 
+          node_id: outgoingLink.to.node_id, 
+          port_name: outgoingLink.to.port_name 
+        }
+      });
+    }
+  }
+  
+  return {
+    nodes: internalNodes,
+    links: [...inputLinks, ...internalLinks, ...outputLinks]
+  };
 }
