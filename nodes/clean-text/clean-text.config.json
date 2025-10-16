@@ -17,26 +17,50 @@
         "id": "trim",
         "type": "string-trim"
       },
-      {
-        "id": "normalize_whitespace",
-        "type": "string-replace",
-        "settings": {
-          "search": "\\s+",
-          "replacement": " ",
-          "regex": true,
-          "case_sensitive": false
-        }
-      },
-      {
-        "id": "normalize_newlines",
-        "type": "string-replace",
-        "settings": {
-          "search": "\\r\\n|\\r|\\n",
-          "replacement": "\\n",
-          "regex": true,
-          "case_sensitive": false
-        }
-      },
+{
+      "id": "whitespace_search",
+      "type": "string",
+      "settings": {
+        "value": "\\s+"
+      }
+    },
+    {
+      "id": "whitespace_replacement",
+      "type": "string",
+      "settings": {
+        "value": " "
+      }
+    },
+    {
+      "id": "normalize_whitespace",
+      "type": "string-replace",
+      "settings": {
+        "regex": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": "newline_search",
+      "type": "string",
+      "settings": {
+        "value": "\\r\\n|\\r|\\n"
+      }
+    },
+    {
+      "id": "newline_replacement",
+      "type": "string",
+      "settings": {
+        "value": "\\n"
+      }
+    },
+    {
+      "id": "normalize_newlines",
+      "type": "string-replace",
+      "settings": {
+        "regex": true,
+        "case_sensitive": false
+      }
+    },
       {
         "id": "output_cleaned_text",
         "type": "output-data",
@@ -55,8 +79,24 @@
         "to": { "node_id": "normalize_whitespace", "port_name": "text" }
       },
       {
+        "from": { "node_id": "whitespace_search", "port_name": "value" },
+        "to": { "node_id": "normalize_whitespace", "port_name": "search" }
+      },
+      {
+        "from": { "node_id": "whitespace_replacement", "port_name": "value" },
+        "to": { "node_id": "normalize_whitespace", "port_name": "replacement" }
+      },
+      {
         "from": { "node_id": "normalize_whitespace", "port_name": "text" },
         "to": { "node_id": "normalize_newlines", "port_name": "text" }
+      },
+      {
+        "from": { "node_id": "newline_search", "port_name": "value" },
+        "to": { "node_id": "normalize_newlines", "port_name": "search" }
+      },
+      {
+        "from": { "node_id": "newline_replacement", "port_name": "value" },
+        "to": { "node_id": "normalize_newlines", "port_name": "replacement" }
       },
       {
         "from": { "node_id": "normalize_newlines", "port_name": "text" },
