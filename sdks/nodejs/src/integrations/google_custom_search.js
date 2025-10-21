@@ -2,7 +2,6 @@ import axios from 'axios';
 
 export default class GoogleCustomSearchIntegration {
     constructor(apiKey, options = {}) {
-      console.log('Google Custom Search API Key:', apiKey);
         this.apiKey = apiKey?.key;
         this.cx = apiKey?.cx;
 
@@ -41,11 +40,6 @@ export default class GoogleCustomSearchIntegration {
                     delete params[key];
                 }
             });
-
-            console.log('Google Custom Search API URL:', url);
-            console.log('Google Custom Search API Params:', params);
-            console.log('Google Custom Search API Key:', this.apiKey);
-            console.log('Google Custom Search CX:', this.cx);
 
             const response = await axios({
                 url: url,

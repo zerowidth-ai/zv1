@@ -207,7 +207,6 @@ export default class OpenRouterIntegration {
 
                   break;
                 default:
-                  // console.log('unknown chunk', chunk);
               }
             }
 

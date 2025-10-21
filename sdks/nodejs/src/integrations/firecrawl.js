@@ -35,9 +35,6 @@ export default class FirecrawlIntegration {
                 }
             });
 
-            console.log('Firecrawl API URL:', url);
-            console.log('Firecrawl API Params:', params);
-
             const response = await axios({
                 url: url,
                 method: 'POST',

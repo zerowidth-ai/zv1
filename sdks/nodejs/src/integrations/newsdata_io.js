@@ -46,10 +46,6 @@ export default class NewsDataIntegration {
             });
 
 
-            console.log('NewsData API URL:', url);
-            console.log('NewsData API Params:', params);
-            console.log('NewsData API Key:', this.apiKey);
-
             const response = await axios({
                 url: url,
                 method: 'GET',

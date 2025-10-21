@@ -77,8 +77,6 @@ export async function loadNodes(flow) {
   // Wait for all nodes to load
   await Promise.all(nodeLoadPromises);
 
-  console.log('Loaded node types:', Object.keys(nodes));
-
   // Load imports as node types
   if (flow.imports && Array.isArray(flow.imports)) {
     flow.imports.forEach(importDef => { 
