@@ -10,8 +10,8 @@
     {
       "name": "message",
       "display_name": "Message",
-      "type": "message",
-      "description": "The full generated response message."
+      "type": "message or array of messages",
+      "description": "The full generated response message or a full update to the conversation state."
     },
     {
       "name": "content",

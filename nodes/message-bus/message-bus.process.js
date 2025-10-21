@@ -11,6 +11,12 @@ export default async ({inputs, settings, config}) => {
                 return input;
             } else if (typeof input === 'object' && input.role) {
                 return [input];
+            } else if (typeof input === 'string') {
+                // Convert string to user message
+                return [{
+                    role: 'user',
+                    content: input
+                }];
             } else {
                 return [];
             }

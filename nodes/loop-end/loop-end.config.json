@@ -1,0 +1,73 @@
+{
+  "display_name": "Loop End",
+  "description": "Loop exit point that decides whether to continue looping or exit. Tracks loop count and evaluates conditions to send value to loop_back or loop_end output.",
+  "category": "logic",
+  "is_plugin": false,
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The current value being processed from the loop",
+      "required": true
+    },
+    {
+      "name": "loop_value",
+      "display_name": "Loop Value",
+      "type": "any",
+      "description": "Value to send back to loop-start for next iteration. If not provided, uses 'value'",
+      "required": false
+    },
+    {
+      "name": "final_value",
+      "display_name": "Final Value",
+      "type": "any",
+      "description": "Value to save as final result when loop exits. If not provided, uses 'value'",
+      "required": false
+    },
+    {
+      "name": "loop_limit",
+      "display_name": "Loop Limit",
+      "type": "number",
+      "description": "Maximum number of times to loop before exiting (default: 10)",
+      "required": false,
+      "default": 10
+    },
+    {
+      "name": "while_condition",
+      "display_name": "While Condition",
+      "type": "boolean",
+      "description": "Boolean condition to continue looping. Loop continues while true (default: true)",
+      "required": false,
+      "default": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "loop_back",
+      "display_name": "Loop Back",
+      "type": "any",
+      "description": "Value sent back to loop start to continue iteration. Only outputs when loop should continue."
+    },
+    {
+      "name": "final_value",
+      "display_name": "Final Value",
+      "type": "any",
+      "description": "Final value when loop exits. Only outputs when loop is complete."
+    },
+    {
+      "name": "total_iterations",
+      "display_name": "Total Iterations",
+      "type": "number",
+      "description": "Total number of iterations that ran. Only outputs when loop is complete."
+    },
+    {
+      "name": "all_values",
+      "display_name": "All Values",
+      "type": "array of any",
+      "description": "Array of all values that were processed through the loop. Only outputs when loop is complete."
+    }
+  ],
+  "settings": []
+}
+

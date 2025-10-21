@@ -20,7 +20,8 @@
   },
   "scripts": {
     "test-nodes": "node tests/test.all-nodes.js",
-    "test-flows": "node tests/test.flows.js"
+    "test-flows": "node tests/test.flows.js",
+    "test-flow": "node tests/test.flows.js"
   },
   "author": "Peter Binggeser @ ZeroWidth, LLC",
   "license": "Apache-2.0",

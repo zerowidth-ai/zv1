@@ -72,7 +72,11 @@ async function runFlowTest(testFile) {
   const engine = await zv1.create(flow, { 
     debug: false,
     keys: {
-      openrouter: process.env.OPENROUTER_API_KEY
+      openrouter: process.env.OPENROUTER_API_KEY,
+      google_custom_search: {
+        key: process.env.GOOGLE_CUSTOM_SEARCH_KEY,
+        cx: process.env.GOOGLE_CUSTOM_SEARCH_CX
+      }
     }
   }); // Enable debug mode
   
@@ -174,8 +178,58 @@ async function runAllTests() {
   }
 }
 
-runAllTests().catch((err) => {
-  console.error("[ERROR] Flow test suite encountered an unexpected error.");
-  console.error(err.stack);
-  process.exit(1);
-});
+async function runSingleTest(filename) {
+  const testDir = path.join(getDirname(import.meta.url), "./flows");
+  const testPath = path.join(testDir, filename);
+  
+  // Check if the file exists
+  if (!fs.existsSync(testPath)) {
+    console.error(`[ERROR] Test file not found: ${filename}`);
+    console.error(`Available test files:`);
+    const allFiles = fs.readdirSync(testDir);
+    const testFiles = allFiles.filter((file) => 
+      (file.endsWith(".json") && !file.endsWith(".test.json")) || file.endsWith(".zv1")
+    );
+    testFiles.forEach(file => console.error(`  - ${file}`));
+    process.exit(1);
+  }
+
+  let passed = 0;
+  let failed = 0;
+
+  try {
+    await runFlowTest(filename);
+    passed++;
+    console.log(`\n[INFO] Single Flow Test Completed: ${passed} Passed, ${failed} Failed.`);
+  } catch (error) {
+    console.error(`  [FAIL] ${error}`);
+    failed++;
+    console.log(`\n[INFO] Single Flow Test Completed: ${passed} Passed, ${failed} Failed.`);
+    if (failed > 0) {
+      process.exit(1);
+    }
+  }
+}
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const filename = args[0];
+
+// Main execution logic
+if (filename) {
+  // Test a single flow file
+  console.log(`[INFO] Running single flow test: ${filename}`);
+  runSingleTest(filename).catch((err) => {
+    console.error("[ERROR] Single flow test encountered an unexpected error.");
+    console.error(err.stack);
+    process.exit(1);
+  });
+} else {
+  // Test all flows
+  console.log(`[INFO] Running all flow tests`);
+  runAllTests().catch((err) => {
+    console.error("[ERROR] Flow test suite encountered an unexpected error.");
+    console.error(err.stack);
+    process.exit(1);
+  });
+}

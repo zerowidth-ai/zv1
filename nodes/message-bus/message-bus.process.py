@@ -14,6 +14,12 @@ async def process(inputs: Dict[str, Any], settings: Dict[str, Any], config: Dict
                 return input_data
             elif isinstance(input_data, dict) and 'role' in input_data:
                 return [input_data]
+            elif isinstance(input_data, str):
+                # Convert string to user message
+                return [{
+                    'role': 'user',
+                    'content': input_data
+                }]
             else:
                 return []
 

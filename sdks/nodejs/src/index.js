@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import crypto from "crypto";
 
 import ErrorManager from "./classes/ErrorManager.js";
+import CacheManager from "./utilities/cache.js";
 
 import { callMCPTool, fetchMCPToolSchema } from "./utilities/mcp.js";
 import { loadNodes, loadIntegrations, detectAndLoadFlow } from "./utilities/loaders.js";
@@ -75,7 +76,7 @@ export default class zv1 {
     this.nodesDir = path.join(getDirname(import.meta.url), "../nodes");
     
 
-    this.cache = {};
+    this.cache = new CacheManager();
     this.flowTimeout = null;
     this.timeline = [];
 
@@ -193,10 +194,43 @@ export default class zv1 {
     const state = {
       id: nodeId,
       inputs: inputs || {},
-      settings: settings || {},
-      // Add timestamp for refiring inputs to ensure unique hash
-      timestamp: this._hasRefiringInput(nodeId) ? Date.now() : undefined
+      settings: settings || {}
     };
+    
+    // For refiring nodes, add a timestamp based on the input values
+    if (this._hasRefiringInput(nodeId)) {
+      // Find the latest timestamp from any refiring input
+      let latestInputTimestamp = 0;
+      const node = this.flow.nodes.find(n => n.id === nodeId);
+      const nodeDefinition = this.nodes[node.type];
+      
+      if (nodeDefinition?.config?.inputs) {
+        nodeDefinition.config.inputs.forEach(inputDef => {
+          if (inputDef.allow_multiple && inputDef.refires) {
+            const inputLinks = this.flow.links.filter(
+              link => link.to.node_id === nodeId && link.to.port_name === inputDef.name
+            );
+            
+            inputLinks.forEach(link => {
+              const timestamp = this.cache.getLatestTimestamp({
+                node_id: link.from.node_id,
+                port_name: link.from.port_name
+              });
+              if (timestamp && timestamp > latestInputTimestamp) {
+                latestInputTimestamp = timestamp;
+              }
+            });
+          }
+        });
+      }
+      
+      state.timestamp = latestInputTimestamp;
+    } else {
+      // For non-refiring nodes, include input values AND current timestamp
+      // This ensures nodes re-execute when inputs change OR when called again
+      state.inputHash = JSON.stringify(inputs || {});
+      state.timestamp = Number(process.hrtime.bigint()); // Current execution timestamp
+    }
     
     // Create deterministic JSON string (sort keys for consistency)
     const stateString = JSON.stringify(state, Object.keys(state).sort());
@@ -362,18 +396,45 @@ export default class zv1 {
       }
 
       this.logDebug(`Input definition for ${inputName}:`, inputDef);
-      this.logDebug(`Checking cache for key: ${key}`, this.cache[key]);
   
-      if (key in this.cache) {
-        if (inputDef.allow_multiple && !inputDef.refires) {
-          // Initialize or reset the array for this run
+      if (inputDef.allow_multiple && inputDef.refires) {
+        // Refiring input: Only collect NEW values (not yet consumed)
+        const lastConsumed = CacheManager.getLastConsumed(node.settings, inputName);
+        
+        // If never consumed before, get the latest value (for initial execution)
+        if (lastConsumed === 0) {
+          const latestValue = this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name });
+          if (latestValue !== undefined) {
+            inputs[inputName] = latestValue;
+            this.logDebug(`Refiring input [${inputName}]: using initial value (never consumed):`, latestValue);
+          }
+        } else {
+          // Get only new values since last consumption
+          const newValues = this.cache.getNew({
+            node_id: link.from.node_id,
+            port_name: link.from.port_name,
+            afterTimestamp: lastConsumed
+          });
           
+          this.logDebug(`Refiring input [${inputName}]: found ${newValues.length} new values since ${lastConsumed}`);
+          
+          if (newValues.length > 0) {
+            // For refiring, use the first new value that triggered this execution
+            inputs[inputName] = newValues[0];
+            this.logDebug(`Setting refiring input [${inputName}] to new value:`, newValues[0]);
+          }
+        }
+      } else if (inputDef.allow_multiple && !inputDef.refires) {
+        // Non-refiring multiple input: Collect all current values
+        const cachedValue = this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name });
+        
+        if (this.cache.has({ node_id: link.from.node_id, port_name: link.from.port_name })) {
           if(!inputs[inputName]) {
             inputs[inputName] = [];
           }
           
           // Get the value and validate its type
-          const value = this.cache[key];
+          const value = cachedValue;
           const itemType = inputDef.type || "any";
           
           // Validate individual item type
@@ -382,16 +443,21 @@ export default class zv1 {
           } else {
               this.logDebug(`Type mismatch for item in multiple-input [${inputName}]: Expected ${itemType}`);
           }
-        } else {
-          this.logDebug(`Setting value for input [${inputName}]`);
-          inputs[inputName] = this.cache[key];
         }
-      } else if (!inputDef.required && inputDef.default !== undefined) {
-        // If optional and no link value, use the default
-        inputs[inputName] = inputDef.default;
-        this.logDebug(`Input [${inputName}] for node [${node.id}] using default value:`, inputDef.default);
       } else {
-        this.logDebug(`Warning: No value found for input [${inputName}] and no default available`);
+        // Single value input: Always use latest value
+        const cachedValue = this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name });
+        
+        if (this.cache.has({ node_id: link.from.node_id, port_name: link.from.port_name })) {
+          this.logDebug(`Setting value for input [${inputName}]`);
+          inputs[inputName] = cachedValue;
+        } else if (!inputDef.required && inputDef.default !== undefined) {
+          // If optional and no link value, use the default
+          inputs[inputName] = inputDef.default;
+          this.logDebug(`Input [${inputName}] for node [${node.id}] using default value:`, inputDef.default);
+        } else {
+          this.logDebug(`Warning: No value found for input [${inputName}] and no default available`);
+        }
       }
     });
   
@@ -421,13 +487,59 @@ export default class zv1 {
     // Validate inputs against node configuration
     this.validateInputs(nodeDefinition.config, inputs);
   
+    // Create execution hash to check for duplicate processing
+    const executionHash = this._createExecutionHash(node.id, inputs, node.settings || {});
+    
+    // Skip if this exact execution state has already been processed
+    if (this.executedNodeStates.has(executionHash)) {
+      this.logDebug(`Node [${node.id}] already executed with identical inputs/settings (hash: ${executionHash}), skipping`);
+      return {}; // Return empty outputs to avoid downstream processing
+    }
+    
     // Execute the process function using the shared core logic
     this.logDebug(`Executing process function for node [${node.id}]`);
     
     const outputs = await this._executeNodeCore(node, inputs, node.settings || {}, nodeDefinition);
     
+    // Track this execution state
+    this.executedNodeStates.add(executionHash);
+    
     // Debug: Log outputs after processing
     this.logDebug(`Node [${node.id}] outputs:`, JSON.stringify(outputs, null, 2));
+    
+    // Update consumption tracking for refiring inputs
+    const consumptionUpdates = {};
+    const refiringInputs = nodeDefinition.config.inputs.filter(i => i.allow_multiple && i.refires);
+    
+    if (refiringInputs.length > 0) {
+      this.logDebug(`Updating consumption tracking for ${refiringInputs.length} refiring inputs`);
+      
+      refiringInputs.forEach(inputDef => {
+        const inputName = inputDef.name;
+        
+        // Find all connected links for this refiring input
+        const inputLinks = this.flow.links.filter(
+          link => link.to.node_id === node.id && link.to.port_name === inputName
+        );
+        
+        // Get the latest timestamp from all connected sources
+        let maxTimestamp = 0;
+        inputLinks.forEach(link => {
+          const timestamp = this.cache.getLatestTimestamp({
+            node_id: link.from.node_id,
+            port_name: link.from.port_name
+          });
+          if (timestamp && timestamp > maxTimestamp) {
+            maxTimestamp = timestamp;
+          }
+        });
+        
+        if (maxTimestamp > 0) {
+          consumptionUpdates[inputName] = maxTimestamp;
+          this.logDebug(`Marking input [${inputName}] as consumed up to timestamp ${maxTimestamp}`);
+        }
+      });
+    }
     
     // Handle updated settings
     if (outputs.__updated_settings) {
@@ -439,11 +551,22 @@ export default class zv1 {
       delete outputs.__updated_settings; // Remove from regular outputs
     }
     
+    // Apply consumption tracking updates if any
+    if (Object.keys(consumptionUpdates).length > 0) {
+      node.settings = {
+        ...node.settings,
+        _consumption_tracking: {
+          ...node.settings._consumption_tracking,
+          ...consumptionUpdates
+        }
+      };
+      this.logDebug(`Node [${node.id}] updated consumption tracking:`, node.settings._consumption_tracking);
+    }
+    
     // Store outputs in the cache
     for (const [key, value] of Object.entries(outputs)) {
-      const cacheKey = `${node.id}:${key}`;
-      this.logDebug(`Storing output in cache: ${cacheKey}`, value);
-      this.cache[cacheKey] = value;
+      this.logDebug(`Storing output in cache: ${node.id}:${key}`, value);
+      this.cache.set({ node_id: node.id, port_name: key, value });
     }
     
     this.logDebug(`Node [${node.id}] processing completed successfully`);
@@ -475,22 +598,13 @@ export default class zv1 {
       
       const nodeDefinition = this.nodes[currentNode.type];
       
-      // Check if node has any refiring inputs
-      const hasRefiringInputs = nodeDefinition?.config?.inputs?.some(input => 
-        input.allow_multiple && input.refires
-      );
-      
-      // Get current visit count
+      // Get current visit count (for debugging only)
       const visitCount = visitedNodes.get(currentNodeId) || 0;
-      
-      // Allow revisits for nodes with refiring inputs
-      if (!hasRefiringInputs && visitCount > 0) {
-        this.logDebug(`Skipping already processed node [${currentNodeId}]`);
-        return;
-      }
       
       // Increment visit count
       visitedNodes.set(currentNodeId, visitCount + 1);
+      
+      this.logDebug(`Processing node [${currentNodeId}] (visit #${visitCount + 1})`);
       
       this.logDebug(`Processing downstream propagation for node [${currentNodeId}]`);
   
@@ -500,8 +614,7 @@ export default class zv1 {
         if(link.from.node_id === currentNodeId) {
 
           // did this output from nodeId actually send a value that wasn't undefined or null?
-          const cacheKey = `${currentNodeId}:${link.from.port_name}`;
-          const value = this.cache[cacheKey];
+          const value = this.cache.get({ node_id: currentNodeId, port_name: link.from.port_name });
           if(value === undefined || value === null) {
             return false;
           }
@@ -553,10 +666,26 @@ export default class zv1 {
           if (!inputDef) return true; // Skip if no definition (shouldn't happen)
           
           if (inputDef.allow_multiple && inputDef.refires) {
-            // For refiring inputs, check if ANY link has a value
+            // For refiring inputs, check if ANY link has NEW values (not yet consumed)
+            const lastConsumed = CacheManager.getLastConsumed(downstreamNode.settings, inputName);
+            
             return links.some(link => {
-              const key = `${link.from.node_id}:${link.from.port_name}`;
-              return key in this.cache;
+              // If never consumed before, check if there's any value available
+              if (lastConsumed === 0) {
+                const hasValue = this.cache.has({ node_id: link.from.node_id, port_name: link.from.port_name });
+                this.logDebug(`Checking refiring input [${inputName}] from ${link.from.node_id}:${link.from.port_name}, hasValue: ${hasValue} (initial execution)`);
+                return hasValue;
+              } else {
+                const hasNew = this.cache.hasNew({
+                  node_id: link.from.node_id,
+                  port_name: link.from.port_name,
+                  afterTimestamp: lastConsumed
+                });
+                
+                this.logDebug(`Checking refiring input [${inputName}] from ${link.from.node_id}:${link.from.port_name}, hasNew: ${hasNew} (after ${lastConsumed})`);
+                
+                return hasNew;
+              }
             });
           }
           
@@ -564,50 +693,23 @@ export default class zv1 {
           return links.every(link => {
             if (link.type === 'plugin') return true;
             
-            const key = `${link.from.node_id}:${link.from.port_name}`;
-            const isValueReady = key in this.cache;
+            const isValueReady = this.cache.has({ node_id: link.from.node_id, port_name: link.from.port_name });
             
-            this.logDebug(`Checking regular input [${inputName}] key: ${key}, ready: ${isValueReady}`);
+            this.logDebug(`Checking regular input [${inputName}] from ${link.from.node_id}:${link.from.port_name}, ready: ${isValueReady}`);
             
             if (inputDef.required) {
               return isValueReady;
             }
             
-            return isValueReady || this.cache[key] === null;
+            return isValueReady || this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name }) === null;
           });
         });
   
         if (isReady) {
           this.logDebug(`Node [${downstreamNode.id}] is ready. Processing...`);
           
-          // Collect inputs that will be used for processing
-          const inputs = {};
-          const nodeInputLinks = this.flow.links.filter((link) => link.to.node_id === downstreamNode.id);
-          
-          nodeInputLinks.forEach((link) => {
-            const key = `${link.from.node_id}:${link.from.port_name}`;
-            const inputName = link.to.port_name;
-            if (key in this.cache) {
-              inputs[inputName] = this.cache[key];
-            }
-          });
-          
-          // Create execution hash to check for duplicate processing
-          const executionHash = this._createExecutionHash(
-            downstreamNode.id, 
-            inputs, 
-            downstreamNode.settings
-          );
-          
-          // Skip if this exact execution state has already been processed
-          if (this.executedNodeStates.has(executionHash)) {
-            this.logDebug(`Node [${downstreamNode.id}] already executed with identical inputs/settings (hash: ${executionHash}), skipping`);
-            continue;
-          }
-          
           try {
             await this.processNode(downstreamNode);
-            this.executedNodeStates.add(executionHash); // Track this execution state
             await processQueue(downstreamNode.id); // Propagate further downstream
           } catch (error) {
             this.logDebug(`Error during propagation at node [${downstreamNode.id}]:`, error.message);
@@ -649,7 +751,8 @@ export default class zv1 {
       
       // Clean up any imported engines that were created
       // These are stored in the cache when import nodes are processed
-      const importEngines = Object.values(this.cache).filter(item => 
+      const rawStore = this.cache.getRawStore();
+      const importEngines = Object.values(rawStore).filter(item => 
         item && typeof item === 'object' && item.constructor?.name === 'zv1'
       );
       
@@ -661,7 +764,7 @@ export default class zv1 {
       }
       
       // Clear the cache
-      this.cache = {};
+      this.cache.clear();
       
       // Clear timeline
       this.timeline = [];
@@ -833,20 +936,17 @@ export default class zv1 {
             const outputs = {};
             // For all outputs defined in config
             for (const output of nodeConfig.outputs) {
-              const cacheKey = `${node.id}:${output.name}`;
-              const value = this.cache[cacheKey];
+              const value = this.cache.get({ node_id: node.id, port_name: output.name });
               if (value === null || value === undefined) continue;
               outputs[output.name] = value;
             }
 
             // --- NEW: For import nodes, also include all cache keys that start with node.id + ':'
             if (node.type.startsWith('imported-')) {
-              for (const cacheKey in this.cache) {
-                if (cacheKey.startsWith(`${node.id}:`)) {
-                  const outputName = cacheKey.slice(node.id.length + 1);
-                  if (!(outputName in outputs)) {
-                    outputs[outputName] = this.cache[cacheKey];
-                  }
+              const nodeOutputs = this.cache.getNodeOutputs(node.id);
+              for (const [outputName, value] of Object.entries(nodeOutputs)) {
+                if (!(outputName in outputs)) {
+                  outputs[outputName] = value;
                 }
               }
             }
@@ -902,10 +1002,8 @@ export default class zv1 {
         
         for (const output of nodeOutputs) {
           
-          const cacheKey = `${node.id}:${output.name}`;
-
-          if (cacheKey in this.cache) {
-            const value = this.cache[cacheKey];
+          if (this.cache.has({ node_id: node.id, port_name: output.name })) {
+            const value = this.cache.get({ node_id: node.id, port_name: output.name });
             
             // Skip null/undefined values
             if (value === null || value === undefined) continue;
@@ -1069,18 +1167,45 @@ export default class zv1 {
       }
 
       this.logDebug(`Input definition for ${inputName}:`, inputDef);
-      this.logDebug(`Checking cache for key: ${key}`, this.cache[key]);
   
-      if (key in this.cache) {
-        if (inputDef.allow_multiple) {
-          // Initialize or reset the array for this run
+      if (inputDef.allow_multiple && inputDef.refires) {
+        // Refiring input: Only collect NEW values (not yet consumed)
+        const lastConsumed = CacheManager.getLastConsumed(node.settings, inputName);
+        
+        // If never consumed before, get the latest value (for initial execution)
+        if (lastConsumed === 0) {
+          const latestValue = this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name });
+          if (latestValue !== undefined) {
+            inputs[inputName] = latestValue;
+            this.logDebug(`LLM refiring input [${inputName}]: using initial value (never consumed):`, latestValue);
+          }
+        } else {
+          // Get only new values since last consumption
+          const newValues = this.cache.getNew({
+            node_id: link.from.node_id,
+            port_name: link.from.port_name,
+            afterTimestamp: lastConsumed
+          });
           
+          this.logDebug(`LLM refiring input [${inputName}]: found ${newValues.length} new values since ${lastConsumed}`);
+          
+          if (newValues.length > 0) {
+            // For refiring, use the first new value that triggered this execution
+            inputs[inputName] = newValues[0];
+            this.logDebug(`Setting LLM refiring input [${inputName}] to new value:`, newValues[0]);
+          }
+        }
+      } else if (inputDef.allow_multiple && !inputDef.refires) {
+        // Non-refiring multiple input: Collect all current values
+        const cachedValue = this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name });
+        
+        if (this.cache.has({ node_id: link.from.node_id, port_name: link.from.port_name })) {
           if(!inputs[inputName]) {
             inputs[inputName] = [];
           }
           
           // Get the value and validate its type
-          const value = this.cache[key];
+          const value = cachedValue;
           const itemType = inputDef.type || "any";
           
           // Validate individual item type
@@ -1089,16 +1214,21 @@ export default class zv1 {
           } else {
               this.logDebug(`Type mismatch for item in multiple-input [${inputName}]: Expected ${itemType}`);
           }
-        } else {
-          this.logDebug(`Setting value for input [${inputName}]`);
-          inputs[inputName] = this.cache[key];
         }
-      } else if (!inputDef.required && inputDef.default !== undefined) {
-        // If optional and no link value, use the default
-        inputs[inputName] = inputDef.default;
-        this.logDebug(`Input [${inputName}] for node [${node.id}] using default value:`, inputDef.default);
       } else {
-        this.logDebug(`Warning: No value found for input [${inputName}] and no default available`);
+        // Single value input: Always use latest value
+        const cachedValue = this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name });
+        
+        if (this.cache.has({ node_id: link.from.node_id, port_name: link.from.port_name })) {
+          this.logDebug(`Setting value for LLM input [${inputName}]`);
+          inputs[inputName] = cachedValue;
+        } else if (!inputDef.required && inputDef.default !== undefined) {
+          // If optional and no link value, use the default
+          inputs[inputName] = inputDef.default;
+          this.logDebug(`Input [${inputName}] for LLM node [${node.id}] using default value:`, inputDef.default);
+        } else {
+          this.logDebug(`Warning: No value found for LLM input [${inputName}] and no default available`);
+        }
       }
     });
   
@@ -1173,13 +1303,13 @@ export default class zv1 {
             
             // Store args in cache as if they came from upstream nodes
             for (const [inputName, value] of Object.entries(mergedInputs)) {
-              const tempKey = `__plugin_arg_${pluginNode.id}:${inputName}`;
-              this.cache[tempKey] = value;
-              tempCacheKeys.push(tempKey);
+              const tempNodeId = `__plugin_arg_${pluginNode.id}`;
+              this.cache.set({ node_id: tempNodeId, port_name: inputName, value });
+              tempCacheKeys.push({ node_id: tempNodeId, port_name: inputName });
               
               // Add a temporary link so getNodeInputValue can find it
               const tempLink = {
-                from: { node_id: `__plugin_arg_${pluginNode.id}`, port_name: inputName },
+                from: { node_id: tempNodeId, port_name: inputName },
                 to: { node_id: pluginNode.id, port_name: inputName }
               };
               this.flow.links.push(tempLink);
@@ -1192,8 +1322,7 @@ export default class zv1 {
               // Store outputs in cache for downstream propagation
               this.logDebug(`Storing macro plugin outputs in cache:`, outputs);
               for (const [key, value] of Object.entries(outputs)) {
-                const cacheKey = `${pluginNode.id}:${key}`;
-                this.cache[cacheKey] = value;
+                this.cache.set({ node_id: pluginNode.id, port_name: key, value });
               }
               
               // Propagate outputs downstream
@@ -1202,7 +1331,9 @@ export default class zv1 {
               return outputs;
             } finally {
               // Clean up temporary cache entries and links
-              tempCacheKeys.forEach(key => delete this.cache[key]);
+              tempCacheKeys.forEach(({ node_id, port_name }) => 
+                this.cache.delete({ node_id, port_name })
+              );
               this.flow.links = this.flow.links.filter(link => 
                 !link.from.node_id.startsWith('__plugin_arg_')
               );
@@ -1224,8 +1355,7 @@ export default class zv1 {
             // Store outputs in cache for downstream propagation
             this.logDebug(`Storing plugin outputs in cache for downstream propagation:`, outputs);
             for (const [key, value] of Object.entries(outputs)) {
-              const cacheKey = `${pluginNode.id}:${key}`;
-              this.cache[cacheKey] = value;
+              this.cache.set({ node_id: pluginNode.id, port_name: key, value });
             }
             
             // Propagate outputs downstream (if any downstream connections exist)
@@ -1246,8 +1376,7 @@ export default class zv1 {
             // Store outputs in cache for downstream propagation
             this.logDebug(`Storing plugin outputs in cache for downstream propagation:`, outputs);
             for (const [key, value] of Object.entries(outputs)) {
-              const cacheKey = `${pluginNode.id}:${key}`;
-              this.cache[cacheKey] = value;
+              this.cache.set({ node_id: pluginNode.id, port_name: key, value });
             }
             
             // Propagate outputs downstream (if any downstream connections exist)
@@ -1297,7 +1426,7 @@ export default class zv1 {
     );
     for (const link of toolInputLinks) {
       // the schema should be grabbable from the node's output cache on its "tool" output
-      const toolSchema = this.cache[`${link.from.node_id}:tool`];
+      const toolSchema = this.cache.get({ node_id: link.from.node_id, port_name: 'tool' });
       if(toolSchema) {
         // Only add schema if developer hasn't already provided one via config
         // If config.tools has this tool name but no schema, developer wants to use flow schema with their process
@@ -1365,9 +1494,8 @@ export default class zv1 {
     // 4. Continue with normal LLM output processing
     // Store outputs in the cache and propagate downstream
     for (const output of nodeDefinition.config.outputs || []) {
-      const cacheKey = `${node.id}:${output.name}`;
       if (llmResult[output.name] !== undefined) {
-        this.cache[cacheKey] = llmResult[output.name];
+        this.cache.set({ node_id: node.id, port_name: output.name, value: llmResult[output.name] });
       }
     }
     
@@ -1500,8 +1628,7 @@ export default class zv1 {
       // Look for the output in the internal engine's cache
       // The output-data node stores its value in the cache with key "output_node_id:value"
       const outputNodeId = `output_${outputDef.name}`;
-      const cacheKey = `${outputNodeId}:value`;
-      const outputValue = internalEngine.cache[cacheKey];
+      const outputValue = internalEngine.cache.get({ node_id: outputNodeId, port_name: 'value' });
       
       if (outputValue !== undefined) {
         macroOutputs[outputDef.name] = outputValue;
@@ -1512,9 +1639,8 @@ export default class zv1 {
     
     // Store macro outputs in the main engine's cache for downstream propagation
     for (const [outputName, outputValue] of Object.entries(macroOutputs)) {
-      const cacheKey = `${node.id}:${outputName}`;
-      this.cache[cacheKey] = outputValue;
-      this.logDebug(`Stored macro output in cache: ${cacheKey}`, outputValue);
+      this.cache.set({ node_id: node.id, port_name: outputName, value: outputValue });
+      this.logDebug(`Stored macro output in cache: ${node.id}:${outputName}`, outputValue);
     }
     
       // Complete timeline entry
@@ -1576,10 +1702,9 @@ export default class zv1 {
       return undefined;
     }
     
-    const key = `${link.from.node_id}:${link.from.port_name}`;
-    const value = this.cache[key];
+    const value = this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name });
     
-    this.logDebug(`Getting input value for ${node.id}.${inputName} from ${key}:`, value);
+    this.logDebug(`Getting input value for ${node.id}.${inputName} from ${link.from.node_id}:${link.from.port_name}:`, value);
     
     return value;
   }
@@ -1610,13 +1735,13 @@ export default class zv1 {
       
       // Store args in cache as if they came from upstream nodes
       for (const [inputName, value] of Object.entries(args)) {
-        const tempKey = `__plugin_arg_${pluginNode.id}:${inputName}`;
-        this.cache[tempKey] = value;
-        tempCacheKeys.push(tempKey);
+        const tempNodeId = `__plugin_arg_${pluginNode.id}`;
+        this.cache.set({ node_id: tempNodeId, port_name: inputName, value });
+        tempCacheKeys.push({ node_id: tempNodeId, port_name: inputName });
         
         // Also add a temporary link so getNodeInputValue can find it
         const tempLink = {
-          from: { node_id: `__plugin_arg_${pluginNode.id}`, port_name: inputName },
+          from: { node_id: tempNodeId, port_name: inputName },
           to: { node_id: pluginNode.id, port_name: inputName }
         };
         this.flow.links.push(tempLink);
@@ -1626,7 +1751,9 @@ export default class zv1 {
       const outputs = await this.processMacroNode(pluginNode);
       
       // Clean up temporary cache entries and links
-      tempCacheKeys.forEach(key => delete this.cache[key]);
+      tempCacheKeys.forEach(({ node_id, port_name }) => 
+        this.cache.delete({ node_id, port_name })
+      );
       this.flow.links = this.flow.links.filter(link => 
         !link.from.node_id.startsWith('__plugin_arg_')
       );
@@ -1649,8 +1776,7 @@ export default class zv1 {
     // Store outputs in parent cache for downstream propagation
     this.logDebug(`Storing plugin outputs in parent cache:`, outputs);
     for (const [key, value] of Object.entries(outputs)) {
-      const cacheKey = `${pluginNode.id}:${key}`;
-      this.cache[cacheKey] = value;
+      this.cache.set({ node_id: pluginNode.id, port_name: key, value });
     }
     
     // Propagate outputs downstream in parent context
@@ -1674,8 +1800,7 @@ export default class zv1 {
         link => link.to.node_id === node.id && link.to.port_name === inputName
       );
       if (incomingLink) {
-        const cacheKey = `${incomingLink.from.node_id}:${incomingLink.from.port_name}`;
-        if (!(cacheKey in this.cache)) {
+        if (!this.cache.has({ node_id: incomingLink.from.node_id, port_name: incomingLink.from.port_name })) {
           return false;
         }
       }
@@ -1708,8 +1833,7 @@ export default class zv1 {
         return;
       }
       
-      const cacheKey = `${link.from.node_id}:${link.from.port_name}`;
-      const value = this.cache[cacheKey];
+      const value = this.cache.get({ node_id: link.from.node_id, port_name: link.from.port_name });
       
       if (value !== undefined) {
         if (inputDef.allow_multiple) {

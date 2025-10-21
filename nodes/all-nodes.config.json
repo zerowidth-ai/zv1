@@ -2559,6 +2559,180 @@
         "id": "ceil"
     },
     {
+        "display_name": "Clean Text",
+        "description": "Clean and normalize text by removing extra whitespace and normalizing line breaks",
+        "category": "text",
+        "is_macro": true,
+        "is_plugin": true,
+        "macro_flow": {
+            "nodes": [
+                {
+                    "id": "input_text",
+                    "type": "input-data",
+                    "settings": {
+                        "key": "text"
+                    }
+                },
+                {
+                    "id": "trim",
+                    "type": "string-trim"
+                },
+                {
+                    "id": "whitespace_search",
+                    "type": "string",
+                    "settings": {
+                        "value": "\\s+"
+                    }
+                },
+                {
+                    "id": "whitespace_replacement",
+                    "type": "string",
+                    "settings": {
+                        "value": " "
+                    }
+                },
+                {
+                    "id": "normalize_whitespace",
+                    "type": "string-replace",
+                    "settings": {
+                        "regex": true,
+                        "case_sensitive": false
+                    }
+                },
+                {
+                    "id": "newline_search",
+                    "type": "string",
+                    "settings": {
+                        "value": "\\r\\n|\\r|\\n"
+                    }
+                },
+                {
+                    "id": "newline_replacement",
+                    "type": "string",
+                    "settings": {
+                        "value": "\\n"
+                    }
+                },
+                {
+                    "id": "normalize_newlines",
+                    "type": "string-replace",
+                    "settings": {
+                        "regex": true,
+                        "case_sensitive": false
+                    }
+                },
+                {
+                    "id": "output_cleaned_text",
+                    "type": "output-data",
+                    "settings": {
+                        "key": "cleaned_text"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "from": {
+                        "node_id": "input_text",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "trim",
+                        "port_name": "text"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "trim",
+                        "port_name": "text"
+                    },
+                    "to": {
+                        "node_id": "normalize_whitespace",
+                        "port_name": "text"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "whitespace_search",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "normalize_whitespace",
+                        "port_name": "search"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "whitespace_replacement",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "normalize_whitespace",
+                        "port_name": "replacement"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "normalize_whitespace",
+                        "port_name": "text"
+                    },
+                    "to": {
+                        "node_id": "normalize_newlines",
+                        "port_name": "text"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "newline_search",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "normalize_newlines",
+                        "port_name": "search"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "newline_replacement",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "normalize_newlines",
+                        "port_name": "replacement"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "normalize_newlines",
+                        "port_name": "text"
+                    },
+                    "to": {
+                        "node_id": "output_cleaned_text",
+                        "port_name": "value"
+                    }
+                }
+            ]
+        },
+        "inputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "The text to clean",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "cleaned_text",
+                "display_name": "Cleaned Text",
+                "type": "string",
+                "description": "The cleaned and normalized text"
+            }
+        ],
+        "settings": [],
+        "id": "clean-text"
+    },
+    {
         "display_name": "Combine Document Chunks",
         "description": "Retrieve all chunks for a document and combine them into a single markdown content string",
         "category": "knowledge",
@@ -6291,6 +6465,83 @@
         "id": "divide"
     },
     {
+        "display_name": "Duration Calculator",
+        "description": "Calculate duration between two timestamps in various units (seconds, minutes, hours, days)",
+        "icon": "timer",
+        "category": "date",
+        "provider": "internal",
+        "is_plugin": false,
+        "inputs": [
+            {
+                "name": "start_time",
+                "display_name": "Start Time",
+                "type": "string",
+                "description": "Start timestamp (ISO string, Unix timestamp, or any parseable date format)",
+                "required": true
+            },
+            {
+                "name": "end_time",
+                "display_name": "End Time",
+                "type": "string",
+                "description": "End timestamp (ISO string, Unix timestamp, or any parseable date format). Leave empty for current time",
+                "required": false
+            },
+            {
+                "name": "output_unit",
+                "display_name": "Output Unit",
+                "type": "string",
+                "description": "Unit for the duration output",
+                "required": false,
+                "options": [
+                    "seconds",
+                    "minutes",
+                    "hours",
+                    "days"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "name": "duration",
+                "display_name": "Duration",
+                "type": "number",
+                "description": "Duration in the specified unit"
+            },
+            {
+                "name": "duration_seconds",
+                "display_name": "Duration (seconds)",
+                "type": "number",
+                "description": "Duration in seconds"
+            },
+            {
+                "name": "duration_minutes",
+                "display_name": "Duration (minutes)",
+                "type": "number",
+                "description": "Duration in minutes"
+            },
+            {
+                "name": "duration_hours",
+                "display_name": "Duration (hours)",
+                "type": "number",
+                "description": "Duration in hours"
+            },
+            {
+                "name": "duration_days",
+                "display_name": "Duration (days)",
+                "type": "number",
+                "description": "Duration in days"
+            },
+            {
+                "name": "human_readable",
+                "display_name": "Human Readable",
+                "type": "string",
+                "description": "Duration in human-readable format (e.g., '2 hours 30 minutes')"
+            }
+        ],
+        "settings": [],
+        "id": "duration-calculator"
+    },
+    {
         "display_name": "Equals",
         "description": "Checks if two values are equal, with deep comparison for objects and arrays",
         "icon": "equals",
@@ -6325,7 +6576,7 @@
     {
         "display_name": "Extract Emails",
         "description": "Extract all email addresses from text using regex patterns",
-        "category": "macro",
+        "category": "text",
         "is_macro": true,
         "is_plugin": true,
         "macro_flow": {
@@ -6434,7 +6685,7 @@
     {
         "display_name": "Extract Hashtags",
         "description": "Extract all hashtags from text",
-        "category": "macro",
+        "category": "text",
         "is_macro": true,
         "is_plugin": true,
         "macro_flow": {
@@ -6543,7 +6794,7 @@
     {
         "display_name": "Extract Mentions",
         "description": "Extract all @mentions from text",
-        "category": "macro",
+        "category": "text",
         "is_macro": true,
         "is_plugin": true,
         "macro_flow": {
@@ -6650,6 +6901,115 @@
         "id": "extract-mentions"
     },
     {
+        "display_name": "Extract Phone Numbers",
+        "description": "Extract phone numbers from text in various formats (US, international, etc.)",
+        "category": "text",
+        "is_macro": true,
+        "is_plugin": true,
+        "macro_flow": {
+            "nodes": [
+                {
+                    "id": "input_text",
+                    "type": "input-data",
+                    "settings": {
+                        "key": "text"
+                    }
+                },
+                {
+                    "id": "match",
+                    "type": "string-match",
+                    "settings": {
+                        "case_sensitive": false,
+                        "global": true
+                    }
+                },
+                {
+                    "id": "phone_pattern",
+                    "type": "string",
+                    "settings": {
+                        "value": "(\\+?1[-.\\(\\s]?)?\\(?([0-9]{3})\\)?[-.\\(\\s]?([0-9]{3})[-.\\(\\s]?([0-9]{4})|\\+?[1-9]\\d{1,14}"
+                    }
+                },
+                {
+                    "id": "filter_empty",
+                    "type": "array-filter",
+                    "settings": {
+                        "condition": "not_equals",
+                        "value": ""
+                    }
+                },
+                {
+                    "id": "output_phone_numbers",
+                    "type": "output-data",
+                    "settings": {
+                        "key": "phone_numbers"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "from": {
+                        "node_id": "input_text",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "text"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "phone_pattern",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "match",
+                        "port_name": "pattern"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "match",
+                        "port_name": "matches"
+                    },
+                    "to": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "filter_empty",
+                        "port_name": "array"
+                    },
+                    "to": {
+                        "node_id": "output_phone_numbers",
+                        "port_name": "value"
+                    }
+                }
+            ]
+        },
+        "inputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "The text to extract phone numbers from",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "phone_numbers",
+                "display_name": "Phone Numbers",
+                "type": "array of strings",
+                "description": "Array of extracted phone numbers"
+            }
+        ],
+        "settings": [],
+        "id": "extract-phone-numbers"
+    },
+    {
         "display_name": "Extract Text Content",
         "description": "Extract text content from messages, supporting multi-modal content and optional role prefixes.",
         "icon": "type",
@@ -6708,8 +7068,7 @@
     {
         "display_name": "Extract URLs",
         "description": "Extract all URLs from text using regex patterns",
-        "category": "macro",
-        "provider": "internal",
+        "category": "text",
         "is_macro": true,
         "is_plugin": true,
         "macro_flow": {
@@ -12631,6 +12990,106 @@
         "id": "liquid-lfm-7b"
     },
     {
+        "display_name": "Loop End",
+        "description": "Loop exit point that decides whether to continue looping or exit. Tracks loop count and evaluates conditions to send value to loop_back or loop_end output.",
+        "category": "logic",
+        "is_plugin": false,
+        "inputs": [
+            {
+                "name": "value",
+                "display_name": "Value",
+                "type": "any",
+                "description": "The current value being processed from the loop",
+                "required": true
+            },
+            {
+                "name": "loop_value",
+                "display_name": "Loop Value",
+                "type": "any",
+                "description": "Value to send back to loop-start for next iteration. If not provided, uses 'value'",
+                "required": false
+            },
+            {
+                "name": "final_value",
+                "display_name": "Final Value",
+                "type": "any",
+                "description": "Value to save as final result when loop exits. If not provided, uses 'value'",
+                "required": false
+            },
+            {
+                "name": "loop_limit",
+                "display_name": "Loop Limit",
+                "type": "number",
+                "description": "Maximum number of times to loop before exiting (default: 10)",
+                "required": false,
+                "default": 10
+            },
+            {
+                "name": "while_condition",
+                "display_name": "While Condition",
+                "type": "boolean",
+                "description": "Boolean condition to continue looping. Loop continues while true (default: true)",
+                "required": false,
+                "default": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "loop_back",
+                "display_name": "Loop Back",
+                "type": "any",
+                "description": "Value sent back to loop start to continue iteration. Only outputs when loop should continue."
+            },
+            {
+                "name": "final_value",
+                "display_name": "Final Value",
+                "type": "any",
+                "description": "Final value when loop exits. Only outputs when loop is complete."
+            },
+            {
+                "name": "total_iterations",
+                "display_name": "Total Iterations",
+                "type": "number",
+                "description": "Total number of iterations that ran. Only outputs when loop is complete."
+            },
+            {
+                "name": "all_values",
+                "display_name": "All Values",
+                "type": "array of any",
+                "description": "Array of all values that were processed through the loop. Only outputs when loop is complete."
+            }
+        ],
+        "settings": [],
+        "id": "loop-end"
+    },
+    {
+        "display_name": "Loop Start",
+        "description": "Entry point for loops - receives values and passes them through. Refires on each new value, enabling iterative processing.",
+        "category": "logic",
+        "is_plugin": false,
+        "inputs": [
+            {
+                "name": "value",
+                "display_name": "Value",
+                "type": "any",
+                "description": "The value to process in the loop. Accepts multiple values over time and refires for each.",
+                "required": true,
+                "allow_multiple": true,
+                "refires": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "value",
+                "display_name": "Value",
+                "type": "any",
+                "description": "The current value being processed in the loop"
+            }
+        ],
+        "settings": [],
+        "id": "loop-start"
+    },
+    {
         "display_name": "Mean",
         "description": "Calculates arithmetic mean (average) of numbers",
         "category": "math",
@@ -12740,7 +13199,7 @@
         "display_name": "Message",
         "description": "Manually create a single message.",
         "icon": "fa-comment",
-        "category": "prompting",
+        "category": "messages",
         "custom_render_height": 200,
         "is_constant": true,
         "is_resizable": true,
@@ -12802,56 +13261,56 @@
             {
                 "name": "input_1",
                 "display_name": "Input 1",
-                "type": "message or array of messages",
+                "type": "message or array of messages or string",
                 "description": "First message source",
                 "required": false
             },
             {
                 "name": "input_2",
                 "display_name": "Input 2",
-                "type": "message or array of messages",
+                "type": "message or array of messages or string",
                 "description": "Second message source",
                 "required": false
             },
             {
                 "name": "input_3",
                 "display_name": "Input 3",
-                "type": "message or array of messages",
+                "type": "message or array of messages or string",
                 "description": "Third message source",
                 "required": false
             },
             {
                 "name": "input_4",
                 "display_name": "Input 4",
-                "type": "message or array of messages",
+                "type": "message or array of messages or string",
                 "description": "Fourth message source",
                 "required": false
             },
             {
                 "name": "input_5",
                 "display_name": "Input 5",
-                "type": "message or array of messages",
+                "type": "message or array of messages or string",
                 "description": "Fifth message source",
                 "required": false
             },
             {
                 "name": "input_6",
                 "display_name": "Input 6",
-                "type": "message or array of messages",
+                "type": "message or array of messages or string",
                 "description": "Sixth message source",
                 "required": false
             },
             {
                 "name": "input_7",
                 "display_name": "Input 7",
-                "type": "message or array of messages",
+                "type": "message or array of messages or string",
                 "description": "Seventh message source",
                 "required": false
             },
             {
                 "name": "input_8",
                 "display_name": "Input 8",
-                "type": "message or array of messages",
+                "type": "message or array of messages or string",
                 "description": "Eighth message source",
                 "required": false
             }
@@ -12895,6 +13354,32 @@
             }
         ],
         "id": "message-bus"
+    },
+    {
+        "display_name": "Message Role Swap",
+        "description": "Swap message roles between assistant and user in a messages array, returning a new array with swapped roles",
+        "icon": "swap-horizontal",
+        "category": "messages",
+        "is_plugin": false,
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array of messages",
+                "description": "Array of message objects to swap roles",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array of messages",
+                "description": "Array of messages with swapped roles (assistant ↔ user)"
+            }
+        ],
+        "settings": [],
+        "id": "message-role-swap"
     },
     {
         "display_name": "Mistral: Codestral 2501",
@@ -34935,9 +35420,9 @@
         "id": "range"
     },
     {
-        "display_name": "Read Website",
+        "display_name": "Read Website (beta)",
         "description": "Simple website reader - scrapes content and extracts main text",
-        "category": "macro",
+        "category": "third-party",
         "provider": "firecrawl",
         "needs_key_from": [
             "firecrawl"
@@ -34946,6 +35431,13 @@
         "is_plugin": true,
         "macro_flow": {
             "nodes": [
+                {
+                    "id": "input_url",
+                    "type": "input-data",
+                    "settings": {
+                        "key": "url"
+                    }
+                },
                 {
                     "id": "scrape",
                     "type": "firecrawl-scrape"
@@ -34956,9 +35448,26 @@
                     "settings": {
                         "value": "markdown"
                     }
+                },
+                {
+                    "id": "output_content",
+                    "type": "output-data",
+                    "settings": {
+                        "key": "content"
+                    }
                 }
             ],
             "links": [
+                {
+                    "from": {
+                        "node_id": "input_url",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "scrape",
+                        "port_name": "url"
+                    }
+                },
                 {
                     "from": {
                         "node_id": "formats",
@@ -34967,6 +35476,16 @@
                     "to": {
                         "node_id": "scrape",
                         "port_name": "formats"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "scrape",
+                        "port_name": "markdown"
+                    },
+                    "to": {
+                        "node_id": "output_content",
+                        "port_name": "value"
                     }
                 }
             ]
@@ -34977,8 +35496,7 @@
                 "display_name": "Website URL",
                 "type": "string",
                 "description": "The website to read",
-                "required": true,
-                "connects_to": "scrape.url"
+                "required": true
             }
         ],
         "outputs": [
@@ -34986,8 +35504,7 @@
                 "name": "content",
                 "display_name": "Content",
                 "type": "string",
-                "description": "The main text content of the website",
-                "connects_to": "scrape.markdown"
+                "description": "The main text content of the website"
             }
         ],
         "settings": [],
@@ -34997,7 +35514,7 @@
         "display_name": "Response Format",
         "description": "Define a JSON Schema response format for structured outputs from LLMs.",
         "icon": "fa-code",
-        "category": "prompting",
+        "category": "messages",
         "custom_render_height": 200,
         "is_constant": true,
         "is_resizable": true,
@@ -35208,8 +35725,7 @@
                 "name": "object",
                 "display_name": "Object",
                 "type": "object",
-                "description": "The object to set the property on (can be null/empty to create a new object)",
-                "required": true
+                "description": "The object to set the property on (can be null/empty to create a new object)"
             },
             {
                 "name": "key",
@@ -35264,6 +35780,82 @@
         "timeout": 3000,
         "retry_limit": 3,
         "id": "set-object-property"
+    },
+    {
+        "display_name": "Simple Agent (beta)",
+        "description": "A simple AI agent that accepts tools and processes messages. Perfect template for creating starter agents.",
+        "category": "ai",
+        "is_macro": true,
+        "is_plugin": true,
+        "accepts_plugins": true,
+        "macro_flow": {
+            "nodes": [
+                {
+                    "id": "input_messages",
+                    "type": "input-data",
+                    "settings": {
+                        "key": "messages"
+                    }
+                },
+                {
+                    "id": "llm",
+                    "type": "openai-gpt-4-1-nano"
+                },
+                {
+                    "id": "output_message",
+                    "type": "output-data",
+                    "settings": {
+                        "key": "message"
+                    }
+                }
+            ],
+            "links": [
+                {
+                    "from": {
+                        "node_id": "input_messages",
+                        "port_name": "value"
+                    },
+                    "to": {
+                        "node_id": "llm",
+                        "port_name": "messages"
+                    }
+                },
+                {
+                    "from": {
+                        "node_id": "llm",
+                        "port_name": "message"
+                    },
+                    "to": {
+                        "node_id": "output_message",
+                        "port_name": "value"
+                    }
+                }
+            ]
+        },
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "array of messages or message or string",
+                "description": "Chat messages to process",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "message",
+                "display_name": "Message",
+                "type": "message",
+                "description": "The agent's response message"
+            }
+        ],
+        "plugins": [
+            {
+                "connects_to": "llm"
+            }
+        ],
+        "settings": [],
+        "id": "simple-agent"
     },
     {
         "display_name": "Standard Deviation",
@@ -35836,7 +36428,7 @@
         "display_name": "System Prompt",
         "description": "Draft a text-based system prompt for an LLM, with configurable variables.",
         "icon": "fa-comment",
-        "category": "prompting",
+        "category": "messages",
         "custom_render_height": 450,
         "width": 450,
         "is_constant": true,
@@ -35849,6 +36441,13 @@
                 "type": "object",
                 "allow_multiple": true,
                 "description": "Connect key-value pairs to inject into any matched {{key}} in the text content."
+            },
+            {
+                "name": "chain",
+                "display_name": "Chain",
+                "type": "string or message",
+                "description": "Connect another system prompt to chain them together. The content from this input will be prepended to the current prompt.",
+                "required": false
             }
         ],
         "outputs": [
@@ -35877,6 +36476,69 @@
         "timeout": 3000,
         "retry_limit": 3,
         "id": "system-prompt"
+    },
+    {
+        "display_name": "Text Scratch Pad",
+        "description": "Accumulate text input over multiple executions. Each new input gets concatenated to the existing content with an optional delimiter.",
+        "icon": "edit",
+        "category": "text",
+        "is_plugin": true,
+        "inputs": [
+            {
+                "name": "text",
+                "display_name": "Text",
+                "type": "string",
+                "description": "Text to append to the scratch pad. Each execution adds this to the accumulated content.",
+                "required": true,
+                "allow_multiple": true,
+                "refires": true
+            },
+            {
+                "name": "delimiter",
+                "display_name": "Delimiter",
+                "type": "string",
+                "description": "Optional delimiter to insert between text additions (e.g., '\\n', ' - ', ', ')",
+                "required": false
+            },
+            {
+                "name": "clear",
+                "display_name": "Clear",
+                "type": "boolean",
+                "description": "Set to true to clear the scratch pad and start fresh",
+                "required": false
+            }
+        ],
+        "outputs": [
+            {
+                "name": "content",
+                "display_name": "Content",
+                "type": "string",
+                "description": "The accumulated text content"
+            },
+            {
+                "name": "length",
+                "display_name": "Length",
+                "type": "number",
+                "description": "Number of characters in the accumulated content"
+            }
+        ],
+        "settings": [
+            {
+                "name": "initial_content",
+                "display_name": "Initial Content",
+                "type": "string",
+                "description": "Starting content for the scratch pad",
+                "default": ""
+            },
+            {
+                "name": "default_delimiter",
+                "display_name": "Default Delimiter",
+                "type": "string",
+                "description": "Default delimiter to use between text additions",
+                "default": "\n"
+            }
+        ],
+        "id": "text-scratch-pad"
     },
     {
         "display_name": "Throw Error",
@@ -35913,6 +36575,132 @@
         "timeout": 3000,
         "retry_limit": 1,
         "id": "throw-error"
+    },
+    {
+        "display_name": "Time Adder",
+        "description": "Add or subtract time from a timestamp. Supports various time units and operations.",
+        "icon": "plus-circle",
+        "category": "date",
+        "provider": "internal",
+        "is_plugin": false,
+        "inputs": [
+            {
+                "name": "base_time",
+                "display_name": "Base Time",
+                "type": "string",
+                "description": "Base timestamp to add/subtract from (ISO string, Unix timestamp, or any parseable date format). Leave empty for current time",
+                "required": false
+            },
+            {
+                "name": "amount",
+                "display_name": "Amount",
+                "type": "number",
+                "description": "Amount of time to add (positive) or subtract (negative)",
+                "required": true
+            },
+            {
+                "name": "unit",
+                "display_name": "Unit",
+                "type": "string",
+                "description": "Time unit for the amount",
+                "required": true,
+                "options": [
+                    "seconds",
+                    "minutes",
+                    "hours",
+                    "days",
+                    "weeks",
+                    "months",
+                    "years"
+                ]
+            },
+            {
+                "name": "output_format",
+                "display_name": "Output Format",
+                "type": "string",
+                "description": "Format for the output timestamp",
+                "required": false,
+                "options": [
+                    "iso",
+                    "unix",
+                    "unix_ms",
+                    "rfc2822"
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "name": "result_time",
+                "display_name": "Result Time",
+                "type": "string",
+                "description": "Resulting timestamp in the specified format"
+            },
+            {
+                "name": "iso_string",
+                "display_name": "ISO String",
+                "type": "string",
+                "description": "Resulting timestamp as ISO 8601 string"
+            },
+            {
+                "name": "unix_timestamp",
+                "display_name": "Unix Timestamp",
+                "type": "number",
+                "description": "Resulting timestamp as Unix seconds"
+            },
+            {
+                "name": "unix_timestamp_ms",
+                "display_name": "Unix Timestamp (ms)",
+                "type": "number",
+                "description": "Resulting timestamp as Unix milliseconds"
+            }
+        ],
+        "settings": [],
+        "id": "time-adder"
+    },
+    {
+        "display_name": "Timestamp",
+        "description": "Generate current timestamp in various formats. Runs as a constant to provide current time at flow start.",
+        "icon": "clock",
+        "category": "date",
+        "is_constant": true,
+        "is_plugin": false,
+        "inputs": [
+            {
+                "name": "format",
+                "display_name": "Format",
+                "type": "string",
+                "description": "Timestamp format (optional). Leave empty for ISO string. Use preset keywords: 'iso', 'unix', 'unix_ms', 'rfc2822', or custom format string like 'YYYY-MM-DD HH:mm:ss'",
+                "required": false
+            }
+        ],
+        "outputs": [
+            {
+                "name": "timestamp",
+                "display_name": "Timestamp",
+                "type": "string",
+                "description": "Current timestamp in the specified format"
+            },
+            {
+                "name": "unix_timestamp",
+                "display_name": "Unix Timestamp",
+                "type": "number",
+                "description": "Current timestamp as Unix seconds"
+            },
+            {
+                "name": "unix_timestamp_ms",
+                "display_name": "Unix Timestamp (ms)",
+                "type": "number",
+                "description": "Current timestamp as Unix milliseconds"
+            },
+            {
+                "name": "iso_string",
+                "display_name": "ISO String",
+                "type": "string",
+                "description": "Current timestamp as ISO 8601 string"
+            }
+        ],
+        "settings": [],
+        "id": "timestamp"
     },
     {
         "display_name": "Token Count",
@@ -35980,7 +36768,7 @@
         "display_name": "Tool",
         "description": "Define a tool / function call for a LLM to use.",
         "icon": "fa-comment",
-        "category": "prompting",
+        "category": "messages",
         "custom_render_height": 200,
         "is_constant": true,
         "is_resizable": true,

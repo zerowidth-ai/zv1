@@ -155,7 +155,7 @@ export async function loadIntegrations(config, flow = null) {
   }
 
   // map of basic keys that share a integrationformat and implementation
-  const basicKeyIntegrations = ['firecrawl', 'newsdata_io', 'openai'];
+  const basicKeyIntegrations = ['firecrawl', 'newsdata_io', 'openai', 'google_custom_search'];
 
   // Load basic integrations in parallel
   await Promise.all(basicKeyIntegrations.map(async integration => {

@@ -5,9 +5,9 @@
   "category": "i/o",
   "is_input": true,
   "is_resizable": true,
-  "custom_render_height": 450,
+  "custom_render_height": 300,
   "has_expanded_view": true,
-  "width": 450,
+  "width": 300,
   "inputs": [
   ],
   "outputs": [

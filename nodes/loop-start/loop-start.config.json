@@ -1,0 +1,27 @@
+{
+  "display_name": "Loop Start",
+  "description": "Entry point for loops - receives values and passes them through. Refires on each new value, enabling iterative processing.",
+  "category": "logic",
+  "is_plugin": false,
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The value to process in the loop. Accepts multiple values over time and refires for each.",
+      "required": true,
+      "allow_multiple": true,
+      "refires": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "type": "any",
+      "description": "The current value being processed in the loop"
+    }
+  ],
+  "settings": []
+}
+

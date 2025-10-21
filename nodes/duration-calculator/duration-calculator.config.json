@@ -1,0 +1,76 @@
+{
+  "display_name": "Duration Calculator",
+  "description": "Calculate duration between two timestamps in various units (seconds, minutes, hours, days)",
+  "icon": "timer",
+  "category": "date",
+  "provider": "internal",
+  "is_plugin": false,
+  "inputs": [
+    {
+      "name": "start_time",
+      "display_name": "Start Time",
+      "type": "string",
+      "description": "Start timestamp (ISO string, Unix timestamp, or any parseable date format)",
+      "required": true
+    },
+    {
+      "name": "end_time",
+      "display_name": "End Time",
+      "type": "string",
+      "description": "End timestamp (ISO string, Unix timestamp, or any parseable date format). Leave empty for current time",
+      "required": false
+    },
+    {
+      "name": "output_unit",
+      "display_name": "Output Unit",
+      "type": "string",
+      "description": "Unit for the duration output",
+      "required": false,
+      "options": [
+        "seconds",
+        "minutes",
+        "hours",
+        "days"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "duration",
+      "display_name": "Duration",
+      "type": "number",
+      "description": "Duration in the specified unit"
+    },
+    {
+      "name": "duration_seconds",
+      "display_name": "Duration (seconds)",
+      "type": "number",
+      "description": "Duration in seconds"
+    },
+    {
+      "name": "duration_minutes",
+      "display_name": "Duration (minutes)",
+      "type": "number",
+      "description": "Duration in minutes"
+    },
+    {
+      "name": "duration_hours",
+      "display_name": "Duration (hours)",
+      "type": "number",
+      "description": "Duration in hours"
+    },
+    {
+      "name": "duration_days",
+      "display_name": "Duration (days)",
+      "type": "number",
+      "description": "Duration in days"
+    },
+    {
+      "name": "human_readable",
+      "display_name": "Human Readable",
+      "type": "string",
+      "description": "Duration in human-readable format (e.g., '2 hours 30 minutes')"
+    }
+  ],
+  "settings": []
+}

@@ -1,0 +1,70 @@
+{
+  "display_name": "Search the Internet",
+  "description": "Search the web using Google Custom Search - returns clean search results with titles, links, and snippets",
+  "category": "third-party",
+  "provider": "google",
+  "needs_key_from": ["google_custom_search"],
+  "is_macro": true,
+  "is_plugin": true,
+  "macro_flow": {
+    "nodes": [
+      {
+        "id": "input_query",
+        "type": "input-data",
+        "settings": {
+          "key": "query"
+        }
+      },
+      {
+        "id": "search",
+        "type": "google-custom-search"
+      },
+      {
+        "id": "num_results",
+        "type": "string",
+        "settings": {
+          "value": "10"
+        }
+      },
+      {
+        "id": "output_results",
+        "type": "output-data",
+        "settings": {
+          "key": "results"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "input_query", "port_name": "value" },
+        "to": { "node_id": "search", "port_name": "query" }
+      },
+      {
+        "from": { "node_id": "num_results", "port_name": "value" },
+        "to": { "node_id": "search", "port_name": "num" }
+      },
+      {
+        "from": { "node_id": "search", "port_name": "items" },
+        "to": { "node_id": "output_results", "port_name": "value" }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "name": "query",
+      "display_name": "Search Query",
+      "type": "string",
+      "description": "What to search for on the internet",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "results",
+      "display_name": "Search Results",
+      "type": "array of objects",
+      "description": "Array of search results with title, link, displayLink, and snippet"
+    }
+  ],
+  "settings": []
+}

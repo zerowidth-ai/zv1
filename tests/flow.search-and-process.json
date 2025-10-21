@@ -1,0 +1,69 @@
+{
+  "flow": {
+    "nodes": [
+      {
+        "id": "input1",
+        "type": "input-data",
+        "settings": {
+          "key": "topic"
+        }
+      },
+      {
+        "id": "search1",
+        "type": "search-internet"
+      },
+      {
+        "id": "count1",
+        "type": "array-length",
+        "settings": {
+          "key": "resultCount"
+        }
+      },
+      {
+        "id": "output1",
+        "type": "output-data",
+        "settings": {
+          "key": "searchSummary"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "input1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "search1",
+          "port_name": "query"
+        }
+      },
+      {
+        "from": {
+          "node_id": "search1",
+          "port_name": "results"
+        },
+        "to": {
+          "node_id": "count1",
+          "port_name": "array"
+        }
+      },
+      {
+        "from": {
+          "node_id": "count1",
+          "port_name": "length"
+        },
+        "to": {
+          "node_id": "output1",
+          "port_name": "value"
+        }
+      }
+    ]
+  },
+  "inputs": {
+    "topic": "artificial intelligence trends 2024"
+  },
+  "expected": {
+    "searchSummary": 10
+  }
+}

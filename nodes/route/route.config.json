@@ -1,0 +1,37 @@
+{
+  "display_name": "Route",
+  "description": "Routes a single value to one of two outputs based on a boolean condition",
+  "category": "logic",
+  "is_plugin": false,
+  "inputs": [
+    {
+      "name": "value",
+      "display_name": "Value",
+      "description": "The value to route",
+      "type": "any",
+      "required": true
+    },
+    {
+      "name": "condition",
+      "display_name": "Condition",
+      "description": "Boolean condition that determines routing",
+      "type": "boolean",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "true_output",
+      "display_name": "If True",
+      "description": "Value when condition is true",
+      "type": "any"
+    },
+    {
+      "name": "false_output",
+      "display_name": "If False", 
+      "description": "Value when condition is false",
+      "type": "any"
+    }
+  ],
+  "settings": []
+}

@@ -1,0 +1,122 @@
+{
+  "test_cases": [
+    {
+      "name": "Default ISO format",
+      "inputs": {},
+      "expected": {
+        "timestamp": "2024-01-15T10:30:45.123Z",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "ISO format explicit",
+      "inputs": {
+        "format": "iso"
+      },
+      "expected": {
+        "timestamp": "2024-01-15T10:30:45.123Z",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "Unix timestamp format",
+      "inputs": {
+        "format": "unix"
+      },
+      "expected": {
+        "timestamp": "1705312245",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "Unix timestamp milliseconds format",
+      "inputs": {
+        "format": "unix_ms"
+      },
+      "expected": {
+        "timestamp": "1705312245123",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "RFC2822 format",
+      "inputs": {
+        "format": "rfc2822"
+      },
+      "expected": {
+        "timestamp": "Mon, 15 Jan 2024 10:30:45 GMT",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "Custom format - YYYY-MM-DD",
+      "inputs": {
+        "format": "YYYY-MM-DD"
+      },
+      "expected": {
+        "timestamp": "2024-01-15",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "Custom format - YYYY-MM-DD HH:mm:ss",
+      "inputs": {
+        "format": "YYYY-MM-DD HH:mm:ss"
+      },
+      "expected": {
+        "timestamp": "2024-01-15 10:30:45",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "Custom format - MM/DD/YYYY",
+      "inputs": {
+        "format": "MM/DD/YYYY"
+      },
+      "expected": {
+        "timestamp": "01/15/2024",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "Custom format with milliseconds",
+      "inputs": {
+        "format": "YYYY-MM-DD HH:mm:ss.SSS"
+      },
+      "expected": {
+        "timestamp": "2024-01-15 10:30:45.123",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    },
+    {
+      "name": "Custom format - HH:mm:ss",
+      "inputs": {
+        "format": "HH:mm:ss"
+      },
+      "expected": {
+        "timestamp": "10:30:45",
+        "unix_timestamp": 1705312245,
+        "unix_timestamp_ms": 1705312245123,
+        "iso_string": "2024-01-15T10:30:45.123Z"
+      }
+    }
+  ]
+}

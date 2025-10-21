@@ -1,0 +1,80 @@
+{
+  "display_name": "Time Adder",
+  "description": "Add or subtract time from a timestamp. Supports various time units and operations.",
+  "icon": "plus-circle",
+  "category": "date",
+  "provider": "internal",
+  "is_plugin": false,
+  "inputs": [
+    {
+      "name": "base_time",
+      "display_name": "Base Time",
+      "type": "string",
+      "description": "Base timestamp to add/subtract from (ISO string, Unix timestamp, or any parseable date format). Leave empty for current time",
+      "required": false
+    },
+    {
+      "name": "amount",
+      "display_name": "Amount",
+      "type": "number",
+      "description": "Amount of time to add (positive) or subtract (negative)",
+      "required": true
+    },
+    {
+      "name": "unit",
+      "display_name": "Unit",
+      "type": "string",
+      "description": "Time unit for the amount",
+      "required": true,
+      "options": [
+        "seconds",
+        "minutes",
+        "hours",
+        "days",
+        "weeks",
+        "months",
+        "years"
+      ]
+    },
+    {
+      "name": "output_format",
+      "display_name": "Output Format",
+      "type": "string",
+      "description": "Format for the output timestamp",
+      "required": false,
+      "options": [
+        "iso",
+        "unix",
+        "unix_ms",
+        "rfc2822"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result_time",
+      "display_name": "Result Time",
+      "type": "string",
+      "description": "Resulting timestamp in the specified format"
+    },
+    {
+      "name": "iso_string",
+      "display_name": "ISO String",
+      "type": "string",
+      "description": "Resulting timestamp as ISO 8601 string"
+    },
+    {
+      "name": "unix_timestamp",
+      "display_name": "Unix Timestamp",
+      "type": "number",
+      "description": "Resulting timestamp as Unix seconds"
+    },
+    {
+      "name": "unix_timestamp_ms",
+      "display_name": "Unix Timestamp (ms)",
+      "type": "number",
+      "description": "Resulting timestamp as Unix milliseconds"
+    }
+  ],
+  "settings": []
+}

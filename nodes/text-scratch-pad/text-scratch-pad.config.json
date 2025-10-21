@@ -1,0 +1,62 @@
+{
+  "display_name": "Text Scratch Pad",
+  "description": "Accumulate text input over multiple executions. Each new input gets concatenated to the existing content with an optional delimiter.",
+  "icon": "edit",
+  "category": "text",
+  "is_plugin": true,
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "type": "string",
+      "description": "Text to append to the scratch pad. Each execution adds this to the accumulated content.",
+      "required": true,
+      "allow_multiple": true,
+      "refires": true
+    },
+    {
+      "name": "delimiter",
+      "display_name": "Delimiter",
+      "type": "string",
+      "description": "Optional delimiter to insert between text additions (e.g., '\\n', ' - ', ', ')",
+      "required": false
+    },
+    {
+      "name": "clear",
+      "display_name": "Clear",
+      "type": "boolean",
+      "description": "Set to true to clear the scratch pad and start fresh",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "content",
+      "display_name": "Content",
+      "type": "string",
+      "description": "The accumulated text content"
+    },
+    {
+      "name": "length",
+      "display_name": "Length",
+      "type": "number",
+      "description": "Number of characters in the accumulated content"
+    }
+  ],
+  "settings": [
+    {
+      "name": "initial_content",
+      "display_name": "Initial Content",
+      "type": "string",
+      "description": "Starting content for the scratch pad",
+      "default": ""
+    },
+    {
+      "name": "default_delimiter",
+      "display_name": "Default Delimiter",
+      "type": "string",
+      "description": "Default delimiter to use between text additions",
+      "default": "\n"
+    }
+  ]
+}

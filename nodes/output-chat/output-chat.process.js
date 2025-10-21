@@ -5,7 +5,11 @@ export default async ({inputs, settings, config}) => {
   let result = [];
 
   if(inputs.message) {
-    result.push(inputs.message);
+    if(Array.isArray(inputs.message)) {
+      result.push(...inputs.message);
+    } else {
+      result.push(inputs.message);
+    }
   } else if(inputs.content) {
     result.push({ content: inputs.content, role: inputs.role ?? "assistant" });
   }

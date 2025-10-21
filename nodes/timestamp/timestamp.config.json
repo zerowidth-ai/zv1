@@ -1,0 +1,44 @@
+{
+  "display_name": "Timestamp",
+  "description": "Generate current timestamp in various formats. Runs as a constant to provide current time at flow start.",
+  "icon": "clock",
+  "category": "date",
+  "is_constant": true,
+  "is_plugin": false,
+  "inputs": [
+    {
+      "name": "format",
+      "display_name": "Format",
+      "type": "string",
+      "description": "Timestamp format (optional). Leave empty for ISO string. Use preset keywords: 'iso', 'unix', 'unix_ms', 'rfc2822', or custom format string like 'YYYY-MM-DD HH:mm:ss'",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "timestamp",
+      "display_name": "Timestamp",
+      "type": "string",
+      "description": "Current timestamp in the specified format"
+    },
+    {
+      "name": "unix_timestamp",
+      "display_name": "Unix Timestamp",
+      "type": "number",
+      "description": "Current timestamp as Unix seconds"
+    },
+    {
+      "name": "unix_timestamp_ms",
+      "display_name": "Unix Timestamp (ms)",
+      "type": "number",
+      "description": "Current timestamp as Unix milliseconds"
+    },
+    {
+      "name": "iso_string",
+      "display_name": "ISO String",
+      "type": "string",
+      "description": "Current timestamp as ISO 8601 string"
+    }
+  ],
+  "settings": []
+}

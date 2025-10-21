@@ -1,0 +1,56 @@
+{
+  "test_cases": [
+    {
+      "name": "Pass through single value",
+      "inputs": {
+        "value": "hello"
+      },
+      "expected": {
+        "value": "hello"
+      }
+    },
+    {
+      "name": "Pass through number",
+      "inputs": {
+        "value": 42
+      },
+      "expected": {
+        "value": 42
+      }
+    },
+    {
+      "name": "Pass through object",
+      "inputs": {
+        "value": {
+          "name": "test",
+          "count": 5
+        }
+      },
+      "expected": {
+        "value": {
+          "name": "test",
+          "count": 5
+        }
+      }
+    },
+    {
+      "name": "Pass through array",
+      "inputs": {
+        "value": [1, 2, 3, 4, 5]
+      },
+      "expected": {
+        "value": [1, 2, 3, 4, 5]
+      }
+    },
+    {
+      "name": "Pass through null",
+      "inputs": {
+        "value": null
+      },
+      "expected": {
+        "value": null
+      }
+    }
+  ]
+}
+

@@ -76,6 +76,7 @@ array-unique,Array Unique,Removes duplicate elements from an array
 boolean,Boolean Switch,A simple switch node that outputs true or false
 boolean-inverter,Boolean Inverter,Inverts the input boolean value
 ceil,Ceil,Rounds up to nearest integer
+clean-text,Clean Text,Clean and normalize text by removing extra whitespace and normalizing line breaks
 combine-document-chunks,Combine Document Chunks,Retrieve all chunks for a document and combine them into a single markdown content string
 csv-parser,CSV Parser,Parses a CSV string into an array of objects or arrays
 csv-stringifier,CSV Stringifier,Converts an array of objects or arrays into a CSV string
@@ -173,10 +174,12 @@ DeepSeek-V3 Base is the pre-trained model behind [DeepSeek V3](/deepseek/deepsee
 delay,Delay,Waits for specified time before continuing
 delete-object-property,Delete Object Property,Remove a specific property from an object, returning a new object without that property.
 divide,Divide,Divides first number by second
+duration-calculator,Duration Calculator,Calculate duration between two timestamps in various units (seconds, minutes, hours, days)
 equals,Equals,Checks if two values are equal, with deep comparison for objects and arrays
 extract-emails,Extract Emails,Extract all email addresses from text using regex patterns
 extract-hashtags,Extract Hashtags,Extract all hashtags from text
 extract-mentions,Extract Mentions,Extract all @mentions from text
+extract-phone-numbers,Extract Phone Numbers,Extract phone numbers from text in various formats (US, international, etc.)
 extract-text-content,Extract Text Content,Extract text content from messages, supporting multi-modal content and optional role prefixes.
 extract-urls,Extract URLs,Extract all URLs from text using regex patterns
 filter-messages,Filter Messages,Filter messages by custom criteria (length, content, role, etc.).
@@ -284,11 +287,14 @@ liquid-lfm-7b,Liquid: LFM 7B,LFM-7B, a new best-in-class language model. LFM-7B 
 LFM-7B is the world’s best-in-class multilingual language model in English, Arabic, and Japanese.
 
 See the [launch announcement](https://www.liquid.ai/lfm-7b) for benchmarks and more info.
+loop-end,Loop End,Loop exit point that decides whether to continue looping or exit. Tracks loop count and evaluates conditions to send value to loop_back or loop_end output.
+loop-start,Loop Start,Entry point for loops - receives values and passes them through. Refires on each new value, enabling iterative processing.
 mean,Mean,Calculates arithmetic mean (average) of numbers
 median,Median,Finds the middle value of a sorted array of numbers
 merge-messages,Merge Messages,Combine consecutive messages from the same role into single messages.
 message,Message,Manually create a single message.
 message-bus,Message Bus,Combine messages from multiple sources into a single message array. Supports daisy-chaining and flexible input handling.
+message-role-swap,Message Role Swap,Swap message roles between assistant and user in a messages array, returning a new array with swapped roles
 mistralai-codestral-2501,Mistral: Codestral 2501,[Mistral](/mistralai)'s cutting-edge language model for coding. Codestral specializes in low-latency, high-frequency tasks such as fill-in-the-middle (FIM), code correction and test generation. 
 
 Learn more on their blog post: https://mistral.ai/news/codestral-2501/
@@ -663,12 +669,13 @@ qwen-qwq-32b-preview,Qwen: QwQ 32B Preview,QwQ-32B-Preview is an experimental re
 random-error,Random Error,Randomly throws an error based on probability, useful for testing error handling and flow robustness.
 random-number,Random Number,Generates random numbers with configurable range and distribution
 range,Range,Calculates range statistics of numbers
-read-website,Read Website,Simple website reader - scrapes content and extracts main text
+read-website,Read Website (beta),Simple website reader - scrapes content and extracts main text
 response-format,Response Format,Define a JSON Schema response format for structured outputs from LLMs.
 round,Round,Rounds a number to nearest integer
 self-healing-error,Self Healing Error,Throws an error initially but succeeds on retry, useful for testing retry logic and error recovery.
 semantic-search,Semantic Search,Search knowledge base using semantic similarity and vector embeddings
 set-object-property,Set Object Property,Set or add a key-value pair to an object, returning a new object with the property set. Can also create a new object from scratch if the input object is empty or null.
+simple-agent,Simple Agent (beta),A simple AI agent that accepts tools and processes messages. Perfect template for creating starter agents.
 standard-deviation,Standard Deviation,Calculates standard deviation of numbers
 string,String,A simple string node that outputs a string
 string-case,String Case Convert,Converts text to different letter cases
@@ -684,7 +691,10 @@ string-trim,String Trim,Removes whitespace or specified characters from the star
 subtract,Subtract,Subtracts second number from first
 switch,Switch,Routes data based on a value matching cases
 system-prompt,System Prompt,Draft a text-based system prompt for an LLM, with configurable variables.
+text-scratch-pad,Text Scratch Pad,Accumulate text input over multiple executions. Each new input gets concatenated to the existing content with an optional delimiter.
 throw-error,Throw Error,Throws an error with a custom message and optional context for testing error handling.
+time-adder,Time Adder,Add or subtract time from a timestamp. Supports various time units and operations.
+timestamp,Timestamp,Generate current timestamp in various formats. Runs as a constant to provide current time at flow start.
 token-count,Token Count,Count tokens in text, messages, or arrays of messages using the cl100k_base tokenizer (used by GPT-4, GPT-3.5-turbo, and other OpenAI models).
 tokenizer,Tokenizer,Convert text, messages, or arrays of messages into arrays of token numbers using cl200k_base or cl100k_base tokenizers.
 tool,Tool,Define a tool / function call for a LLM to use.

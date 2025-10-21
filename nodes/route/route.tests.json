@@ -1,0 +1,90 @@
+[
+  {
+    "description": "True condition routes to true_output",
+    "inputs": {
+      "value": "test data",
+      "condition": true
+    },
+    "expected": {
+      "true_output": "test data",
+      "false_output": null
+    }
+  },
+  {
+    "description": "False condition routes to false_output",
+    "inputs": {
+      "value": "test data",
+      "condition": false
+    },
+    "expected": {
+      "true_output": null,
+      "false_output": "test data"
+    }
+  },
+  {
+    "description": "Object value with true condition",
+    "inputs": {
+      "value": {"name": "John", "age": 30},
+      "condition": true
+    },
+    "expected": {
+      "true_output": {"name": "John", "age": 30},
+      "false_output": null
+    }
+  },
+  {
+    "description": "Array value with false condition",
+    "inputs": {
+      "value": [1, 2, 3, 4, 5],
+      "condition": false
+    },
+    "expected": {
+      "true_output": null,
+      "false_output": [1, 2, 3, 4, 5]
+    }
+  },
+  {
+    "description": "Number value with truthy condition",
+    "inputs": {
+      "value": 42,
+      "condition": 1
+    },
+    "expected": {
+      "true_output": 42,
+      "false_output": null
+    }
+  },
+  {
+    "description": "String value with falsy condition",
+    "inputs": {
+      "value": "hello",
+      "condition": 0
+    },
+    "expected": {
+      "true_output": null,
+      "false_output": "hello"
+    }
+  },
+  {
+    "description": "Null value with true condition",
+    "inputs": {
+      "value": null,
+      "condition": true
+    },
+    "expected": {
+      "true_output": null,
+      "false_output": null
+    }
+  },
+  {
+    "description": "Undefined value with false condition",
+    "inputs": {
+      "value": undefined,
+      "condition": false
+    },
+    "expected": {
+      "true_output": null,
+      "false_output": undefined
+    }
+  }
+]
