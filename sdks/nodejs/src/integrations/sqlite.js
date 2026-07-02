@@ -658,4 +658,32 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             metadata: r.metadata ? JSON.parse(r.metadata) : {},
         }));
     }
+
+    /**
+     * Describe the tabular tables in a Tabular→SQL KB, from the `_kb_tables`
+     * registry (table name, source, row count, column schema). Returns [] for
+     * a KB with no registry (e.g. a docs KB), so callers can probe safely.
+     * @returns {Promise<Array>} [{ table_name, source_name, row_count, columns:[{name,type}] }]
+     */
+    async listTables() {
+        if (!this.isConnected) {
+            await this.connect();
+        }
+        let rows;
+        try {
+            rows = this._all(
+                `SELECT table_name, source_name, row_count, columns
+                 FROM _kb_tables
+                 ORDER BY table_name ASC`,
+            );
+        } catch {
+            return []; // no _kb_tables registry — not a tabular KB
+        }
+        return rows.map((r) => ({
+            table_name: r.table_name,
+            source_name: r.source_name,
+            row_count: r.row_count,
+            columns: r.columns ? JSON.parse(r.columns) : [],
+        }));
+    }
 }

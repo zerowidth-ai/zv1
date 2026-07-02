@@ -83,6 +83,7 @@ deepseek-deepseek-v4-flash,DeepSeek: DeepSeek V4 Flash,DeepSeek V4 Flash is an e
 deepseek-deepseek-v4-pro,DeepSeek: DeepSeek V4 Pro,DeepSeek V4 Pro is a large-scale Mixture-of-Experts model from DeepSeek with 1.6T total parameters and 49B activated parameters, supporting a 1M-token context window. It is designed for advanced reasoning, coding,...
 delay,Delay,Waits for specified time before continuing
 delete-object-property,Delete Object Property,Remove a specific property from an object, returning a new object without that property.
+describe-tables,Describe Tables,List the tables in a Tabular knowledge base with their columns, types, and row counts — so a model can discover the schema before writing SQL for the Query Knowledge Base node. Wire a Knowledge Base node into knowledge_base, same as the other KB nodes. Returns [] for a docs KB.
 divide,Divide,Divides first number by second
 duration-calculator,Duration Calculator,Calculate duration between two timestamps in various units (seconds, minutes, hours, days)
 embedding,Embedding,Generate vector embeddings using any OpenRouter embedding model. The model is an input, so it can be specified or swapped from outside the flow rather than baked into the node.

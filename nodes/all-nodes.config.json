@@ -7770,6 +7770,53 @@
         "id": "delete-object-property"
     },
     {
+        "display_name": "Describe Tables",
+        "tagline": "See a KB's tables + columns",
+        "description": "List the tables in a Tabular knowledge base with their columns, types, and row counts — so a model can discover the schema before writing SQL for the Query Knowledge Base node. Wire a Knowledge Base node into knowledge_base, same as the other KB nodes. Returns [] for a docs KB.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": false,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to describe, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            }
+        ],
+        "outputs": [
+            {
+                "name": "tables",
+                "display_name": "Tables",
+                "type": "array",
+                "description": "[{ table_name, source_name, row_count, columns: [{ name, type }] }]"
+            },
+            {
+                "name": "count",
+                "display_name": "Table Count",
+                "type": "number",
+                "description": "Number of tables"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether it completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "describe-tables"
+    },
+    {
         "display_name": "Divide",
         "tagline": "Divide two numbers",
         "description": "Divides first number by second",

@@ -45,6 +45,13 @@ function buildDb() {
   db.prepare(
     "INSERT INTO documents (id, display_name, file_type, file_size, created_at) VALUES (?,?,?,?,?)",
   ).run("d1", "bio.md", "md", 1234, "2026-07-02T00:00:00Z");
+  // A _kb_tables registry row so listTables() has something to parse.
+  db.exec(
+    "CREATE TABLE _kb_tables (table_name TEXT PRIMARY KEY, source_name TEXT, row_count INTEGER, columns TEXT);",
+  );
+  db.prepare(
+    "INSERT INTO _kb_tables (table_name, source_name, row_count, columns) VALUES (?,?,?,?)",
+  ).run("orders", "orders.csv", 2, JSON.stringify([{ name: "id", type: "INTEGER" }]));
   const insert = db.prepare(
     "INSERT INTO chunks (id,document_id,chunk_index,content,embedding,embedding_model,embedding_dimensions,created_at) VALUES (?,?,?,?,?,?,?,?)",
   );
@@ -115,6 +122,14 @@ async function main() {
       win.map((c) => c.chunk_index).join(",") +
       ")",
     win.length === 2 && win[0].chunk_index === 0 && win[1].chunk_index === 1,
+  );
+
+  // 9. listTables parses the _kb_tables registry (Tabular→SQL introspection).
+  const tables = await kb.listTables();
+  check(`listTables returns registry rows (got ${tables.length})`, tables.length === 1);
+  check(
+    "listTables parses columns JSON",
+    tables[0].table_name === "orders" && tables[0].columns[0].type === "INTEGER",
   );
 
   await kb.disconnect();
