@@ -33,11 +33,23 @@ export default async ({inputs, config}) => {
     // Execute the query
     const result = await knowledgeBase.query(query, params, operation);
 
+    // Cap the rows returned into the flow so a broad SELECT can't bloat the run
+    // payload. rowCount stays the true count; `truncated` flags the cut (never
+    // silently). Bump the SQL's own LIMIT for fewer/more rows.
+    const MAX_ROWS = 1000;
+    let data = result.data;
+    let truncated = false;
+    if (Array.isArray(data) && data.length > MAX_ROWS) {
+        data = data.slice(0, MAX_ROWS);
+        truncated = true;
+    }
+
     return {
-        data: result.data,
+        data,
         success: result.success,
         rowCount: result.rowCount,
         operation: result.operation,
+        truncated,
         error: null
     };
 };

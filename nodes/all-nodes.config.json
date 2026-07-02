@@ -35938,6 +35938,12 @@
                 "description": "Number of rows affected or returned"
             },
             {
+                "name": "truncated",
+                "display_name": "Truncated",
+                "type": "boolean",
+                "description": "True when the returned data was capped (>1000 rows) — add a LIMIT to the query for the full set"
+            },
+            {
                 "name": "operation",
                 "display_name": "Operation",
                 "type": "string",
