@@ -16067,6 +16067,7 @@
         "is_constant": true,
         "is_plugin": false,
         "is_output": false,
+        "custom_render_height": 76,
         "inputs": [],
         "outputs": [
             {
