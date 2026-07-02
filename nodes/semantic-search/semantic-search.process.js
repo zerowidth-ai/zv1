@@ -1,8 +1,20 @@
 export default async ({inputs, settings, config, nodeConfig}) => {
     try {
-        // Knowledge base + OpenRouter (the engine's embedding provider — same
-        // gateway/key as chat and the generic `embedding` node).
-        const knowledgeBase = config.integrations?.knowledgeBase || config.integrations?.sqlite;
+        // Resolve which knowledge base to search. Node-level binding: a
+        // `knowledge_base` handle wired in from a Knowledge Base node names a
+        // specific KB by uuid, resolved to a per-KB integration the host keyed
+        // as config.integrations.knowledgeBases[uuid]. Falls back to the
+        // flow-global KB (config.integrations.knowledgeBase / .sqlite) so
+        // existing single-KB flows keep working. See ADR 0023.
+        const kbRef = inputs.knowledge_base;
+        const kbByUuid =
+            kbRef && kbRef.uuid
+                ? config.integrations?.[`knowledgeBase:${kbRef.uuid}`]
+                : null;
+        const knowledgeBase =
+            kbByUuid ||
+            config.integrations?.knowledgeBase ||
+            config.integrations?.sqlite;
         const openrouter = config.integrations?.openrouter;
 
         if (!knowledgeBase) {

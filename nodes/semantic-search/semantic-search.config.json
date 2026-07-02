@@ -16,6 +16,14 @@
       "required": true
     },
     {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base to search, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
+    },
+    {
       "name": "limit",
       "display_name": "Result Limit",
       "type": "number",

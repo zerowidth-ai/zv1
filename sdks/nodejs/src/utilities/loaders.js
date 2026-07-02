@@ -145,7 +145,22 @@ export async function loadIntegrations(config, flow = null) {
           if (knowledgeBaseType === 'sqlite') {
               integrations.sqlite = integrations.knowledgeBase;
           }
-          
+
+          // Node-level knowledge bases (ADR 0023): a flow can reference several
+          // KBs, each attached to a specific search node via a Knowledge Base
+          // node. The host resolves every referenced KB's `.db` and passes them
+          // keyed by uuid in `flow.knowledgeDbPaths`. Register each as its own
+          // first-class integration under `knowledgeBase:<uuid>` — a flat key
+          // (not a nested map) so it gets the same `_engineConfig` wiring as
+          // any other integration; nodes look theirs up by uuid. Coexists with
+          // the flow-global KB above (the fallback when a node has none).
+          if (knowledgeBaseType === 'sqlite' && flow?.knowledgeDbPaths && typeof flow.knowledgeDbPaths === 'object') {
+              for (const [kbUuid, dbPath] of Object.entries(flow.knowledgeDbPaths)) {
+                  if (!dbPath) continue;
+                  integrations[`knowledgeBase:${kbUuid}`] = new KnowledgeBaseIntegration(dbPath, integrationOptions);
+              }
+          }
+
       } catch (error) {
           console.warn(`[WARN] Failed to load ${knowledgeBaseType} knowledge base integration:`, error.message);
           console.warn('[WARN] Error details:', error);

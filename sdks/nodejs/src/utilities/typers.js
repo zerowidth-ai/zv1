@@ -40,10 +40,14 @@ export async function loadCustomTypes() {
         // Try to load custom converters for this type
         const customConverter = await loadTypeConverter(typeName);
         
-        // Store both validator and converters
+        // Store both validator and converters. Converters are optional — a
+        // type with no `<type>.converters.js` (e.g. knowledge_base, a plain
+        // reference handle) just gets an empty converter map. (Was referencing
+        // an undeclared `typeConverters`, which threw for converter-less types
+        // and left them unregistered.)
         retval[typeName] = {
           validate: compiledSchema,
-          converters: customConverter || (typeConverters[typeName] || {})
+          converters: customConverter || {}
         };
 
       } catch (err) { 

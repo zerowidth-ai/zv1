@@ -1077,7 +1077,21 @@ export default class Workbench {
         await this.config.integrations.sqlite.disconnect();
         delete this.config.integrations.sqlite;
       }
-      
+
+      // Clean up node-level knowledge base integrations (keyed knowledgeBase:<uuid>).
+      if (this.config.integrations) {
+        for (const key of Object.keys(this.config.integrations)) {
+          if (!key.startsWith('knowledgeBase:')) continue;
+          this.logDebug(`Cleaning up node-level knowledge base integration ${key}...`);
+          try {
+            await this.config.integrations[key].disconnect();
+          } catch (err) {
+            this.logDebug(`Failed to disconnect ${key}: ${err.message}`);
+          }
+          delete this.config.integrations[key];
+        }
+      }
+
       // Clean up any imported engines that were created
       // These are stored in the cache when import nodes are processed
       const rawStore = this.cache.getRawStore();
@@ -2890,6 +2904,13 @@ export default class Workbench {
         if (importDef.knowledgeDbPath) {
           this.trackKnowledgeFile(importDef.knowledgeDbPath);
         }
+      }
+    }
+
+    // Track node-level knowledge base files (keyed by uuid).
+    if (this.flow.knowledgeDbPaths && typeof this.flow.knowledgeDbPaths === 'object') {
+      for (const dbPath of Object.values(this.flow.knowledgeDbPaths)) {
+        if (dbPath) this.trackKnowledgeFile(dbPath);
       }
     }
   }

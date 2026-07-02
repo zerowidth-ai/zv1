@@ -162,6 +162,7 @@ json-stringifier,JSON Stringifier,Converts an object or array to a JSON string
 json-to-xml,JSON to XML,Converts a JSON object to XML format. Useful for Claude prompts which work well with XML structure.
 json-to-yaml,JSON to YAML,Converts a JSON object to YAML format. Useful for configuration files or human-readable output.
 keep-bookends,Keep Bookends,Keeps the first N and last M messages from a conversation, removing the middle. System messages are always preserved regardless of counts. Useful for managing context length while retaining initial context and recent messages.
+knowledge-base,Knowledge Base,References a workspace knowledge base by id and emits a handle to it. Wire this node's output into a Semantic Search (or Query Knowledge Base) node to search that KB. Attach one Knowledge Base node to several search nodes to reuse the same KB — like importing a subflow, the KB is one thing they all depend on.
 less-than,Less Than,Checks if the first number is less than the second number
 less-than-equal,Less Than or Equal,Checks if the first number is less than or equal to the second number
 linear-create-issue,Linear Create Issue,Create a new issue in Linear using the GraphQL API.
