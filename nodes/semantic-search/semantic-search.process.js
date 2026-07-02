@@ -28,7 +28,9 @@ export default async ({inputs, settings, config, nodeConfig}) => {
         const {
             query,
             limit = 10,
-            similarity_threshold = 0.7,
+            // Default 0 (matches the node config) — return matches ranked by
+            // similarity rather than silently filtering everything below 0.7.
+            similarity_threshold = 0,
             document_id = null
         } = inputs;
 

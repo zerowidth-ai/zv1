@@ -308,19 +308,29 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
      */
     async getEmbeddingModel() {
         try {
-            const recentChunk = await this.select(
+            const rows = await this.select(
                 'SELECT embedding_model FROM chunks WHERE embedding_model IS NOT NULL ORDER BY created_at DESC LIMIT 1'
             );
 
-            if (recentChunk.length > 0 && recentChunk[0].embedding_model) {
-                return recentChunk[0].embedding_model;
+            // `select()` returns a single object for LIMIT-1 queries (query()
+            // dispatches those through `_get`), or an array otherwise —
+            // normalize to the first row. Reading `.length` on the object
+            // silently missed the stored model and fell through to the default,
+            // whose NON-namespaced value ("text-embedding-3-small") then never
+            // matched the namespaced model the chunks are indexed under
+            // ("openai/text-embedding-3-small"), so `WHERE embedding_model = ?`
+            // dropped every row.
+            const row = Array.isArray(rows) ? rows[0] : rows;
+            if (row && row.embedding_model) {
+                return row.embedding_model;
             }
 
-            // Fall back to default
-            return 'text-embedding-3-small';
+            // Fall back to the namespaced default (matches the ingestion
+            // default + OpenRouter's expected model id).
+            return 'openai/text-embedding-3-small';
         } catch (error) {
             console.warn('[WARN] Failed to get embedding model from database, using default:', error.message);
-            return 'text-embedding-3-small';
+            return 'openai/text-embedding-3-small';
         }
     }
 
