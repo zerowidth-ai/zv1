@@ -52,6 +52,10 @@ function buildDb() {
   db.prepare(
     "INSERT INTO _kb_tables (table_name, source_name, row_count, columns) VALUES (?,?,?,?)",
   ).run("orders", "orders.csv", 2, JSON.stringify([{ name: "id", type: "INTEGER" }]));
+  // A real data table so listTables can sample rows + build DDL against it.
+  db.exec("CREATE TABLE orders (id INTEGER);");
+  db.prepare("INSERT INTO orders (id) VALUES (?)").run(1);
+  db.prepare("INSERT INTO orders (id) VALUES (?)").run(2);
   const insert = db.prepare(
     "INSERT INTO chunks (id,document_id,chunk_index,content,embedding,embedding_model,embedding_dimensions,created_at) VALUES (?,?,?,?,?,?,?,?)",
   );
@@ -130,6 +134,15 @@ async function main() {
   check(
     "listTables parses columns JSON",
     tables[0].table_name === "orders" && tables[0].columns[0].type === "INTEGER",
+  );
+  check(
+    "listTables builds CREATE TABLE ddl",
+    tables[0].ddl.includes('CREATE TABLE "orders"') &&
+      tables[0].ddl.includes('"id" INTEGER'),
+  );
+  check(
+    `listTables returns sample rows (got ${tables[0].sample_rows.length})`,
+    tables[0].sample_rows.length === 2,
   );
 
   await kb.disconnect();

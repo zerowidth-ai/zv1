@@ -661,11 +661,15 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
 
     /**
      * Describe the tabular tables in a Tabular→SQL KB, from the `_kb_tables`
-     * registry (table name, source, row count, column schema). Returns [] for
-     * a KB with no registry (e.g. a docs KB), so callers can probe safely.
-     * @returns {Promise<Array>} [{ table_name, source_name, row_count, columns:[{name,type}] }]
+     * registry — everything an LLM needs to write correct SQL: the column
+     * schema, a `CREATE TABLE` DDL (the format models expect), and a few
+     * sample rows (which disambiguate value formats / casing far better than
+     * types alone). Returns [] for a KB with no registry (e.g. a docs KB).
+     * @param {Object} options - { sampleLimit = 5 } rows per table (0 = none)
+     * @returns {Promise<Array>} [{ table_name, source_name, row_count, columns:[{name,type}], ddl, sample_rows }]
      */
-    async listTables() {
+    async listTables(options = {}) {
+        const { sampleLimit = 5 } = options;
         if (!this.isConnected) {
             await this.connect();
         }
@@ -679,11 +683,39 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
         } catch {
             return []; // no _kb_tables registry — not a tabular KB
         }
-        return rows.map((r) => ({
-            table_name: r.table_name,
-            source_name: r.source_name,
-            row_count: r.row_count,
-            columns: r.columns ? JSON.parse(r.columns) : [],
-        }));
+        return rows.map((r) => {
+            const tableName = String(r.table_name ?? "");
+            const columns = r.columns ? JSON.parse(r.columns) : [];
+            let sample_rows = [];
+            // Identifiers come from our own sanitizer, but guard the
+            // interpolation before it reaches SQL anyway.
+            if (sampleLimit > 0 && /^[a-zA-Z0-9_]+$/.test(tableName)) {
+                try {
+                    sample_rows = this._all(
+                        `SELECT * FROM "${tableName}" LIMIT ?`,
+                        [sampleLimit],
+                    );
+                } catch {
+                    sample_rows = [];
+                }
+            }
+            return {
+                table_name: r.table_name,
+                source_name: r.source_name,
+                row_count: r.row_count,
+                columns,
+                ddl: buildCreateTableDDL(tableName, columns),
+                sample_rows,
+            };
+        });
     }
+}
+
+/** A `CREATE TABLE` statement for a KB table's columns — the schema format
+ *  LLMs are trained on for text-to-SQL. */
+function buildCreateTableDDL(name, columns) {
+    const cols = (columns || [])
+        .map((c) => `  "${c.name}" ${c.type}`)
+        .join(",\n");
+    return `CREATE TABLE "${name}" (\n${cols}\n);`;
 }

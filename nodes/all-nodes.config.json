@@ -7785,14 +7785,27 @@
                 "description": "The knowledge base to describe, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
                 "required": false,
                 "default": null
+            },
+            {
+                "name": "sample_rows",
+                "display_name": "Sample Rows",
+                "type": "number",
+                "description": "Rows to sample per table (0 = none). Samples help an LLM write correct SQL.",
+                "default": 5
             }
         ],
         "outputs": [
             {
+                "name": "schema",
+                "display_name": "Schema (for LLM)",
+                "type": "string",
+                "description": "Ready-to-paste schema block: CREATE TABLE DDL + a few sample rows (as comments) per table. Feed into an LLM node's context to write SQL."
+            },
+            {
                 "name": "tables",
                 "display_name": "Tables",
                 "type": "array",
-                "description": "[{ table_name, source_name, row_count, columns: [{ name, type }] }]"
+                "description": "[{ table_name, source_name, row_count, columns: [{ name, type }], ddl, sample_rows }]"
             },
             {
                 "name": "count",
