@@ -516,4 +516,69 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             throw new Error(`Fallback text search failed: ${error.message}`);
         }
     }
+
+    /**
+     * Keyword (substring) search over chunk content — the free, no-embedding
+     * complement to semanticSearch. Case-insensitive; ranks by number of
+     * occurrences (mirrors the in-app KB "test search" keyword mode). Returns
+     * the same row shape as semanticSearch (plus `match_count` / `match_type`).
+     * @param {string} query - Text to match within chunk content
+     * @param {Object} options - { limit = 10, document_id = null }
+     * @returns {Promise<Array>} Matching chunks, most matches first
+     */
+    async keywordSearch(query, options = {}) {
+        const { limit = 10, document_id = null } = options;
+        if (!this.isConnected) {
+            await this.connect();
+        }
+        const q = String(query ?? '');
+        if (q.length === 0) return [];
+
+        let sql = `
+            SELECT
+                c.id,
+                c.document_id,
+                c.chunk_index,
+                c.content,
+                c.token_count,
+                c.chunk_type,
+                c.metadata,
+                c.embedding_model,
+                c.embedding_dimensions,
+                d.display_name as document_name,
+                d.file_type,
+                d.folder_path,
+                c.created_at
+            FROM chunks c
+            LEFT JOIN documents d ON c.document_id = d.id
+            WHERE c.content LIKE ? COLLATE NOCASE
+        `;
+        const params = [`%${q}%`];
+        if (document_id) {
+            sql += ' AND c.document_id = ?';
+            params.push(document_id);
+        }
+
+        // No SQL LIMIT: rank by occurrence count in JS, then slice.
+        const rows = this._all(sql, params);
+        const needle = q.toLowerCase();
+        const scored = rows.map((row) => {
+            const content = row.content ?? '';
+            const hay = content.toLowerCase();
+            let count = 0;
+            let idx = hay.indexOf(needle);
+            while (idx !== -1) {
+                count++;
+                idx = hay.indexOf(needle, idx + needle.length);
+            }
+            return {
+                ...row,
+                metadata: row.metadata ? JSON.parse(row.metadata) : {},
+                match_count: count,
+                match_type: 'keyword'
+            };
+        });
+        scored.sort((a, b) => b.match_count - a.match_count || a.chunk_index - b.chunk_index);
+        return scored.slice(0, limit);
+    }
 }

@@ -1,12 +1,20 @@
-export default async ({inputs, settings, config, nodeConfig}) => {
-   // Get knowledge base integration from engine (supports multiple backends)
-   const knowledgeBase = config.integrations?.knowledgeBase || config.integrations?.sqlite;
+export default async ({inputs, config}) => {
+   // Resolve which knowledge base to query — SAME wiring as semantic-search
+   // and keyword-search: a `knowledge_base` handle wired in from a Knowledge
+   // Base node names a specific KB by uuid (resolved to a per-KB integration
+   // keyed knowledgeBase:<uuid>), falling back to the flow-global KB. See ADR 0023.
+   const kbRef = inputs.knowledge_base;
+   const knowledgeBase =
+       (kbRef && kbRef.uuid
+           ? config.integrations?.[`knowledgeBase:${kbRef.uuid}`]
+           : null) ||
+       config.integrations?.knowledgeBase ||
+       config.integrations?.sqlite;
    if (!knowledgeBase) {
        throw new Error("Knowledge base integration not found. Make sure a knowledge database is available.");
    }
 
     const { query, params = [], operation = 'SELECT' } = inputs;
-    const { database_path = 'knowledge.db', timeout = 5000 } = settings;
 
     if (!query || typeof query !== 'string') {
         throw new Error("Query is required and must be a string");
