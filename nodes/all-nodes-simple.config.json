@@ -99,10 +99,12 @@ extract-text-content,Extract Text Content,Extract text content from messages, su
 extract-urls,Extract URLs,Extract all URLs from text using regex patterns
 filter-messages,Filter Messages,Filter messages by custom criteria (length, content, role, etc.).
 filter-tools,Filter Tools,Filter tools by name for dynamic tool selection
+find-entity-path,Find Entity Path,Find the shortest chain of relations connecting two entities in a Graph knowledge base (breadth-first, direction-agnostic). Answers "how are X and Y related?" with the hop-by-hop path. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
 firecrawl-scrape,Firecrawl: Scrape URL,Scrape content from any URL with advanced options including format selection, content filtering, mobile emulation, and more
 floor,Floor,Rounds down to nearest integer
 generate-uuid,Generate UUID,Generates a random UUID v4.
 get-chunk-by-index,Get Chunk by Index,Retrieve a specific chunk from a knowledge base by document ID and chunk index
+get-entity-neighbors,Get Entity Neighbors,Look up an entity in a Graph knowledge base (by name or id) and return every relation touching it, each with the entity on the far side — one hop of graph traversal. Filter by direction or relation type. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
 get-first-n-messages,Get First N Messages,Extract the first N messages from an array of messages.
 get-last-n-messages,Get Last N Messages,Extract the most recent N messages from an array of messages.
 get-messages-by-role,Get Messages by Role,Filter messages by specific role (user, assistant, system, etc.).
@@ -175,6 +177,7 @@ liquid-lfm-2-24b-a2b,LiquidAI: LFM2-24B-A2B,LFM2-24B-A2B is the largest model in
 liquid-lfm-2-5-1-2b-instruct-free,LiquidAI: LFM2.5-1.2B-Instruct (free),LFM2.5-1.2B-Instruct is a compact, high-performance instruction-tuned model built for fast on-device AI. It delivers strong chat quality in a 1.2B parameter footprint, with efficient edge inference and broad runtime support.
 liquid-lfm-2-5-1-2b-thinking-free,LiquidAI: LFM2.5-1.2B-Thinking (free),LFM2.5-1.2B-Thinking is a lightweight reasoning-focused model optimized for agentic tasks, data extraction, and RAG—while still running comfortably on edge devices. It supports long context (up to 32K tokens) and is...
 list-documents,List Documents,List the documents in a knowledge base (id, name, type, size, chunk count) — for browsing or letting an agent pick a document to read. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
+list-entities,List Entities,List the entities in a Graph knowledge base, highest-degree (most-connected) first — for browsing the graph or letting an agent discover what it can traverse. Optionally filter by entity type or a name substring. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
 loop-end,Loop End,Loop exit point that decides whether to continue looping or exit. Tracks loop count and evaluates conditions to send value to loop_back or loop_end output.
 loop-start,Loop Start,Entry point for loops - receives values and passes them through. Refires on each new value, enabling iterative processing.
 mean,Mean,Calculates arithmetic mean (average) of numbers

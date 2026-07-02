@@ -709,6 +709,220 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             };
         });
     }
+
+    // ── Knowledge-graph traversal (Graph recipe, ADR 0023) ────────────
+    // Graph KBs carry `nodes` + `edges` tables (entities + typed
+    // relations, both with document provenance) alongside the same
+    // `_kb_tables` registry tabular uses — so `listTables` / `query`
+    // work on them unchanged; these methods add traversal sugar.
+    // Soft-fail convention matches listTables: a KB without graph
+    // tables returns empty shapes, never throws.
+
+    /**
+     * List entities, highest-degree first (degree = count of edges in
+     * either direction), so the "important" nodes surface first.
+     * @param {Object} options - { limit=100, offset=0, type=null, search=null }
+     * @returns {Promise<Array>} [{ id, name, type, description, document_id, degree, created_at }]
+     */
+    async listEntities(options = {}) {
+        const { limit = 100, offset = 0, type = null, search = null } = options;
+        if (!this.isConnected) {
+            await this.connect();
+        }
+        try {
+            const where = [];
+            const params = [];
+            if (type) {
+                where.push("n.type = ? COLLATE NOCASE");
+                params.push(type);
+            }
+            if (search) {
+                where.push("n.name LIKE ? COLLATE NOCASE");
+                params.push(`%${search}%`);
+            }
+            return this._all(
+                `SELECT n.*, (
+                    SELECT COUNT(*) FROM edges e
+                    WHERE e.source_id = n.id OR e.target_id = n.id
+                 ) AS degree
+                 FROM nodes n
+                 ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
+                 ORDER BY degree DESC, n.name COLLATE NOCASE ASC
+                 LIMIT ? OFFSET ?`,
+                [...params, limit, offset],
+            );
+        } catch {
+            return []; // no nodes table — not a graph KB
+        }
+    }
+
+    /**
+     * Resolve an entity reference — exact id first, then
+     * case-insensitive name. Returns the node row or null.
+     */
+    async getEntity(ref) {
+        if (!this.isConnected) {
+            await this.connect();
+        }
+        if (typeof ref !== "string" || ref.length === 0) return null;
+        try {
+            return (
+                this._get(`SELECT * FROM nodes WHERE id = ?`, [ref]) ||
+                this._get(
+                    `SELECT * FROM nodes WHERE name = ? COLLATE NOCASE`,
+                    [ref],
+                ) ||
+                null
+            );
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Edges touching an entity, each joined with the node on the far
+     * side. `direction` filters to edges where the entity is the
+     * source ("out"), the target ("in"), or either ("both").
+     * @param {string} entityRef - entity id or (case-insensitive) name
+     * @param {Object} options - { direction="both", relation_type=null, limit=50 }
+     * @returns {Promise<Object>} { entity, neighbors: [{ edge_id, relation_type, description, direction, node }] }
+     */
+    async getNeighbors(entityRef, options = {}) {
+        const { direction = "both", relation_type = null, limit = 50 } = options;
+        const entity = await this.getEntity(entityRef);
+        if (!entity) return { entity: null, neighbors: [] };
+        try {
+            let directionSql;
+            if (direction === "out") directionSql = "e.source_id = ?";
+            else if (direction === "in") directionSql = "e.target_id = ?";
+            else directionSql = "(e.source_id = ? OR e.target_id = ?)";
+            const directionParams =
+                direction === "out" || direction === "in"
+                    ? [entity.id]
+                    : [entity.id, entity.id];
+            const typeSql = relation_type
+                ? " AND e.type = ? COLLATE NOCASE"
+                : "";
+            const rows = this._all(
+                `SELECT e.id AS edge_id, e.type AS relation_type,
+                        e.description, e.source_id, e.target_id,
+                        n.id AS node_id, n.name AS node_name,
+                        n.type AS node_type, n.description AS node_description
+                 FROM edges e
+                 JOIN nodes n ON n.id = CASE
+                    WHEN e.source_id = ? THEN e.target_id ELSE e.source_id
+                 END
+                 WHERE ${directionSql}${typeSql}
+                 LIMIT ?`,
+                [
+                    entity.id,
+                    ...directionParams,
+                    ...(relation_type ? [relation_type] : []),
+                    limit,
+                ],
+            );
+            return {
+                entity,
+                neighbors: rows.map((r) => ({
+                    edge_id: r.edge_id,
+                    relation_type: r.relation_type,
+                    description: r.description,
+                    direction: r.source_id === entity.id ? "out" : "in",
+                    node: {
+                        id: r.node_id,
+                        name: r.node_name,
+                        type: r.node_type,
+                        description: r.node_description,
+                    },
+                })),
+            };
+        } catch {
+            return { entity, neighbors: [] };
+        }
+    }
+
+    /**
+     * Shortest path between two entities — BFS over edges, direction-
+     * agnostic (relations read both ways for pathfinding). Edge count
+     * is capped so a runaway artifact can't wedge a run.
+     * @param {string} fromRef - entity id or (case-insensitive) name
+     * @param {string} toRef - entity id or (case-insensitive) name
+     * @param {Object} options - { max_depth=4, max_edges=50000 }
+     * @returns {Promise<Object>} { found, from, to, hops, steps: [{ node, via_edge? }] }
+     */
+    async findPath(fromRef, toRef, options = {}) {
+        const { max_depth = 4, max_edges = 50000 } = options;
+        const from = await this.getEntity(fromRef);
+        const to = await this.getEntity(toRef);
+        if (!from || !to) {
+            return { found: false, from, to, hops: 0, steps: [] };
+        }
+        if (from.id === to.id) {
+            return { found: true, from, to, hops: 0, steps: [{ node: from }] };
+        }
+        let edges;
+        try {
+            edges = this._all(
+                `SELECT id, source_id, target_id, type FROM edges LIMIT ?`,
+                [max_edges],
+            );
+        } catch {
+            return { found: false, from, to, hops: 0, steps: [] };
+        }
+        const adjacency = new Map();
+        for (const e of edges) {
+            if (!adjacency.has(e.source_id)) adjacency.set(e.source_id, []);
+            if (!adjacency.has(e.target_id)) adjacency.set(e.target_id, []);
+            adjacency.get(e.source_id).push({ next: e.target_id, edge: e });
+            adjacency.get(e.target_id).push({ next: e.source_id, edge: e });
+        }
+        // BFS with parent pointers.
+        const visited = new Map([[from.id, null]]);
+        let frontier = [from.id];
+        for (let depth = 0; depth < max_depth && frontier.length > 0; depth++) {
+            const next = [];
+            for (const nodeId of frontier) {
+                for (const { next: nextId, edge } of adjacency.get(nodeId) ?? []) {
+                    if (visited.has(nextId)) continue;
+                    visited.set(nextId, { prev: nodeId, edge });
+                    if (nextId === to.id) {
+                        return this._materializePath(from, to, visited);
+                    }
+                    next.push(nextId);
+                }
+            }
+            frontier = next;
+        }
+        return { found: false, from, to, hops: 0, steps: [] };
+    }
+
+    /** Walk parent pointers back from `to`, hydrating node rows. */
+    _materializePath(from, to, visited) {
+        const reversed = [];
+        let cursor = to.id;
+        while (cursor !== from.id) {
+            const link = visited.get(cursor);
+            reversed.push({ nodeId: cursor, edge: link.edge });
+            cursor = link.prev;
+        }
+        const steps = [{ node: from }];
+        for (const { nodeId, edge } of reversed.reverse()) {
+            const node =
+                this._get(`SELECT * FROM nodes WHERE id = ?`, [nodeId]) ?? {
+                    id: nodeId,
+                };
+            steps.push({
+                node,
+                via_edge: {
+                    id: edge.id,
+                    type: edge.type,
+                    source_id: edge.source_id,
+                    target_id: edge.target_id,
+                },
+            });
+        }
+        return { found: true, from, to, hops: steps.length - 1, steps };
+    }
 }
 
 /** A `CREATE TABLE` statement for a KB table's columns — the schema format

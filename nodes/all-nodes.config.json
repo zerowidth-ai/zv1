@@ -8937,6 +8937,80 @@
         "id": "filter-tools"
     },
     {
+        "display_name": "Find Entity Path",
+        "tagline": "Connect two graph entities",
+        "description": "Find the shortest chain of relations connecting two entities in a Graph knowledge base (breadth-first, direction-agnostic). Answers \"how are X and Y related?\" with the hop-by-hop path. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "from",
+                "display_name": "From Entity",
+                "type": "string",
+                "description": "The starting entity — its name (case-insensitive) or id.",
+                "required": true
+            },
+            {
+                "name": "to",
+                "display_name": "To Entity",
+                "type": "string",
+                "description": "The target entity — its name (case-insensitive) or id.",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to traverse, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "max_depth",
+                "display_name": "Max Depth",
+                "type": "number",
+                "description": "Maximum number of hops to search before giving up.",
+                "default": 4
+            }
+        ],
+        "outputs": [
+            {
+                "name": "found",
+                "display_name": "Found",
+                "type": "boolean",
+                "description": "Whether a path exists within max_depth"
+            },
+            {
+                "name": "hops",
+                "display_name": "Hops",
+                "type": "number",
+                "description": "Number of relations in the path (0 when from = to)"
+            },
+            {
+                "name": "steps",
+                "display_name": "Steps",
+                "type": "array",
+                "description": "The path, node by node: [{ node, via_edge? }] — via_edge names the relation that reached each node"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the search completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed (including unknown entities)"
+            }
+        ],
+        "settings": [],
+        "id": "find-entity-path"
+    },
+    {
         "display_name": "Firecrawl: Scrape URL",
         "tagline": "Scrape web content",
         "description": "Scrape content from any URL with advanced options including format selection, content filtering, mobile emulation, and more",
@@ -9225,6 +9299,92 @@
             "openai"
         ],
         "id": "get-chunk-by-index"
+    },
+    {
+        "display_name": "Get Entity Neighbors",
+        "tagline": "Walk one hop in a graph",
+        "description": "Look up an entity in a Graph knowledge base (by name or id) and return every relation touching it, each with the entity on the far side — one hop of graph traversal. Filter by direction or relation type. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "entity",
+                "display_name": "Entity",
+                "type": "string",
+                "description": "The entity to look up — its name (case-insensitive) or id.",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to traverse, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "direction",
+                "display_name": "Direction",
+                "type": "string",
+                "description": "Which relations to include: both, out (entity is the source), or in (entity is the target).",
+                "default": "both",
+                "options": [
+                    "both",
+                    "out",
+                    "in"
+                ]
+            },
+            {
+                "name": "relation_type",
+                "display_name": "Relation Type",
+                "type": "string",
+                "description": "Optional: only relations of this type (e.g. works_at). Case-insensitive.",
+                "default": null
+            },
+            {
+                "name": "limit",
+                "display_name": "Limit",
+                "type": "number",
+                "description": "Maximum number of neighbors to return",
+                "default": 50
+            }
+        ],
+        "outputs": [
+            {
+                "name": "entity",
+                "display_name": "Entity",
+                "type": "object",
+                "description": "The resolved entity row (null if not found)"
+            },
+            {
+                "name": "neighbors",
+                "display_name": "Neighbors",
+                "type": "array",
+                "description": "Relations touching the entity: { edge_id, relation_type, description, direction, node }"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of neighbors returned"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the lookup completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed (including entity not found)"
+            }
+        ],
+        "settings": [],
+        "id": "get-entity-neighbors"
     },
     {
         "display_name": "Get First N Messages",
@@ -17064,6 +17224,81 @@
         ],
         "settings": [],
         "id": "list-documents"
+    },
+    {
+        "display_name": "List Entities",
+        "tagline": "Browse a knowledge graph",
+        "description": "List the entities in a Graph knowledge base, highest-degree (most-connected) first — for browsing the graph or letting an agent discover what it can traverse. Optionally filter by entity type or a name substring. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to list, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "type",
+                "display_name": "Entity Type",
+                "type": "string",
+                "description": "Optional: only entities of this type (e.g. person, organization). Case-insensitive.",
+                "default": null
+            },
+            {
+                "name": "search",
+                "display_name": "Name Search",
+                "type": "string",
+                "description": "Optional: only entities whose name contains this text (case-insensitive).",
+                "default": null
+            },
+            {
+                "name": "limit",
+                "display_name": "Limit",
+                "type": "number",
+                "description": "Maximum number of entities to return",
+                "default": 100
+            },
+            {
+                "name": "offset",
+                "display_name": "Offset",
+                "type": "number",
+                "description": "Number of entities to skip (pagination)",
+                "default": 0
+            }
+        ],
+        "outputs": [
+            {
+                "name": "entities",
+                "display_name": "Entities",
+                "type": "array",
+                "description": "Entity rows (id, name, type, description, degree, …), most-connected first"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of entities returned"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the listing completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "list-entities"
     },
     {
         "display_name": "Loop End",
