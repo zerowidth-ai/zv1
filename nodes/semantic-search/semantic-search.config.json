@@ -6,7 +6,7 @@
   "is_constant": false,
   "is_plugin": true,
   "is_output": false,
-  "needs_key_from": ["openai"],
+  "needs_key_from": ["openrouter"],
   "inputs": [
     {
       "name": "query",

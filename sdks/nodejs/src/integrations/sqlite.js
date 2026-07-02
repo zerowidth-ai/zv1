@@ -1,10 +1,11 @@
-import sqlite3 from 'sqlite3';
-import { promisify } from 'util';
+import { DatabaseSync } from 'node:sqlite';
 import path from 'path';
 import fs from 'fs';
 import { KnowledgeBaseInterface } from './knowledge-base-interface.js';
 
-// Import sqlite-vec extension
+// sqlite-vec ships a loadable extension (prebuilt per-platform .dylib/.so);
+// `getLoadablePath()` returns the binary we hand to node:sqlite's
+// `loadExtension`. No native node module / node-gyp build involved.
 import * as sqliteVec from 'sqlite-vec';
 
 export default class SQLiteIntegration extends KnowledgeBaseInterface {
@@ -21,48 +22,46 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
     }
 
     /**
-     * Initialize the database connection
+     * Initialize the database connection.
+     *
+     * Uses Node's built-in `node:sqlite` (DatabaseSync) — synchronous,
+     * zero native dependency, uniform across Node 22+/24 and Linux — rather
+     * than the legacy `sqlite3` native module. The public methods stay
+     * `async` for call-site compatibility.
      * @returns {Promise<void>}
      */
   async connect() {
     try {
-
-      
       // Check if database file exists
       if (!fs.existsSync(this.dbPath)) {
         throw new Error(`Database file not found: ${this.dbPath}`);
       }
 
-      // Create database connection
-      this.db = new sqlite3.Database(this.dbPath, (err) => {
-        if (err) {
-          throw new Error(`Failed to connect to database: ${err.message}`);
+      // Open the connection with extension loading allowed so sqlite-vec
+      // can be attached.
+      this.db = new DatabaseSync(this.dbPath, { allowExtension: true });
+
+      // Load sqlite-vec extension. Enable extension loading first where the
+      // runtime exposes the toggle (guarded for forward-compat).
+      try {
+        if (typeof this.db.enableLoadExtension === 'function') {
+          this.db.enableLoadExtension(true);
         }
-      });
+        this.db.loadExtension(sqliteVec.getLoadablePath());
+      } catch (error) {
+        console.warn('[WARN] Failed to load sqlite-vec extension:', error.message);
+        // Don't fail the connection, just warn — semanticSearch falls back
+        // to text search when vec functions are unavailable.
+      }
 
-            // Promisify the database methods
-            this.db.run = promisify(this.db.run.bind(this.db));
-            this.db.get = promisify(this.db.get.bind(this.db));
-            this.db.all = promisify(this.db.all.bind(this.db));
-            this.db.close = promisify(this.db.close.bind(this.db));
-
-            // Load sqlite-vec extension
-            try {
-                sqliteVec.load(this.db);
-            } catch (error) {
-                console.warn('[WARN] Failed to load sqlite-vec extension:', error.message);
-                // Don't fail the connection, just warn
-            }
-
-            // Test the connection
-            await this.db.get("SELECT 1");
-            this.isConnected = true;
-
-        } catch (error) {
-            this.isConnected = false;
-            throw new Error(`SQLite connection failed: ${error.message}`);
-        }
+      // Test the connection
+      this._get('SELECT 1');
+      this.isConnected = true;
+    } catch (error) {
+      this.isConnected = false;
+      throw new Error(`SQLite connection failed: ${error.message}`);
     }
+  }
 
   /**
    * Close the database connection and clean up temporary files
@@ -71,13 +70,13 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
   async disconnect() {
     if (this.db && this.isConnected) {
       try {
-        await this.db.close();
+        this.db.close();
         this.isConnected = false;
       } catch (error) {
         throw new Error(`Failed to close database: ${error.message}`);
       }
     }
-    
+
     // Clean up temporary file if it exists
     if (this.dbPath && (this.dbPath.includes('.temp') || this.dbPath.includes('knowledge_'))) {
       try {
@@ -89,6 +88,23 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
         // Don't throw - cleanup should be best effort
       }
     }
+  }
+
+  // ─── node:sqlite driver helpers ────────────────────────────────────────
+  // DatabaseSync is synchronous: prepare once, bind anonymous `?` params by
+  // spreading the params array. These wrap the three shapes the rest of the
+  // class needs.
+
+  _all(sql, params = []) {
+    return this.db.prepare(sql).all(...params);
+  }
+
+  _get(sql, params = []) {
+    return this.db.prepare(sql).get(...params);
+  }
+
+  _run(sql, params = []) {
+    return this.db.prepare(sql).run(...params);
   }
 
     /**
@@ -108,7 +124,7 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             const allowedOperations = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 'ALTER'];
             const queryUpper = query.trim().toUpperCase();
             const isAllowed = allowedOperations.some(op => queryUpper.startsWith(op));
-            
+
             if (!isAllowed) {
                 throw new Error(`Operation not allowed: ${queryUpper.split(' ')[0]}`);
             }
@@ -117,21 +133,29 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             let result;
             if (operation.toUpperCase() === 'SELECT') {
                 if (queryUpper.includes('LIMIT 1')) {
-                    result = await this.db.get(query, params);
+                    result = this._get(query, params);
                 } else {
-                    result = await this.db.all(query, params);
+                    result = this._all(query, params);
                 }
-            } else {
-                result = await this.db.run(query, params);
+                return {
+                    success: true,
+                    data: result,
+                    operation: operation.toUpperCase(),
+                    rowCount: Array.isArray(result) ? result.length : (result ? 1 : 0)
+                };
             }
 
+            // Non-SELECT: run() returns { changes, lastInsertRowid }.
+            const runResult = this._run(query, params);
             return {
                 success: true,
-                data: result,
+                data: {
+                    changes: Number(runResult.changes),
+                    lastID: runResult.lastInsertRowid,
+                },
                 operation: operation.toUpperCase(),
-                rowCount: result?.changes || (Array.isArray(result) ? result.length : 0)
+                rowCount: Number(runResult.changes) || 0
             };
-
         } catch (error) {
             throw new Error(`SQLite query failed: ${error.message}`);
         }
@@ -197,7 +221,7 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
      */
     async getSchema() {
         const tables = await this.select(`
-            SELECT name FROM sqlite_master 
+            SELECT name FROM sqlite_master
             WHERE type='table' AND name NOT LIKE 'sqlite_%'
             ORDER BY name
         `);
@@ -218,10 +242,10 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
     async validateKnowledgeBaseSchema() {
         try {
             const schema = await this.getSchema();
-            
+
             const hasDocuments = 'documents' in schema;
             const hasChunks = 'chunks' in schema;
-            
+
             if (!hasDocuments || !hasChunks) {
                 return {
                     valid: false,
@@ -267,7 +291,7 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             const docCount = await this.select('SELECT COUNT(*) as count FROM documents');
             const chunkCount = await this.select('SELECT COUNT(*) as count FROM chunks');
             const totalSize = await this.select('SELECT SUM(file_size) as total_size FROM documents');
-            
+
             return {
                 documents: docCount[0]?.count || 0,
                 chunks: chunkCount[0]?.count || 0,
@@ -287,11 +311,11 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             const recentChunk = await this.select(
                 'SELECT embedding_model FROM chunks WHERE embedding_model IS NOT NULL ORDER BY created_at DESC LIMIT 1'
             );
-            
+
             if (recentChunk.length > 0 && recentChunk[0].embedding_model) {
                 return recentChunk[0].embedding_model;
             }
-            
+
             // Fall back to default
             return 'text-embedding-3-small';
         } catch (error) {
@@ -336,7 +360,7 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
 
             // Check if sqlite-vec extension is loaded
             try {
-                await this.db.get("SELECT vec_version()");
+                this._get("SELECT vec_version()");
             } catch (error) {
                 console.warn('[WARN] sqlite-vec extension not loaded properly, falling back to text search');
                 return await this._fallbackTextSearch(query, options);
@@ -351,10 +375,10 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             const queryEmbedding = options.query_embedding;
             const embeddingDimensions = queryEmbedding.length;
             const queryEmbeddingString = JSON.stringify(queryEmbedding);
-            
+
             // Build the KNN query using sqlite-vec scalar functions
             let searchSql = `
-                SELECT 
+                SELECT
                     c.id,
                     c.document_id,
                     c.chunk_index,
@@ -375,10 +399,16 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
                 WHERE c.embedding IS NOT NULL
                     AND c.embedding_model = ?
                     AND c.embedding_dimensions = ?
-                    AND vec_distance_cosine(c.embedding, ?) >= ?
+                    AND vec_distance_cosine(c.embedding, ?) <= ?
             `;
 
-            const params = [queryEmbeddingString, modelToUse, embeddingDimensions, queryEmbeddingString, similarity_threshold];
+            // vec_distance_cosine is a DISTANCE (0 = identical, larger = less
+            // similar). Callers pass `similarity_threshold` in [0,1] (1 =
+            // identical), so convert: similarity >= t  ⟺  distance <= (1 - t).
+            // (Previously this compared distance `>= threshold`, which dropped
+            // the closest matches and kept the farthest — inverted.)
+            const maxDistance = 1 - similarity_threshold;
+            const params = [queryEmbeddingString, modelToUse, embeddingDimensions, queryEmbeddingString, maxDistance];
 
             // Add document filter if specified
             if (document_id) {
@@ -394,8 +424,8 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             // Add the query embedding and limit to params
             params.push(queryEmbeddingString, limit);
 
-            const results = await this.db.all(searchSql, params);
-            
+            const results = this._all(searchSql, params);
+
             // Parse JSON metadata and format results
             return results.map(row => ({
                 id: row.id,
@@ -410,10 +440,12 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
                 metadata: row.metadata ? JSON.parse(row.metadata) : {},
                 embedding_model: row.embedding_model,
                 embedding_dimensions: row.embedding_dimensions,
-                similarity_score: row.similarity,
+                // `row.similarity` is the aliased cosine DISTANCE; report it as
+                // an actual similarity in [-1, 1] (1 = identical).
+                similarity_score: 1 - row.similarity,
                 created_at: row.created_at
             }));
-            
+
         } catch (error) {
             console.warn('[WARN] Vector search failed, falling back to text search:', error.message);
             return await this._fallbackTextSearch(query, options);
@@ -434,7 +466,7 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
 
         try {
             let sql = `
-                SELECT 
+                SELECT
                     c.id,
                     c.document_id,
                     c.chunk_index,
@@ -450,26 +482,26 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
                 LEFT JOIN documents d ON c.document_id = d.id
                 WHERE c.content LIKE ?
             `;
-            
+
             const params = [`%${query}%`];
-            
+
             if (document_id) {
                 sql += ' AND c.document_id = ?';
                 params.push(document_id);
             }
-            
+
             sql += ' ORDER BY c.created_at DESC LIMIT ?';
             params.push(limit);
-            
+
             const results = await this.select(sql, params);
-            
+
             // Add mock similarity scores for text search
             return results.map((result, index) => ({
                 ...result,
                 similarity_score: 1.0 - (index * 0.1), // Mock decreasing similarity
                 match_type: 'text_search'
             }));
-            
+
         } catch (error) {
             throw new Error(`Fallback text search failed: ${error.message}`);
         }

@@ -1,44 +1,53 @@
 export default async ({inputs, settings, config, nodeConfig}) => {
     try {
-        // Get knowledge base and OpenAI integrations
+        // Knowledge base + OpenRouter (the engine's embedding provider — same
+        // gateway/key as chat and the generic `embedding` node).
         const knowledgeBase = config.integrations?.knowledgeBase || config.integrations?.sqlite;
-        const openai = config.integrations?.openai;
-        
+        const openrouter = config.integrations?.openrouter;
+
         if (!knowledgeBase) {
             throw new Error("Knowledge base integration not found. Make sure a knowledge database is available.");
         }
-        
-        if (!openai) {
-            throw new Error("OpenAI integration not found. Semantic search requires OpenAI API key for embeddings.");
+
+        if (!openrouter) {
+            throw new Error("OpenRouter integration not found. Semantic search requires an OpenRouter API key for query embeddings.");
         }
 
-        const { 
-            query, 
-            limit = 10, 
-            similarity_threshold = 0.7, 
-            document_id = null 
+        const {
+            query,
+            limit = 10,
+            similarity_threshold = 0.7,
+            document_id = null
         } = inputs;
-        
+
         const { embedding_model = null } = settings;
 
         if (!query || typeof query !== 'string') {
             throw new Error("Query is required and must be a string");
         }
 
-        // Get the embedding model to use
+        // Embedding model: node-setting override, else the model the KB was
+        // indexed with (KB-owned — query + index MUST agree so semanticSearch
+        // can filter `embedding_model = ?`). OpenRouter model ids are
+        // namespaced, e.g. "openai/text-embedding-3-small".
         let modelToUse = embedding_model;
         if (!modelToUse) {
             try {
                 modelToUse = await knowledgeBase.getEmbeddingModel();
             } catch (error) {
                 console.warn('[WARN] Failed to get embedding model from knowledge base, using default:', error.message);
-                modelToUse = 'text-embedding-3-small';
+                modelToUse = 'openai/text-embedding-3-small';
             }
         }
 
-        // Create embedding for the query
-        const embeddingResponse = await openai.createEmbedding(query, modelToUse);
-        const queryEmbedding = embeddingResponse.data[0].embedding;
+        // Embed the query via OpenRouter. Returns { embedding, embeddings,
+        // dimensions, model, usage, cost_total?, cost_itemized? }.
+        const embeddingResponse = await openrouter.createEmbedding(
+            { model: modelToUse, input: query },
+            nodeConfig,
+            config
+        );
+        const queryEmbedding = embeddingResponse.embedding;
 
         // Perform semantic search
         const searchOptions = {
