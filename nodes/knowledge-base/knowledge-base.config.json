@@ -21,15 +21,8 @@
     {
       "name": "uuid",
       "display_name": "Knowledge Base",
-      "type": "string",
-      "description": "The knowledge base to reference (its id).",
-      "default": null
-    },
-    {
-      "name": "name",
-      "display_name": "Name",
-      "type": "string",
-      "description": "Display name of the referenced knowledge base (informational only).",
+      "type": "knowledge_base_ref",
+      "description": "The knowledge base this node references.",
       "default": null
     }
   ],
