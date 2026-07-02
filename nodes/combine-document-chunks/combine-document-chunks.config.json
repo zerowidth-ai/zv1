@@ -25,6 +25,14 @@
       "type": "string",
       "description": "String to use as separator between chunks",
       "default": "\n\n---\n\n"
+    },
+    {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
     }
   ],
   "outputs": [

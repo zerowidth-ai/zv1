@@ -34,13 +34,17 @@ function buildDb() {
   const dir = mkdtempSync(join(tmpdir(), "kbtest-"));
   const dbPath = join(dir, "k.db");
   const db = new DatabaseSync(dbPath, { allowExtension: true });
+  // Mirror the real artifact schema (kbArtifactBuilder) so navigation queries
+  // that read file_size / updated_at etc. are exercised faithfully.
   db.exec(
-    "CREATE TABLE documents (id TEXT PRIMARY KEY, display_name TEXT, file_type TEXT, folder_path TEXT);",
+    "CREATE TABLE documents (id TEXT PRIMARY KEY, display_name TEXT, file_type TEXT, file_size INTEGER, created_by TEXT, created_at TEXT, updated_at TEXT, folder_path TEXT, frontmatter TEXT, source_text TEXT);",
   );
   db.exec(
     "CREATE TABLE chunks (id TEXT PRIMARY KEY, document_id TEXT, chunk_index INTEGER, content TEXT, token_count INTEGER, chunk_type TEXT, metadata TEXT, embedding TEXT, embedding_model TEXT, embedding_dimensions INTEGER, created_at TEXT, updated_at TEXT);",
   );
-  db.prepare("INSERT INTO documents VALUES (?,?,?,?)").run("d1", "bio.md", "md", null);
+  db.prepare(
+    "INSERT INTO documents (id, display_name, file_type, file_size, created_at) VALUES (?,?,?,?,?)",
+  ).run("d1", "bio.md", "md", 1234, "2026-07-02T00:00:00Z");
   const insert = db.prepare(
     "INSERT INTO chunks (id,document_id,chunk_index,content,embedding,embedding_model,embedding_dimensions,created_at) VALUES (?,?,?,?,?,?,?,?)",
   );
@@ -94,6 +98,24 @@ async function main() {
   // 5. keywordSearch returns nothing for an absent term.
   const none = await kb.keywordSearch("quantum", { limit: 10 });
   check("keywordSearch returns [] for no match", none.length === 0);
+
+  // 6. Navigation: listDocuments returns docs with a chunk_count.
+  const docs = await kb.listDocuments({ limit: 100 });
+  check(`listDocuments returns the document (got ${docs.length})`, docs.length === 1);
+  check("listDocuments carries chunk_count", docs[0].chunk_count === 2);
+
+  // 7. getChunks paginates from a start index.
+  const page = await kb.getChunks("d1", { startIndex: 1, limit: 10 });
+  check("getChunks reads from startIndex", page.length === 1 && page[0].id === "c1");
+
+  // 8. getChunkWindow grabs the window around an anchor chunk.
+  const win = await kb.getChunkWindow("d1", 1, { before: 1, after: 1 });
+  check(
+    "getChunkWindow returns before+anchor (got indices " +
+      win.map((c) => c.chunk_index).join(",") +
+      ")",
+    win.length === 2 && win[0].chunk_index === 0 && win[1].chunk_index === 1,
+  );
 
   await kb.disconnect();
   console.log(`\n${passed} checks passed.`);

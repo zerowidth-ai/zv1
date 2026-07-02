@@ -581,4 +581,81 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
         scored.sort((a, b) => b.match_count - a.match_count || a.chunk_index - b.chunk_index);
         return scored.slice(0, limit);
     }
+
+    /**
+     * List documents in the knowledge base (navigation, not search).
+     * @param {Object} options - { limit = 100, offset = 0 }
+     * @returns {Promise<Array>} Document rows with a chunk_count each
+     */
+    async listDocuments(options = {}) {
+        const { limit = 100, offset = 0 } = options;
+        if (!this.isConnected) {
+            await this.connect();
+        }
+        return this._all(
+            `SELECT
+                d.id, d.display_name, d.file_type, d.file_size, d.folder_path,
+                d.created_at, d.updated_at,
+                (SELECT COUNT(*) FROM chunks c WHERE c.document_id = d.id) AS chunk_count
+             FROM documents d
+             ORDER BY d.created_at ASC, d.display_name ASC
+             LIMIT ? OFFSET ?`,
+            [limit, offset],
+        );
+    }
+
+    /**
+     * Read chunks of a document in order, starting at a chunk index — for
+     * pagination and "read what came after chunk N" (e.g. following a
+     * similarity hit). Returns chunks with index >= startIndex, ascending.
+     * @param {string} documentId
+     * @param {Object} options - { startIndex = 0, limit = 10 }
+     * @returns {Promise<Array>} Chunk rows (metadata parsed)
+     */
+    async getChunks(documentId, options = {}) {
+        const { startIndex = 0, limit = 10 } = options;
+        if (!this.isConnected) {
+            await this.connect();
+        }
+        const rows = this._all(
+            `SELECT id, document_id, chunk_index, content, token_count, chunk_type, metadata, created_at
+             FROM chunks
+             WHERE document_id = ? AND chunk_index >= ?
+             ORDER BY chunk_index ASC
+             LIMIT ?`,
+            [documentId, startIndex, limit],
+        );
+        return rows.map((r) => ({
+            ...r,
+            metadata: r.metadata ? JSON.parse(r.metadata) : {},
+        }));
+    }
+
+    /**
+     * Read a window of chunks around a given chunk index — context expansion
+     * for a chunk found via search (grab the N before / after it).
+     * @param {string} documentId
+     * @param {number} chunkIndex - The anchor chunk's index
+     * @param {Object} options - { before = 1, after = 1 }
+     * @returns {Promise<Array>} Chunk rows in the window, ascending (metadata parsed)
+     */
+    async getChunkWindow(documentId, chunkIndex, options = {}) {
+        const { before = 1, after = 1 } = options;
+        if (!this.isConnected) {
+            await this.connect();
+        }
+        const lo = Math.max(0, Number(chunkIndex) - before);
+        const hi = Number(chunkIndex) + after;
+        const rows = this._all(
+            `SELECT id, document_id, chunk_index, content, token_count, chunk_type, metadata, created_at
+             FROM chunks
+             WHERE document_id = ? AND chunk_index >= ? AND chunk_index <= ?
+             ORDER BY chunk_index ASC`,
+            [documentId, lo, hi],
+        );
+        return rows.map((r) => ({
+            ...r,
+            metadata: r.metadata ? JSON.parse(r.metadata) : {},
+        }));
+    }
 }

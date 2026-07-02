@@ -1,7 +1,14 @@
 export default async ({inputs, settings, config, nodeConfig}) => {
     try {
-        // Get knowledge base integration
-        const knowledgeBase = config.integrations?.knowledgeBase || config.integrations?.sqlite;
+        // Resolve the KB from a knowledge_base handle (shared wiring), falling
+        // back to the flow-global KB. See ADR 0023.
+        const kbRef = inputs.knowledge_base;
+        const knowledgeBase =
+            (kbRef && kbRef.uuid
+                ? config.integrations?.[`knowledgeBase:${kbRef.uuid}`]
+                : null) ||
+            config.integrations?.knowledgeBase ||
+            config.integrations?.sqlite;
         
         if (!knowledgeBase) {
             throw new Error("Knowledge base integration not found. Make sure a knowledge database is available.");

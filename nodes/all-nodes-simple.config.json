@@ -87,6 +87,7 @@ divide,Divide,Divides first number by second
 duration-calculator,Duration Calculator,Calculate duration between two timestamps in various units (seconds, minutes, hours, days)
 embedding,Embedding,Generate vector embeddings using any OpenRouter embedding model. The model is an input, so it can be specified or swapped from outside the flow rather than baked into the node.
 equals,Equals,Checks if two values are equal, with deep comparison for objects and arrays
+expand-chunk-context,Expand Chunk Context,Given a chunk (its document_id + chunk_index, e.g. from a search result), return the surrounding chunks — the N before and N after — plus their combined text. The classic RAG move: search finds one chunk, this widens the window so the model has the context around it.
 extract-code,Extract Code,Extracts code blocks from LLM responses that use markdown formatting. Returns the code content and detected language.
 extract-emails,Extract Emails,Extract all email addresses from text using regex patterns
 extract-hashtags,Extract Hashtags,Extract all hashtags from text
@@ -172,6 +173,7 @@ linear-update-issue,Linear Update Issue,Update an existing issue in Linear by ID
 liquid-lfm-2-24b-a2b,LiquidAI: LFM2-24B-A2B,LFM2-24B-A2B is the largest model in the LFM2 family of hybrid architectures designed for efficient on-device deployment. Built as a 24B parameter Mixture-of-Experts model with only 2B active parameters per...
 liquid-lfm-2-5-1-2b-instruct-free,LiquidAI: LFM2.5-1.2B-Instruct (free),LFM2.5-1.2B-Instruct is a compact, high-performance instruction-tuned model built for fast on-device AI. It delivers strong chat quality in a 1.2B parameter footprint, with efficient edge inference and broad runtime support.
 liquid-lfm-2-5-1-2b-thinking-free,LiquidAI: LFM2.5-1.2B-Thinking (free),LFM2.5-1.2B-Thinking is a lightweight reasoning-focused model optimized for agentic tasks, data extraction, and RAG—while still running comfortably on edge devices. It supports long context (up to 32K tokens) and is...
+list-documents,List Documents,List the documents in a knowledge base (id, name, type, size, chunk count) — for browsing or letting an agent pick a document to read. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
 loop-end,Loop End,Loop exit point that decides whether to continue looping or exit. Tracks loop count and evaluates conditions to send value to loop_back or loop_end output.
 loop-start,Loop Start,Entry point for loops - receives values and passes them through. Refires on each new value, enabling iterative processing.
 mean,Mean,Calculates arithmetic mean (average) of numbers
@@ -376,6 +378,7 @@ qwen-qwen3-vl-8b-thinking,Qwen: Qwen3 VL 8B Thinking,Qwen3-VL-8B-Thinking is the
 random-error,Random Error,Randomly throws an error based on probability, useful for testing error handling and flow robustness.
 random-number,Random Number,Generates random numbers with configurable range and distribution
 range,Range,Calculates range statistics of numbers
+read-chunks,Read Chunks,Read a document's chunks in order starting at a chunk index — paginate through a document, or read what came AFTER a chunk you found via search (set start_index to that chunk's index + 1). Feed next_index back in to page forward.
 read-website,Read Website (beta),Simple website reader - scrapes content and extracts main text
 remote-mcp-tool,Remote MCP Tool,Connect a remote MCP (Model Context Protocol) server as a tool provider for an LLM node.
 resend-send-email,Resend Send Email,Send an email using the Resend API.

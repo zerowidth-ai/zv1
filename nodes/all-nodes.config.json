@@ -4638,6 +4638,14 @@
                 "type": "string",
                 "description": "String to use as separator between chunks",
                 "default": "\n\n---\n\n"
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
             }
         ],
         "outputs": [
@@ -7987,6 +7995,94 @@
         "id": "equals"
     },
     {
+        "display_name": "Expand Chunk Context",
+        "tagline": "Grab chunks around a hit",
+        "description": "Given a chunk (its document_id + chunk_index, e.g. from a search result), return the surrounding chunks — the N before and N after — plus their combined text. The classic RAG move: search finds one chunk, this widens the window so the model has the context around it.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": false,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "document_id",
+                "display_name": "Document ID",
+                "type": "string",
+                "description": "The document the anchor chunk belongs to",
+                "required": true
+            },
+            {
+                "name": "chunk_index",
+                "display_name": "Chunk Index",
+                "type": "number",
+                "description": "The anchor chunk's index (e.g. from a search result)",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "before",
+                "display_name": "Chunks Before",
+                "type": "number",
+                "description": "How many chunks before the anchor to include",
+                "default": 1
+            },
+            {
+                "name": "after",
+                "display_name": "Chunks After",
+                "type": "number",
+                "description": "How many chunks after the anchor to include",
+                "default": 2
+            },
+            {
+                "name": "separator",
+                "display_name": "Separator",
+                "type": "string",
+                "description": "Joins chunk contents in the combined output",
+                "default": "\n\n"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "chunks",
+                "display_name": "Chunks",
+                "type": "array",
+                "description": "The window of chunks, ascending by index"
+            },
+            {
+                "name": "content",
+                "display_name": "Combined Content",
+                "type": "string",
+                "description": "The window's chunk contents joined by the separator"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of chunks in the window"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether it completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "expand-chunk-context"
+    },
+    {
         "display_name": "Extract Code",
         "tagline": "Extract code blocks",
         "description": "Extracts code blocks from LLM responses that use markdown formatting. Returns the code content and detected language.",
@@ -9034,6 +9130,14 @@
                 "type": "number",
                 "description": "The index of the chunk to retrieve (0-based)",
                 "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
             }
         ],
         "outputs": [
@@ -16839,6 +16943,67 @@
             ]
         },
         "id": "liquid-lfm-2-5-1-2b-thinking-free"
+    },
+    {
+        "display_name": "List Documents",
+        "tagline": "List everything in a KB",
+        "description": "List the documents in a knowledge base (id, name, type, size, chunk count) — for browsing or letting an agent pick a document to read. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": false,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to list, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "limit",
+                "display_name": "Limit",
+                "type": "number",
+                "description": "Maximum number of documents to return",
+                "default": 100
+            },
+            {
+                "name": "offset",
+                "display_name": "Offset",
+                "type": "number",
+                "description": "Number of documents to skip (pagination)",
+                "default": 0
+            }
+        ],
+        "outputs": [
+            {
+                "name": "documents",
+                "display_name": "Documents",
+                "type": "array",
+                "description": "Document rows (id, display_name, file_type, file_size, chunk_count, …)"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of documents returned"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the listing completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "list-documents"
     },
     {
         "display_name": "Loop End",
@@ -45843,6 +46008,86 @@
             }
         ],
         "id": "range"
+    },
+    {
+        "display_name": "Read Chunks",
+        "tagline": "Paginate through a document",
+        "description": "Read a document's chunks in order starting at a chunk index — paginate through a document, or read what came AFTER a chunk you found via search (set start_index to that chunk's index + 1). Feed next_index back in to page forward.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": false,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "document_id",
+                "display_name": "Document ID",
+                "type": "string",
+                "description": "The document to read chunks from",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "start_index",
+                "display_name": "Start Index",
+                "type": "number",
+                "description": "First chunk index to read (0-based). To continue after a found chunk, use its index + 1.",
+                "default": 0
+            },
+            {
+                "name": "limit",
+                "display_name": "Limit",
+                "type": "number",
+                "description": "Maximum number of chunks to return",
+                "default": 10
+            }
+        ],
+        "outputs": [
+            {
+                "name": "chunks",
+                "display_name": "Chunks",
+                "type": "array",
+                "description": "Chunks with index >= start_index, ascending"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of chunks returned"
+            },
+            {
+                "name": "next_index",
+                "display_name": "Next Index",
+                "type": "number",
+                "description": "start_index for the next page, or null if there are no more chunks"
+            },
+            {
+                "name": "has_more",
+                "display_name": "Has More",
+                "type": "boolean",
+                "description": "Whether more chunks remain after this page"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the read completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "read-chunks"
     },
     {
         "display_name": "Read Website (beta)",
