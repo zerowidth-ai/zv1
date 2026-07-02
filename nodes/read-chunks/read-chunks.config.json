@@ -4,7 +4,7 @@
   "description": "Read a document's chunks in order starting at a chunk index — paginate through a document, or read what came AFTER a chunk you found via search (set start_index to that chunk's index + 1). Feed next_index back in to page forward.",
   "category": "knowledge",
   "is_constant": false,
-  "is_plugin": false,
+  "is_plugin": true,
   "is_output": false,
   "inputs": [
     {

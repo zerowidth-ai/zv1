@@ -4,7 +4,7 @@
   "description": "List the documents in a knowledge base (id, name, type, size, chunk count) — for browsing or letting an agent pick a document to read. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
   "category": "knowledge",
   "is_constant": false,
-  "is_plugin": false,
+  "is_plugin": true,
   "is_output": false,
   "inputs": [
     {

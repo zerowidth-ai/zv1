@@ -4,7 +4,7 @@
   "description": "Search a knowledge base for chunks containing a word or phrase (case-insensitive substring match). Free and instant — no embeddings. The exact-term complement to Semantic Search; wire a Knowledge Base node into its knowledge_base input the same way.",
   "category": "knowledge",
   "is_constant": false,
-  "is_plugin": false,
+  "is_plugin": true,
   "is_output": false,
   "inputs": [
     {

@@ -16228,7 +16228,7 @@
         "description": "Search a knowledge base for chunks containing a word or phrase (case-insensitive substring match). Free and instant — no embeddings. The exact-term complement to Semantic Search; wire a Knowledge Base node into its knowledge_base input the same way.",
         "category": "knowledge",
         "is_constant": false,
-        "is_plugin": false,
+        "is_plugin": true,
         "is_output": false,
         "inputs": [
             {
@@ -17010,7 +17010,7 @@
         "description": "List the documents in a knowledge base (id, name, type, size, chunk count) — for browsing or letting an agent pick a document to read. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
         "category": "knowledge",
         "is_constant": false,
-        "is_plugin": false,
+        "is_plugin": true,
         "is_output": false,
         "inputs": [
             {
@@ -46081,7 +46081,7 @@
         "description": "Read a document's chunks in order starting at a chunk index — paginate through a document, or read what came AFTER a chunk you found via search (set start_index to that chunk's index + 1). Feed next_index back in to page forward.",
         "category": "knowledge",
         "is_constant": false,
-        "is_plugin": false,
+        "is_plugin": true,
         "is_output": false,
         "inputs": [
             {
