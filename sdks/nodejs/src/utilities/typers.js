@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import Ajv from "ajv";
-import zv1 from "../index.js";
+import Workbench from "../index.js";
 
 import { getDirname } from "./helpers.js";
 import { loadTypeConverter } from "./typeConverters.js";

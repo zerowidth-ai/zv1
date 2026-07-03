@@ -68,6 +68,14 @@ async function runFlowTest(testFile) {
     expectedError = testData.expectedError;
   }
 
+  // Optional env gate: a test can declare "requiresEnv": ["SOME_KEY"]
+  // and it is skipped (not failed) when those vars aren't set locally.
+  const missingEnv = (testData.requiresEnv || []).filter((k) => !process.env[k]);
+  if (missingEnv.length > 0) {
+    console.log(`[SKIP] ${testFile} — missing env: ${missingEnv.join(", ")}`);
+    return;
+  }
+
   console.log(`[INFO] Testing flow: ${testFile} with inputs: ${JSON.stringify(inputs)}`);
   const engine = await zv1.create(flow, {
     debug: false,
