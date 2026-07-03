@@ -158,6 +158,35 @@ async function runFlowTest(testFile) {
   }
 }
 
+/**
+ * Retry wrapper for live-model tests: a test file can declare
+ * `"retries": N` and a failure re-runs up to N extra times before
+ * counting as red. Deterministic tests omit it and fail fast.
+ */
+async function runFlowTestWithRetries(testFile) {
+  const testDir = path.join(getDirname(import.meta.url), "./flows");
+  const metadataPath = testFile.endsWith(".zv1")
+    ? path.join(testDir, testFile.replace(".zv1", ".test.json"))
+    : path.join(testDir, testFile);
+  let retries = 0;
+  try {
+    retries = JSON.parse(fs.readFileSync(metadataPath, "utf-8")).retries ?? 0;
+  } catch {
+    // No metadata / unparsable — no retries.
+  }
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      if (attempt > 0) console.log(`[RETRY ${attempt}/${retries}] ${testFile}`);
+      await runFlowTest(testFile);
+      return;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError;
+}
+
 async function runAllTests() {
   const testDir = path.join(getDirname(import.meta.url), "./flows");
   const allFiles = fs.readdirSync(testDir);
@@ -173,7 +202,7 @@ async function runAllTests() {
 
   for (const testFile of testFiles) {
     try {
-      await runFlowTest(testFile);
+      await runFlowTestWithRetries(testFile);
       passed++;
     } catch (error) {
       console.error(`  [FAIL] ${error}`);
@@ -208,7 +237,7 @@ async function runSingleTest(filename) {
   let failed = 0;
 
   try {
-    await runFlowTest(filename);
+    await runFlowTestWithRetries(filename);
     passed++;
     console.log(`\n[INFO] Single Flow Test Completed: ${passed} Passed, ${failed} Failed.`);
   } catch (error) {

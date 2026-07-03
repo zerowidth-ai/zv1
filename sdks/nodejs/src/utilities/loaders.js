@@ -588,19 +588,27 @@ async function loadFlowImportFolder(folderName, folderEntries) {
     }
   }
 
-  // Return import definition with metadata
+  // Return import definition with metadata. Field order matters:
+  // `...orchestrationData` used to be spread LAST, which clobbered
+  // `imports: nestedImports` (the loaded definitions array) with the
+  // raw orchestration's `imports` — the {id: snapshot} REQUEST map.
+  // Nested imports were loaded and then silently discarded, so any
+  // import-within-import never resolved. The spread now sits before
+  // the fields the loader owns.
   return {
     id: `imported-${importId}`,
     display_name: displayName,
     snapshot: snapshot,
     unique_id: importId,
     folder_name: folderName,
+    knowledgeDbPath: knowledgeDbPath,
+    // Preserve any additional metadata from orchestration.json
+    // (including `id`, which zv1 orchestrations carry and node-type
+    // lookups key on — same effective value as before this fix).
+    ...orchestrationData,
     nodes: orchestrationData.nodes,
     links: orchestrationData.links,
     imports: nestedImports,
-    knowledgeDbPath: knowledgeDbPath,
-    // Preserve any additional metadata from orchestration.json
-    ...orchestrationData
   };
 }
 

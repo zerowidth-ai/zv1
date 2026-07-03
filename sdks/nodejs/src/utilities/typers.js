@@ -189,21 +189,15 @@ export function convertType(value, type, options = {}) {
 export function convertImportToNodeType(importDef) {
   this.logDebug(`Converting import ${importDef.id} to node type`);
 
-  // First ensure any nested imports are processed
+  // Nested imports resolve when the import EXECUTES: the internal
+  // engine's own loadNodes() registers everything in the def's
+  // `imports` array (same path the root engine uses). The old code
+  // here converted nested imports to node-type objects and pushed
+  // them into the flow's NODES array — type definitions aren't flow
+  // nodes, and once nested imports actually load (see the loaders.js
+  // spread-order fix) those pushed objects fail flow validation as
+  // typeless nodes. The def passes through with its imports intact.
   let processedImportDef = { ...importDef };
-  if (importDef.imports && importDef.imports.length > 0) {
-    this.logDebug(`Processing ${importDef.imports.length} nested imports`);
-    
-    // Load nested imports as node types
-    const nestedNodes = [];
-    for (const nestedImport of importDef.imports) {
-      const nodeType = this.convertImportToNodeType(nestedImport);
-      nestedNodes.push(nodeType);
-    }
-
-    // Add the nested import nodes to the flow
-    processedImportDef.nodes = [...processedImportDef.nodes, ...nestedNodes];
-  }
   processedImportDef.nodes = processedImportDef.nodes.filter(node => !node.debug_only);
 
   // Rest of the existing code...
