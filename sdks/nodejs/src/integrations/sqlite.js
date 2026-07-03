@@ -77,17 +77,11 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
       }
     }
 
-    // Clean up temporary file if it exists
-    if (this.dbPath && (this.dbPath.includes('.temp') || this.dbPath.includes('knowledge_'))) {
-      try {
-        if (fs.existsSync(this.dbPath)) {
-          fs.unlinkSync(this.dbPath);
-        }
-      } catch (error) {
-        console.warn(`[WARN] Failed to cleanup temporary file ${this.dbPath}:`, error.message);
-        // Don't throw - cleanup should be best effort
-      }
-    }
+    // NOTE: disconnect() never deletes the database file. File lifecycle
+    // belongs to whoever created the file — the engine tracks and removes
+    // its own temp extractions (and hosts opt in via
+    // config.knowledgeBase.cleanupDbFiles); a path-substring heuristic
+    // here once deleted user-owned databases.
   }
 
   // ─── node:sqlite driver helpers ────────────────────────────────────────
@@ -132,7 +126,7 @@ export default class SQLiteIntegration extends KnowledgeBaseInterface {
             // Execute query based on operation type
             let result;
             if (operation.toUpperCase() === 'SELECT') {
-                if (queryUpper.includes('LIMIT 1')) {
+                if (/\bLIMIT\s+1\b(?!\s*,)/.test(queryUpper)) {
                     result = this._get(query, params);
                 } else {
                     result = this._all(query, params);

@@ -2893,25 +2893,41 @@ export default class Workbench {
    * @private
    */
   _trackKnowledgeFiles() {
-    // Track main flow's knowledge base file
-    if (this.flow.knowledgeDbPath) {
-      this.trackKnowledgeFile(this.flow.knowledgeDbPath);
-    }
+    // Host-provided knowledge db paths are HOST-OWNED: the engine must
+    // never delete them unless the host explicitly opts in (hosted
+    // runners that hand the engine per-run temp copies set
+    // config.knowledgeBase.cleanupDbFiles = true). The engine's own
+    // archive extractions live under ./.temp and are always cleaned.
+    const optIn = this.config?.knowledgeBase?.cleanupDbFiles === true;
+    const track = (filePath) => {
+      if (!filePath) return;
+      if (optIn || this._isEngineTempPath(filePath)) {
+        this.trackKnowledgeFile(filePath);
+      }
+    };
 
-    // Track import knowledge base files
+    track(this.flow.knowledgeDbPath);
+
     if (this.flow.imports && Array.isArray(this.flow.imports)) {
       for (const importDef of this.flow.imports) {
-        if (importDef.knowledgeDbPath) {
-          this.trackKnowledgeFile(importDef.knowledgeDbPath);
-        }
+        track(importDef.knowledgeDbPath);
       }
     }
 
-    // Track node-level knowledge base files (keyed by uuid).
     if (this.flow.knowledgeDbPaths && typeof this.flow.knowledgeDbPaths === 'object') {
       for (const dbPath of Object.values(this.flow.knowledgeDbPaths)) {
-        if (dbPath) this.trackKnowledgeFile(dbPath);
+        track(dbPath);
       }
+    }
+  }
+
+  /** Paths inside the engine's own ./.temp extraction dir. @private */
+  _isEngineTempPath(filePath) {
+    try {
+      const tempDir = path.resolve(process.cwd(), '.temp') + path.sep;
+      return path.resolve(filePath).startsWith(tempDir);
+    } catch {
+      return false;
     }
   }
 

@@ -135,7 +135,7 @@ export async function loadIntegrations(config, flow = null) {
       }
   }
 
-  if (!knowledgeBaseConfig.instance && (flow?.knowledgeDbPath || knowledgeBaseConfig.enabled !== false)) {
+  if (flow?.knowledgeDbPath || knowledgeBaseConfig.enabled !== false) {
     
       try {
           // Load the appropriate knowledge base integration
@@ -149,9 +149,12 @@ export async function loadIntegrations(config, flow = null) {
           };
           
           if (knowledgeBaseType === 'sqlite' && flow?.knowledgeDbPath) {
-              integrations.knowledgeBase = new KnowledgeBaseIntegration(flow.knowledgeDbPath, integrationOptions);
-              
-          } else if (knowledgeBaseType !== 'sqlite') {
+              // A host-injected global instance wins over the built-in.
+              if (!integrations.knowledgeBase) {
+                  integrations.knowledgeBase = new KnowledgeBaseIntegration(flow.knowledgeDbPath, integrationOptions);
+              }
+
+          } else if (knowledgeBaseType !== 'sqlite' && !integrations.knowledgeBase) {
               // For other knowledge base types, pass the config directly
               integrations.knowledgeBase = new KnowledgeBaseIntegration(knowledgeBaseConfig, integrationOptions);
               
@@ -173,6 +176,8 @@ export async function loadIntegrations(config, flow = null) {
           if (knowledgeBaseType === 'sqlite' && flow?.knowledgeDbPaths && typeof flow.knowledgeDbPaths === 'object') {
               for (const [kbUuid, dbPath] of Object.entries(flow.knowledgeDbPaths)) {
                   if (!dbPath) continue;
+                  // Host-injected per-uuid instances win over file paths.
+                  if (integrations[`knowledgeBase:${kbUuid}`]) continue;
                   integrations[`knowledgeBase:${kbUuid}`] = new KnowledgeBaseIntegration(dbPath, integrationOptions);
               }
           }

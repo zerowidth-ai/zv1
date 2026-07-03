@@ -15,9 +15,19 @@ async def process(
     """
     Process function for the Query Knowledge Base node.
     """
-    # Get knowledge base integration from engine (supports multiple backends)
+    # Get knowledge base integration from engine. Mirrors the JS variant:
+    # a wired knowledge_base handle names a KB by uuid (per-node binding,
+    # ADR 0023), falling back to the flow-global KB.
     integrations = config.get("integrations", {})
-    knowledge_base = integrations.get("knowledgeBase") or integrations.get("sqlite")
+    kb_ref = inputs.get("knowledge_base")
+    knowledge_base = None
+    if isinstance(kb_ref, dict) and kb_ref.get("uuid"):
+        knowledge_base = integrations.get(f"knowledgeBase:{kb_ref['uuid']}")
+    knowledge_base = (
+        knowledge_base
+        or integrations.get("knowledgeBase")
+        or integrations.get("sqlite")
+    )
 
     if not knowledge_base:
         raise ValueError(
@@ -44,10 +54,21 @@ async def process(
     # Execute the query
     result = await knowledge_base.query(query, params, operation)
 
+    # Cap the returned payload (mirrors the JS variant): rowCount stays
+    # the true count; `truncated` flags the cut so callers can add a
+    # LIMIT for the full set.
+    max_rows = 1000
+    data = result.get("data")
+    truncated = False
+    if isinstance(data, list) and len(data) > max_rows:
+        data = data[:max_rows]
+        truncated = True
+
     return {
-        "data": result.get("data"),
+        "data": data,
         "success": result.get("success"),
         "rowCount": result.get("rowCount"),
+        "truncated": truncated,
         "operation": result.get("operation"),
         "error": None,
     }
