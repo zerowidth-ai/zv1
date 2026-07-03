@@ -2493,6 +2493,13 @@ export default class Workbench {
    * @returns {boolean} True if the node is a plugin or macro
    */
   isLocalNodePlugin(node) {
+    // Remote MCP tool nodes carry is_plugin (so the entry-node scan
+    // and propagation-skip treat them as plugins) but are NOT local
+    // plugins: their tool schemas come from the remote server via
+    // the isRemoteMCPTool branch of the plugin loop. Classifying one
+    // as local would generate a bogus single-tool schema from the
+    // node's own config and the real MCP tools would never load.
+    if (isRemoteMCPTool(node)) return false;
     const thisNodeConfig = this.nodes[node.type]?.config || {};
     return thisNodeConfig.is_plugin || thisNodeConfig.is_macro;
   }
