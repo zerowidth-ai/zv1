@@ -364,6 +364,21 @@ export default class Workbench {
         id: node.id
       };
 
+      // Config-only nodes (remote-mcp-tool) have no process function —
+      // they exist for the plugin loop, not direct execution. If one
+      // lands in the queue anyway (e.g. a dangling MCP node with no
+      // plugin link), no-op instead of crashing the whole run.
+      if (typeof nodeDefinition.process !== 'function') {
+        this.logDebug(`Node [${node.id}] (${node.type}) is config-only; skipping direct execution.`);
+        const endDate = new Date();
+        timelineEntry.outputs = {};
+        timelineEntry.endTime = endDate.toISOString();
+        timelineEntry.durationMs = endDate - startDate;
+        timelineEntry.status = 'success';
+        this.timeline.push(timelineEntry);
+        return {};
+      }
+
       const outputs = await this._raceAbort(
         nodeDefinition.process({inputs, settings, config: this.config, nodeConfig})
       );

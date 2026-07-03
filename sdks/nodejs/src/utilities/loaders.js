@@ -68,9 +68,12 @@ export async function loadNodes(flow) {
           // MCP tool nodes are config-only BY DESIGN: dispatch happens
           // through the LLM plugin loop (see isRemoteMCPTool call
           // sites), never a process function. Register them so flow
-          // validation recognizes the type.
+          // validation recognizes the type — and force is_plugin so
+          // the entry-node scan excludes them (the shipped config says
+          // is_constant without is_plugin, which would otherwise queue
+          // the node for direct execution it can't perform).
           nodes[type] = {
-            config: configModule.default,
+            config: { ...configModule.default, is_plugin: true },
             process: null,
           };
         } else {
