@@ -77,18 +77,20 @@ async function runFlowTest(testFile) {
   }
 
   console.log(`[INFO] Testing flow: ${testFile} with inputs: ${JSON.stringify(inputs)}`);
-  const engine = await zv1.create(flow, {
-    debug: false,
-    keys: {
-      openrouter: process.env.OPENROUTER_API_KEY,
-      google_custom_search: {
-        key: process.env.GOOGLE_CUSTOM_SEARCH_KEY,
-        cx: process.env.GOOGLE_CUSTOM_SEARCH_CX
-      }
-    }
-  }); // Enable debug mode
-  
+
   try {
+    // Creation is inside the try so load/validation-time throws (e.g. an
+    // unknown node type) can be asserted with expectedError too.
+    const engine = await zv1.create(flow, {
+      debug: false,
+      keys: {
+        openrouter: process.env.OPENROUTER_API_KEY,
+        google_custom_search: {
+          key: process.env.GOOGLE_CUSTOM_SEARCH_KEY,
+          cx: process.env.GOOGLE_CUSTOM_SEARCH_CX
+        }
+      }
+    });
     const result = await engine.run(inputs);
     console.log(`  [RESULT] ${JSON.stringify(result)}`);
     

@@ -10,6 +10,7 @@ First stable release of `@zerowidth/workbench-sdk` (successor to the `zv1` packa
 - **Bring your own knowledge base**: pass any object implementing the exported `KnowledgeBaseInterface` via `config.knowledgeBase.instance` (flow-global) or `config.knowledgeBase.instances[kbUuid]` — run flows against your own SQL database, vector store, or service. The interface now declares every method knowledge nodes call.
 
 ### Fixes
+- **Unknown node types now fail at load.** `Workbench.create` throws `Flow references unknown node type(s): …` when a flow names a node type that isn't in the catalog (removed model, typo, missing import). Previously the node silently never executed and the flow "completed" with empty outputs.
 - **Imported subflows are callable as LLM tools again.** The `zv1 → Workbench` class rename left a stale reference in the import-to-node-type converter, so every imported-flow tool call failed at runtime with `Workbench is not defined`. Covered by the new `flow.chat-tool-chain.zv1` test (two dependent sequential tool calls).
 - **`disconnect()` no longer deletes database files by path heuristic.** File lifecycle belongs to the creator: the engine cleans its own temp extractions; hosts opt in to cleanup of paths they provide with `config.knowledgeBase.cleanupDbFiles: true`. (Previously, a path merely containing `knowledge_` or `.temp` was unlinked after every run.)
 - `query()` routes only true `LIMIT 1` statements to single-row mode — `LIMIT 10`/`LIMIT 100` return full result sets.
