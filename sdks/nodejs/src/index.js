@@ -2493,13 +2493,15 @@ export default class Workbench {
    * @returns {boolean} True if the node is a plugin or macro
    */
   isLocalNodePlugin(node) {
-    // Remote MCP tool nodes carry is_plugin (so the entry-node scan
-    // and propagation-skip treat them as plugins) but are NOT local
-    // plugins: their tool schemas come from the remote server via
-    // the isRemoteMCPTool branch of the plugin loop. Classifying one
-    // as local would generate a bogus single-tool schema from the
-    // node's own config and the real MCP tools would never load.
-    if (isRemoteMCPTool(node)) return false;
+    // Remote MCP tool nodes and manual tool nodes carry is_plugin —
+    // the flag drives shared plugin BEHAVIOR (entry-node exclusion,
+    // propagation skip, the canvas's plugin drag-and-dock UX) — but
+    // neither is a LOCAL plugin: MCP tools load their schemas from
+    // the remote server (isRemoteMCPTool branch) and manual tools
+    // are caller-executed pass-throughs (isManualToolNode branch).
+    // Classifying either as local would misroute them in the plugin
+    // loop (bogus single-tool schema / unwanted process execution).
+    if (isRemoteMCPTool(node) || isManualToolNode(node)) return false;
     const thisNodeConfig = this.nodes[node.type]?.config || {};
     return thisNodeConfig.is_plugin || thisNodeConfig.is_macro;
   }
