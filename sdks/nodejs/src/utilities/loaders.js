@@ -118,8 +118,24 @@ export async function loadIntegrations(config, flow = null) {
   // Load knowledge base integration if available
   const knowledgeBaseType = config.knowledgeBase?.type || 'sqlite';
   const knowledgeBaseConfig = config.knowledgeBase || {};
-  
-  if (flow?.knowledgeDbPath || knowledgeBaseConfig.enabled !== false) {
+
+  // Bring-your-own knowledge base: the host passes a ready instance
+  // (anything implementing KnowledgeBaseInterface — your own SQL
+  // database, a vector store, an HTTP service) and every knowledge
+  // node uses it as the flow-global knowledge base. Skips the
+  // built-in loader entirely. `instances` (keyed by knowledge-base
+  // uuid) covers flows whose nodes reference specific KBs via a
+  // Knowledge Base node.
+  if (knowledgeBaseConfig.instance) {
+      integrations.knowledgeBase = knowledgeBaseConfig.instance;
+  }
+  if (knowledgeBaseConfig.instances && typeof knowledgeBaseConfig.instances === 'object') {
+      for (const [kbUuid, instance] of Object.entries(knowledgeBaseConfig.instances)) {
+          if (instance) integrations[`knowledgeBase:${kbUuid}`] = instance;
+      }
+  }
+
+  if (!knowledgeBaseConfig.instance && (flow?.knowledgeDbPath || knowledgeBaseConfig.enabled !== false)) {
     
       try {
           // Load the appropriate knowledge base integration

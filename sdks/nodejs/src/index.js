@@ -3017,3 +3017,9 @@ export default class Workbench {
     }
   }
 }
+
+// Base class for bring-your-own knowledge bases: implement its methods
+// over your own store (SQL database, vector store, HTTP service) and
+// pass an instance via `config.knowledgeBase.instance` (flow-global)
+// or `config.knowledgeBase.instances[kbUuid]` (per Knowledge Base node).
+export { default as KnowledgeBaseInterface } from './integrations/knowledge-base-interface.js';
