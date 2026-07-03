@@ -3,7 +3,7 @@ import fs from "fs";
 import AdmZip from "adm-zip";
 
 import { convertImportToNodeType } from "./typers.js";
-import { getDirname } from "./helpers.js";
+import { getDirname, isRemoteMCPTool } from "./helpers.js";
 import { isOAuthKey, OAuthRefreshManager } from "./oauth.js";
 
 
@@ -59,10 +59,19 @@ export async function loadNodes(flow) {
           // Regular node - needs both config and process
           const processFileUrl = `file://${path.resolve(processPath)}`;
           const processModule = await import(processFileUrl);
-          
+
           nodes[type] = {
             config: configModule.default,
             process: processModule.default || processModule,
+          };
+        } else if (isRemoteMCPTool({ type })) {
+          // MCP tool nodes are config-only BY DESIGN: dispatch happens
+          // through the LLM plugin loop (see isRemoteMCPTool call
+          // sites), never a process function. Register them so flow
+          // validation recognizes the type.
+          nodes[type] = {
+            config: configModule.default,
+            process: null,
           };
         } else {
           console.warn(`Missing process file for regular node ${type}:`, { processPath });
