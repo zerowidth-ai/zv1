@@ -1,0 +1,52 @@
+{
+  "flow": {
+    "nodes": [
+      {
+        "id": "input-1",
+        "type": "input-data",
+        "settings": { "key": "test-value" }
+      },
+      {
+        "id": "self-healing-1",
+        "type": "self-healing-error",
+        "settings": {}
+      },
+      {
+        "id": "output-1",
+        "type": "output-data",
+        "settings": { "key": "result" }
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "input-1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "self-healing-1",
+          "port_name": "value"
+        }
+      },
+      {
+        "from": {
+          "node_id": "self-healing-1",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "output-1",
+          "port_name": "value"
+        }
+      }
+    ]
+  },
+  "inputs": {
+    "test-value": "Recovery Test"
+  },
+  "expectedError": {
+    "type": "node",
+    "message": "Self-healing error: failing 1 time(s) before success",
+    "nodeId": "self-healing-1",
+    "nodeType": "self-healing-error"
+  }
+} 

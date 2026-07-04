@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Throw error with basic message",
+    "inputs": {
+      "message": "This is a test error"
+    },
+    "expected": "Should throw an error with message 'This is a test error'",
+    "shouldThrow": true
+  },
+  {
+    "description": "Throw error with message and context",
+    "inputs": {
+      "message": "Database connection failed",
+      "context": "Attempted to connect to PostgreSQL on port 5432"
+    },
+    "expected": "Should throw an error with message and context",
+    "shouldThrow": true
+  },
+  {
+    "description": "Throw error with custom error type",
+    "inputs": {
+      "message": "Validation failed",
+      "errorType": "ValidationError"
+    },
+    "expected": "Should throw a ValidationError with custom name",
+    "shouldThrow": true
+  },
+  {
+    "description": "Throw error with all parameters",
+    "inputs": {
+      "message": "API rate limit exceeded",
+      "context": "Made 100 requests in 1 minute, limit is 60",
+      "errorType": "RateLimitError"
+    },
+    "expected": "Should throw a RateLimitError with message and context",
+    "shouldThrow": true
+  },
+  {
+    "description": "Throw error with empty message (should use default)",
+    "inputs": {},
+    "expected": "Should throw an error with default message",
+    "shouldThrow": true
+  }
+] 

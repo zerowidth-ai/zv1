@@ -1,0 +1,34 @@
+[
+  {
+    "description": "Never fail (failCount = 0)",
+    "inputs": {
+      "value": "immediate success",
+      "failCount": 0
+    },
+    "expected": {
+      "result": "immediate success"
+    }
+  },
+  {
+    "description": "Complex data structure (failCount = 0)",
+    "inputs": {
+      "value": {
+        "status": "healed",
+        "data": [1, 2, 3],
+        "metadata": {
+          "attempts": "tracked internally"
+        }
+      },
+      "failCount": 0
+    },
+    "expected": {
+      "result": {
+        "status": "healed",
+        "data": [1, 2, 3],
+        "metadata": {
+          "attempts": "tracked internally"
+        }
+      }
+    }
+  }
+]

@@ -12,12 +12,17 @@
     "uuid": "^11.1.0"
   },
   "repository": "https://github.com/zerowidth-ai/workbench-sdk",
-  "description": "Workbench SDK — execute Workbench-authored flows in production. Successor to the zv1 package; see https://zerowidth.ai for the design surface.",
+  "description": "Workbench SDK \u2014 execute Workbench-authored flows in production. Successor to the zv1 package; see https://zerowidth.ai for the design surface.",
   "main": "./src/index.js",
-  "files": ["src/", "nodes/", "types/", "LICENSE", "README.md"],
+  "files": [
+    "src/",
+    "nodes/",
+    "types/",
+    "LICENSE",
+    "README.md"
+  ],
   "publishConfig": {
-    "access": "public",
-    "tag": "alpha"
+    "access": "public"
   },
   "engines": {
     "node": ">=20.0.0"

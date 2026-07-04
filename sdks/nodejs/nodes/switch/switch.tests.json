@@ -1,0 +1,85 @@
+[
+  {
+    "description": "Basic case matching",
+    "inputs": {
+      "value": "apple",
+      "cases": ["banana", "apple", "orange"],
+      "outputs": ["yellow", "red", "orange"]
+    },
+    "expected": {
+      "result": "red",
+      "case_index": 1,
+      "matched": true,
+      "case_1": true
+    }
+  },
+  {
+    "description": "No match with default",
+    "inputs": {
+      "value": "grape",
+      "cases": ["banana", "apple", "orange"],
+      "outputs": ["yellow", "red", "orange"],
+      "default_output": "purple"
+    },
+    "expected": {
+      "result": "purple",
+      "case_index": -1,
+      "matched": false
+    }
+  },
+  {
+    "description": "Numeric case matching",
+    "inputs": {
+      "value": 42,
+      "cases": [10, 42, 100],
+      "outputs": ["small", "medium", "large"]
+    },
+    "expected": {
+      "result": "medium",
+      "case_index": 1,
+      "matched": true,
+      "case_1": true
+    }
+  },
+  {
+    "description": "String/number equality",
+    "inputs": {
+      "value": "42",
+      "cases": [10, 42, 100],
+      "outputs": ["small", "medium", "large"]
+    },
+    "expected": {
+      "result": "medium",
+      "case_index": 1,
+      "matched": true,
+      "case_1": true
+    }
+  },
+  {
+    "description": "Missing outputs array",
+    "inputs": {
+      "value": "apple",
+      "cases": ["banana", "apple", "orange"]
+    },
+    "expected": {
+      "result": "apple",
+      "case_index": 1,
+      "matched": true,
+      "case_1": true
+    }
+  },
+  {
+    "description": "Output index out of bounds",
+    "inputs": {
+      "value": "orange",
+      "cases": ["banana", "apple", "orange"],
+      "outputs": ["yellow", "red"]
+    },
+    "expected": {
+      "result": "orange",
+      "case_index": 2,
+      "matched": true,
+      "case_2": true
+    }
+  }
+] 

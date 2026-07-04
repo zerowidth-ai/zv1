@@ -1,0 +1,83 @@
+[
+  {
+    "description": "Always pass through value (0% probability)",
+    "inputs": {
+      "value": "test string",
+      "nullProbability": 0.0
+    },
+    "expected": {
+      "result": "test string"
+    }
+  },
+  {
+    "description": "Always return null (100% probability)",
+    "inputs": {
+      "value": 42,
+      "nullProbability": 1.0
+    },
+    "expected": {
+      "result": null
+    }
+  },
+  {
+    "description": "50% chance of null - schema validation",
+    "inputs": {
+      "value": {"key": "value"},
+      "nullProbability": 0.5
+    },
+    "expectedSchema": {
+      "result": {
+        "type": ["object", "null"]
+      }
+    }
+  },
+  {
+    "description": "Default probability (10%) - schema validation",
+    "inputs": {
+      "value": [1, 2, 3]
+    },
+    "expectedSchema": {
+      "result": {
+        "type": ["array", "null"]
+      }
+    }
+  },
+  {
+    "description": "Handle edge case probability values (clamped to 1.0)",
+    "inputs": {
+      "value": "edge case",
+      "nullProbability": 1.5
+    },
+    "expected": {
+      "result": null
+    }
+  },
+  {
+    "description": "Handle negative probability (clamped to 0.0)",
+    "inputs": {
+      "value": "negative test",
+      "nullProbability": -0.5
+    },
+    "expected": {
+      "result": "negative test"
+    }
+  },
+  {
+    "description": "Test with complex data structure - schema validation",
+    "inputs": {
+      "value": {
+        "nested": {
+          "array": [1, 2, 3],
+          "string": "hello",
+          "number": 123.45
+        }
+      },
+      "nullProbability": 0.3
+    },
+    "expectedSchema": {
+      "result": {
+        "type": ["object", "null"]
+      }
+    }
+  }
+]

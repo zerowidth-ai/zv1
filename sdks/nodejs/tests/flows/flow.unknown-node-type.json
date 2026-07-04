@@ -1,0 +1,40 @@
+{
+  "description": "A flow referencing a node type that does not exist must fail loudly at load time — previously the node silently never executed and the flow 'completed' with empty outputs.",
+  "flow": {
+    "id": "testUnknownNodeType01",
+    "metadata": {
+      "display_name": "Test: Unknown node type"
+    },
+    "nodes": [
+      {
+        "id": "inA",
+        "type": "input-data",
+        "settings": { "key": "a", "type": "number", "default_value": "1" }
+      },
+      {
+        "id": "ghost",
+        "type": "this-node-type-does-not-exist"
+      },
+      {
+        "id": "outA",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "inA", "port_name": "value" },
+        "to": { "node_id": "ghost", "port_name": "value" }
+      },
+      {
+        "from": { "node_id": "ghost", "port_name": "value" },
+        "to": { "node_id": "outA", "port_name": "value" }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": { "a": 1 },
+  "expectedError": {
+    "message": "unknown node type"
+  }
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "description": "Simple replacement",
+    "inputs": {
+      "text": "hello world",
+      "search": "world",
+      "replacement": "there"
+    },
+    "settings": {
+      "regex": false,
+      "case_sensitive": true
+    },
+    "expected": {
+      "text": "hello there"
+    }
+  },
+  {
+    "description": "Case insensitive replacement",
+    "inputs": {
+      "text": "Hello World",
+      "search": "hello",
+      "replacement": "Hi"
+    },
+    "settings": {
+      "regex": false,
+      "case_sensitive": false
+    },
+    "expected": {
+      "text": "Hi World"
+    }
+  },
+  {
+    "description": "Regex replacement",
+    "inputs": {
+      "text": "apple orange apple banana",
+      "search": "apple|orange",
+      "replacement": "fruit"
+    },
+    "settings": {
+      "regex": true,
+      "case_sensitive": true
+    },
+    "expected": {
+      "text": "fruit fruit fruit banana"
+    }
+  },
+  {
+    "description": "Multiple replacements",
+    "inputs": {
+      "text": "test test test",
+      "search": "test",
+      "replacement": "check"
+    },
+    "settings": {
+      "regex": false,
+      "case_sensitive": true
+    },
+    "expected": {
+      "text": "check check check"
+    }
+  }
+] 

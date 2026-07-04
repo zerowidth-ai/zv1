@@ -1,0 +1,45 @@
+[
+  {
+    "description": "Basic average",
+    "inputs": {
+      "numbers": [1, 2, 3, 4, 5]
+    },
+    "expected": {
+      "result": 3
+    }
+  },
+  {
+    "description": "Decimal numbers",
+    "inputs": {
+      "numbers": [1.5, 2.5, 3.5]
+    },
+    "expected": {
+      "result": 2.5
+    }
+  },
+  {
+    "description": "Single number",
+    "inputs": {
+      "numbers": [42]
+    },
+    "expected": {
+      "result": 42
+    }
+  },
+  {
+    "description": "Empty array",
+    "inputs": {
+      "numbers": []
+    },
+    "expected": {
+      "result": 0
+    }
+  },
+  {
+    "description": "Mixed valid/invalid values",
+    "inputs": {
+      "numbers": [1, "2", 3, null, 5]
+    },
+    "expectedError": "Input contains non-numeric values that cannot be processed"
+  }
+] 

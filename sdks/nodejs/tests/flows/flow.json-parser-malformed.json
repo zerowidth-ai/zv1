@@ -1,0 +1,77 @@
+{
+  "description": "json-parser on malformed input: run COMPLETES (no crash), success=false. Structurer flows depend on this soft-failure so downstream if-else can branch on it.",
+  "flow": {
+    "id": "testJsonParseBad",
+    "metadata": {
+      "display_name": "Test: json parser malformed"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "raw",
+          "type": "string",
+          "default_value": ""
+        }
+      },
+      {
+        "id": "parse",
+        "type": "json-parser",
+        "settings": {}
+      },
+      {
+        "id": "outS",
+        "type": "output-data",
+        "settings": {
+          "key": "success"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "parse",
+          "port_name": "json"
+        }
+      },
+      {
+        "from": {
+          "node_id": "parse",
+          "port_name": "success"
+        },
+        "to": {
+          "node_id": "outS",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {
+    "raw": "{not json at all"
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "properties": {
+          "success": {
+            "const": false
+          }
+        }
+      }
+    }
+  }
+}

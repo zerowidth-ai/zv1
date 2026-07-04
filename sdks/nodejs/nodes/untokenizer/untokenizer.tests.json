@@ -1,0 +1,83 @@
+[
+  {
+    "description": "Untokenize simple tokens with cl200k_base (default)",
+    "inputs": {
+      "tokens": [13225, 11, 2375, 0]
+    },
+    "expected": {
+      "text": "Hello, world!"
+    }
+  },
+  {
+    "description": "Untokenize with cl100k_base tokenizer",
+    "inputs": {
+      "tokens": [9906, 11, 1917, 0]
+    },
+    "settings": {
+      "tokenizer": "cl100k_base"
+    },
+    "expected": {
+      "text": "Hello, world!"
+    }
+  },
+  {
+    "description": "Untokenize Message object tokens with cl200k_base",
+    "inputs": {
+      "tokens": [2500, 382, 261, 1746, 3176]
+    },
+    "settings": {
+      "tokenizer": "cl200k_base"
+    },
+    "expected": {
+      "text": "This is a test message"
+    }
+  },
+  {
+    "description": "Untokenize array of message tokens with cl100k_base",
+    "inputs": {
+      "tokens": [5451, 1984, 16041, 1984]
+    },
+    "settings": {
+      "tokenizer": "cl100k_base"
+    },
+    "expected": {
+      "text": "First messageSecond message"
+    }
+  },
+  {
+    "description": "Untokenize conversation tokens",
+    "inputs": {
+      "tokens": [13225, 12194, 1354, 0]
+    },
+    "expected": {
+      "text": "HelloHi there!"
+    }
+  },
+  {
+    "description": "Handle empty token array",
+    "inputs": {
+      "tokens": []
+    },
+    "expected": {
+      "text": ""
+    }
+  },
+  {
+    "description": "Handle single token",
+    "inputs": {
+      "tokens": [13225]
+    },
+    "expected": {
+      "text": "Hello"
+    }
+  },
+  {
+    "description": "Handle multi-modal text tokens",
+    "inputs": {
+      "tokens": [13225, 11, 2375, 0]
+    },
+    "expected": {
+      "text": "Hello, world!"
+    }
+  }
+]

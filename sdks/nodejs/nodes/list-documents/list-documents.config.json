@@ -1,0 +1,60 @@
+{
+  "display_name": "List Documents",
+  "tagline": "List everything in a KB",
+  "description": "List the documents in a knowledge base (id, name, type, size, chunk count) — for browsing or letting an agent pick a document to read. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+  "category": "knowledge",
+  "is_constant": false,
+  "is_plugin": true,
+  "is_output": false,
+  "inputs": [
+    {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base to list, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "limit",
+      "display_name": "Limit",
+      "type": "number",
+      "description": "Maximum number of documents to return",
+      "default": 100
+    },
+    {
+      "name": "offset",
+      "display_name": "Offset",
+      "type": "number",
+      "description": "Number of documents to skip (pagination)",
+      "default": 0
+    }
+  ],
+  "outputs": [
+    {
+      "name": "documents",
+      "display_name": "Documents",
+      "type": "array",
+      "description": "Document rows (id, display_name, file_type, file_size, chunk_count, …)"
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Number of documents returned"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the listing completed successfully"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if it failed"
+    }
+  ],
+  "settings": []
+}

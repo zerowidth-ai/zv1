@@ -1,0 +1,134 @@
+{
+  "description": "One input fans out to two independent add branches landing in two KEYED outputs \u2014 concurrent scheduling + output-data key mapping.",
+  "flow": {
+    "id": "testParallel",
+    "metadata": {
+      "display_name": "Test: parallel branches"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "a",
+          "type": "number",
+          "default_value": "0"
+        }
+      },
+      {
+        "id": "n10",
+        "type": "number",
+        "settings": {
+          "value": 10,
+          "min": 0,
+          "max": 1000,
+          "step": 1
+        }
+      },
+      {
+        "id": "n20",
+        "type": "number",
+        "settings": {
+          "value": 20,
+          "min": 0,
+          "max": 1000,
+          "step": 1
+        }
+      },
+      {
+        "id": "add1",
+        "type": "add",
+        "settings": {}
+      },
+      {
+        "id": "add2",
+        "type": "add",
+        "settings": {}
+      },
+      {
+        "id": "outA",
+        "type": "output-data",
+        "settings": {
+          "key": "sum1"
+        }
+      },
+      {
+        "id": "outB",
+        "type": "output-data",
+        "settings": {
+          "key": "sum2"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "add1",
+          "port_name": "a"
+        }
+      },
+      {
+        "from": {
+          "node_id": "n10",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "add1",
+          "port_name": "b"
+        }
+      },
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "add2",
+          "port_name": "a"
+        }
+      },
+      {
+        "from": {
+          "node_id": "n20",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "add2",
+          "port_name": "b"
+        }
+      },
+      {
+        "from": {
+          "node_id": "add1",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "outA",
+          "port_name": "value"
+        }
+      },
+      {
+        "from": {
+          "node_id": "add2",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "outB",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {
+    "a": 5
+  },
+  "expected": {
+    "sum1": 15,
+    "sum2": 25
+  }
+}

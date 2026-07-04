@@ -1,0 +1,22 @@
+[
+  {
+    "description": "True XNOR true",
+    "inputs": { "input1": true, "input2": true },
+    "expected": { "value": true }
+  },
+  {
+    "description": "True XNOR false",
+    "inputs": { "input1": true, "input2": false },
+    "expected": { "value": false }
+  },
+  {
+    "description": "False XNOR true",
+    "inputs": { "input1": false, "input2": true },
+    "expected": { "value": false }
+  },
+  {
+    "description": "False XNOR false",
+    "inputs": { "input1": false, "input2": false },
+    "expected": { "value": true }
+  }
+] 

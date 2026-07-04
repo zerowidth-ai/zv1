@@ -1,0 +1,26 @@
+{
+  "display_name": "Message Role Swap",
+  "tagline": "Swap message roles",
+  "description": "Swap message roles between assistant and user in a messages array, returning a new array with swapped roles",
+  "icon": "swap-horizontal",
+  "category": "messages",
+  "is_plugin": false,
+  "inputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "conversation",
+      "description": "Array of message objects to swap roles",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "messages",
+      "display_name": "Messages",
+      "type": "conversation",
+      "description": "Array of messages with swapped roles (assistant ↔ user)"
+    }
+  ],
+  "settings": []
+}

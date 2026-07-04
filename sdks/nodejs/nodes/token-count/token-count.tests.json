@@ -1,0 +1,163 @@
+[
+  {
+    "description": "Count tokens in simple string with cl200k_base (default)",
+    "inputs": {
+      "input": "Hello, world!"
+    },
+    "expected": {
+      "tokens": 4
+    }
+  },
+  {
+    "description": "Count tokens with cl100k_base tokenizer",
+    "inputs": {
+      "input": "Hello, world!"
+    },
+    "settings": {
+      "tokenizer": "cl100k_base"
+    },
+    "expected": {
+      "tokens": 4
+    }
+  },
+  {
+    "description": "Count tokens in Message object with cl200k_base",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": "This is a test message"
+      }
+    },
+    "settings": {
+      "tokenizer": "cl200k_base"
+    },
+    "expected": {
+      "tokens": 5
+    }
+  },
+  {
+    "description": "Count tokens in array of strings with cl100k_base",
+    "inputs": {
+      "input": [
+        "First message",
+        "Second message"
+      ]
+    },
+    "settings": {
+      "tokenizer": "cl100k_base"
+    },
+    "expected": {
+      "tokens": 4
+    }
+  },
+  {
+    "description": "Count tokens in array of Message objects",
+    "inputs": {
+      "input": [
+        {
+          "role": "user",
+          "content": "Hello"
+        },
+        {
+          "role": "assistant", 
+          "content": "Hi there!"
+        }
+      ]
+    },
+    "expected": {
+      "tokens": 4
+    }
+  },
+  {
+    "description": "Handle multi-modal content structure 1",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Hello, world!"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "tokens": 4
+    }
+  },
+  {
+    "description": "Handle multi-modal content structure w/ image",
+    "inputs": {
+      "input": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Hello"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://example.com/image.png"
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "tokens": 1
+    }
+  },
+  {
+    "description": "Handle messages array",
+    "inputs": {
+      "input": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Hello"
+            },
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "https://example.com/image.png"
+              }
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Hi there!"
+            }
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "tokens": 4
+    }
+  },
+  {
+    "description": "Handle empty string",
+    "inputs": {
+      "input": ""
+    },
+    "expected": {
+      "tokens": 0
+    }
+  },
+  {
+    "description": "Handle empty array",
+    "inputs": {
+      "input": []
+    },
+    "expected": {
+      "tokens": 0
+    }
+  }
+]

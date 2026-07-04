@@ -1,0 +1,25 @@
+{
+  "description": "Import-within-import: root uses a wrapper subflow which itself imports an adder. 10 -> wrapper(x+5) -> 15.",
+  "inputs": {
+    "a": 10
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "const": 15
+          }
+        }
+      }
+    }
+  }
+}

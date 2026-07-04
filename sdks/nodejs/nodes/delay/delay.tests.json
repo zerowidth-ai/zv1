@@ -1,0 +1,59 @@
+[
+  {
+    "description": "Basic delay with value",
+    "inputs": {
+      "value": "test data",
+      "delay_ms": 100
+    },
+    "expected": {
+      "result": "test data",
+      "actual_delay_ms": 100
+    }
+  },
+  {
+    "description": "Zero delay",
+    "inputs": {
+      "value": 42,
+      "delay_ms": 0
+    },
+    "expected": {
+      "result": 42,
+      "actual_delay_ms": 0
+    }
+  },
+  {
+    "description": "Negative delay (should be treated as zero)",
+    "inputs": {
+      "value": true,
+      "delay_ms": -500
+    },
+    "expected": {
+      "result": true,
+      "actual_delay_ms": 0
+    }
+  },
+  {
+    "description": "Delay exceeding maximum",
+    "inputs": {
+      "value": "limited",
+      "delay_ms": 100000,
+      "max_delay_ms": 5000
+    },
+    "expected": {
+      "result": "limited",
+      "actual_delay_ms": 5000
+    }
+  },
+  {
+    "description": "Custom maximum delay",
+    "inputs": {
+      "value": "custom max",
+      "delay_ms": 3000,
+      "max_delay_ms": 10000
+    },
+    "expected": {
+      "result": "custom max",
+      "actual_delay_ms": 3000
+    }
+  }
+] 

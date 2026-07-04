@@ -1,0 +1,88 @@
+{
+  "display_name": "Query Knowledge Base",
+  "tagline": "Query knowledge base",
+  "description": "Execute SQL queries against the orchestration's knowledge database",
+  "category": "knowledge",
+  "is_plugin": true,
+  "is_constant": false,
+  "is_output": false,
+  "inputs": [
+    {
+      "name": "query",
+      "display_name": "SQL Query",
+      "type": "string",
+      "description": "SQL query to execute against the knowledge database",
+      "required": true
+    },
+    {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base to query, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "params",
+      "display_name": "Parameters",
+      "type": "array",
+      "description": "Parameters for parameterized queries (prevents SQL injection)",
+      "default": []
+    },
+    {
+      "name": "operation",
+      "display_name": "Operation Type",
+      "type": "string",
+      "description": "Type of SQL operation (SELECT, INSERT, UPDATE, DELETE)",
+      "default": "SELECT",
+      "options": ["SELECT", "INSERT", "UPDATE", "DELETE"]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "data",
+      "display_name": "Query Results",
+      "type": "array or object",
+      "description": "Results from the SQL query"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the query executed successfully"
+    },
+    {
+      "name": "rowCount",
+      "display_name": "Row Count",
+      "type": "number",
+      "description": "Number of rows affected or returned"
+    },
+    {
+      "name": "truncated",
+      "display_name": "Truncated",
+      "type": "boolean",
+      "description": "True when the returned data was capped (>1000 rows) — add a LIMIT to the query for the full set"
+    },
+    {
+      "name": "operation",
+      "display_name": "Operation",
+      "type": "string",
+      "description": "The SQL operation that was executed"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if query failed"
+    }
+  ],
+  "settings": [
+    {
+      "name": "timeout",
+      "display_name": "Query Timeout",
+      "type": "number",
+      "description": "Query timeout in milliseconds",
+      "default": 5000
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+[
+  {
+    "description": "Convert array of objects to CSV with headers",
+    "inputs": {
+      "data": [
+        {"name": "John", "age": 30, "city": "New York"},
+        {"name": "Jane", "age": 25, "city": "Boston"}
+      ]
+    },
+    "expected": {
+      "csv": "\"name\",\"age\",\"city\"\n\"John\",30,\"New York\"\n\"Jane\",25,\"Boston\"",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Convert array of arrays to CSV",
+    "inputs": {
+      "data": [
+        ["John", 30, "New York"],
+        ["Jane", 25, "Boston"]
+      ],
+      "headers": ["name", "age", "city"]
+    },
+    "expected": {
+      "csv": "\"name\",\"age\",\"city\"\n\"John\",30,\"New York\"\n\"Jane\",25,\"Boston\"",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Convert with custom delimiter",
+    "inputs": {
+      "data": [
+        {"name": "John", "age": 30, "city": "New York"},
+        {"name": "Jane", "age": 25, "city": "Boston"}
+      ]
+    },
+    "settings": {"delimiter": ";"},
+    "expected": {
+      "csv": "\"name\";\"age\";\"city\"\n\"John\";30;\"New York\"\n\"Jane\";25;\"Boston\"",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Handle empty data",
+    "inputs": {"data": []},
+    "expected": {
+      "csv": "",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Handle non-array input",
+    "inputs": {"data": "not an array"},
+    "expected": {
+      "csv": "",
+      "success": false
+    }
+  }
+] 

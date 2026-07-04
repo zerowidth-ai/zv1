@@ -1,0 +1,79 @@
+[
+  {
+    "description": "Simple nested array",
+    "inputs": {
+      "array": [1, [2, 3], [4, [5, 6]], 7]
+    },
+    "settings": {
+      "depth": -1
+    },
+    "expected": {
+      "array": [1, 2, 3, 4, 5, 6, 7]
+    }
+  },
+  {
+    "description": "Limited depth flattening",
+    "inputs": {
+      "array": [1, [2, [3, 4]], [5, [6, 7]]]
+    },
+    "settings": {
+      "depth": 1
+    },
+    "expected": {
+      "array": [1, 2, [3, 4], 5, [6, 7]]
+    }
+  },
+  {
+    "description": "Skip empty arrays",
+    "inputs": {
+      "array": [1, [], [2, []], [[], 3], 4]
+    },
+    "settings": {
+      "skip_empty": true
+    },
+    "expected": {
+      "array": [1, 2, 3, 4]
+    }
+  },
+  {
+    "description": "Keep empty arrays",
+    "inputs": {
+      "array": [1, [], [2, []], [[], 3], 4]
+    },
+    "settings": {
+      "skip_empty": false
+    },
+    "expected": {
+      "array": [1, 2, 3, 4]
+    }
+  },
+  {
+    "description": "Mixed content",
+    "inputs": {
+      "array": [
+        1,
+        [2, "three"],
+        [{"x": 1}, [4, 5]],
+        [6, [7, [8]]]
+      ]
+    },
+    "settings": {
+      "depth": -1
+    },
+    "expected": {
+      "array": [1, 2, "three", {"x": 1}, 4, 5, 6, 7, 8]
+    }
+  },
+  {
+    "description": "Zero depth (no flattening)",
+    "inputs": {
+      "array": [1, [2, 3], [4, [5]]]
+    },
+    "settings": {
+      "depth": 0
+    },
+    "expected": {
+      "array": [1, [2, 3], [4, [5]]]
+    }
+  }
+] 

@@ -1,0 +1,95 @@
+{
+  "description": "A number-typed input-data receiving the STRING '42' \u2014 documents whether the engine coerces typed inputs (add would concat or NaN without it).",
+  "flow": {
+    "id": "testCoerce",
+    "metadata": {
+      "display_name": "Test: type coercion"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "a",
+          "type": "number",
+          "default_value": "0"
+        }
+      },
+      {
+        "id": "n1",
+        "type": "number",
+        "settings": {
+          "value": 1,
+          "min": 0,
+          "max": 1000,
+          "step": 1
+        }
+      },
+      {
+        "id": "add1",
+        "type": "add",
+        "settings": {}
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "add1",
+          "port_name": "a"
+        }
+      },
+      {
+        "from": {
+          "node_id": "n1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "add1",
+          "port_name": "b"
+        }
+      },
+      {
+        "from": {
+          "node_id": "add1",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {
+    "a": "42"
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "const": 43
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,174 @@
+[
+  {
+    "description": "Merge consecutive user messages",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "user", "content": "How are you?"},
+        {"role": "assistant", "content": "I'm doing well"},
+        {"role": "user", "content": "That's great!"}
+      ]
+    },
+    "expected": {
+      "original_count": 4,
+      "merged_count": 3,
+      "merges_performed": 1
+    }
+  },
+  {
+    "description": "Merge multiple consecutive messages",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "user", "content": "How are you?"},
+        {"role": "user", "content": "I hope you're doing well"},
+        {"role": "assistant", "content": "I'm doing great"},
+        {"role": "assistant", "content": "Thank you for asking"},
+        {"role": "user", "content": "You're welcome"}
+      ]
+    },
+    "expected": {
+      "original_count": 6,
+      "merged_count": 3,
+      "merges_performed": 3
+    }
+  },
+  {
+    "description": "No consecutive messages to merge",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there"},
+        {"role": "user", "content": "How are you?"},
+        {"role": "assistant", "content": "I'm doing well"}
+      ]
+    },
+    "expected": {
+      "original_count": 4,
+      "merged_count": 4,
+      "merges_performed": 0
+    }
+  },
+  {
+    "description": "Merge with custom separator",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "user", "content": "World"}
+      ],
+      "settings": {
+        "separator": " | "
+      }
+    },
+    "expected": {
+      "original_count": 2,
+      "merged_count": 1,
+      "merges_performed": 1
+    }
+  },
+  {
+    "description": "Merge multi-modal content with structure preserved",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+        {"role": "user", "content": [{"type": "text", "text": "World"}]}
+      ],
+      "settings": {
+        "preserve_structure": true
+      }
+    },
+    "expected": {
+      "original_count": 2,
+      "merged_count": 1,
+      "merges_performed": 1
+    }
+  },
+  {
+    "description": "Merge multi-modal content flattened to text",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+        {"role": "user", "content": [{"type": "text", "text": "World"}]}
+      ],
+      "settings": {
+        "preserve_structure": false
+      }
+    },
+    "expected": {
+      "original_count": 2,
+      "merged_count": 1,
+      "merges_performed": 1
+    }
+  },
+  {
+    "description": "Handle mixed content types",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "user", "content": [{"type": "text", "text": "World"}]}
+      ]
+    },
+    "expected": {
+      "original_count": 2,
+      "merged_count": 1,
+      "merges_performed": 1
+    }
+  },
+  {
+    "description": "Handle empty message array",
+    "inputs": {
+      "messages": []
+    },
+    "expected": {
+      "original_count": 0,
+      "merged_count": 0,
+      "merges_performed": 0
+    }
+  },
+  {
+    "description": "Handle single message",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"}
+      ]
+    },
+    "expected": {
+      "original_count": 1,
+      "merged_count": 1,
+      "merges_performed": 0
+    }
+  },
+  {
+    "description": "Handle invalid messages gracefully - invalid messages break consecutive sequence",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        null,
+        {"role": "user", "content": "World"},
+        {"role": "assistant", "content": "Hi"}
+      ]
+    },
+    "expected": {
+      "original_count": 4,
+      "merged_count": 4,
+      "merges_performed": 0
+    }
+  },
+  {
+    "description": "Handle invalid messages with actual consecutive messages",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "user", "content": "How are you?"},
+        null,
+        {"role": "assistant", "content": "I'm doing well"},
+        {"role": "assistant", "content": "Thank you"}
+      ]
+    },
+    "expected": {
+      "original_count": 5,
+      "merged_count": 3,
+      "merges_performed": 2
+    }
+  }
+]

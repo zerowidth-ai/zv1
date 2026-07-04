@@ -1,0 +1,38 @@
+[
+  {
+    "description": "Never throw error (0% probability)",
+    "inputs": {
+      "value": "always succeeds",
+      "errorProbability": 0.0
+    },
+    "expected": {
+      "result": "always succeeds"
+    }
+  },
+  {
+    "description": "Always throw error (100% probability)",
+    "inputs": {
+      "value": "never reaches here",
+      "errorProbability": 1.0
+    },
+    "expectedError": "Random error occurred"
+  },
+  {
+    "description": "Handle edge case probability values (clamped to 1.0)",
+    "inputs": {
+      "value": "edge case test",
+      "errorProbability": 1.5
+    },
+    "expectedError": "Random error occurred"
+  },
+  {
+    "description": "Handle negative probability (clamped to 0.0)",
+    "inputs": {
+      "value": "negative test",
+      "errorProbability": -0.5
+    },
+    "expected": {
+      "result": "negative test"
+    }
+  }
+]

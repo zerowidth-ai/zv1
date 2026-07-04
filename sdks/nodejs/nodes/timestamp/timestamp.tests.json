@@ -1,0 +1,90 @@
+[
+  {
+    "description": "Default ISO format",
+    "inputs": {},
+    "expectedSchema": {
+      "timestamp": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+      },
+      "unix_timestamp": {
+        "type": "number",
+        "minimum": 1000000000
+      },
+      "unix_timestamp_ms": {
+        "type": "number",
+        "minimum": 1000000000000
+      },
+      "iso_string": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+      }
+    }
+  },
+  {
+    "description": "Unix timestamp format",
+    "inputs": {
+      "format": "unix"
+    },
+    "expectedSchema": {
+      "timestamp": {
+        "type": "string",
+        "pattern": "^\\d{10}$"
+      },
+      "unix_timestamp": {
+        "type": "number"
+      }
+    }
+  },
+  {
+    "description": "Unix timestamp milliseconds format",
+    "inputs": {
+      "format": "unix_ms"
+    },
+    "expectedSchema": {
+      "timestamp": {
+        "type": "string",
+        "pattern": "^\\d{13}$"
+      },
+      "unix_timestamp_ms": {
+        "type": "number"
+      }
+    }
+  },
+  {
+    "description": "RFC2822 format",
+    "inputs": {
+      "format": "rfc2822"
+    },
+    "expectedSchema": {
+      "timestamp": {
+        "type": "string",
+        "pattern": "^\\w{3}, \\d{2} \\w{3} \\d{4} \\d{2}:\\d{2}:\\d{2} GMT$"
+      }
+    }
+  },
+  {
+    "description": "Custom format - YYYY-MM-DD",
+    "inputs": {
+      "format": "YYYY-MM-DD"
+    },
+    "expectedSchema": {
+      "timestamp": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      }
+    }
+  },
+  {
+    "description": "Custom format - HH:mm:ss",
+    "inputs": {
+      "format": "HH:mm:ss"
+    },
+    "expectedSchema": {
+      "timestamp": {
+        "type": "string",
+        "pattern": "^\\d{2}:\\d{2}:\\d{2}$"
+      }
+    }
+  }
+]

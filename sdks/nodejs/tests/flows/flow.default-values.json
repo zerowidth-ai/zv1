@@ -1,0 +1,58 @@
+{
+  "description": "input-data default_value kicks in when the caller omits the key \u2014 and DOCUMENTS AN ENGINE QUIRK: the default passes through as the raw settings STRING ('7'), bypassing the declared number type's coercion. Callers relying on defaults for numeric inputs get strings. If this test starts failing with data:7, the engine started coercing defaults \u2014 audit flows that depend on string-shaped defaults.",
+  "flow": {
+    "id": "testDefaults",
+    "metadata": {
+      "display_name": "Test: default values"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "a",
+          "type": "number",
+          "default_value": "7"
+        }
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {},
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "const": "7"
+          }
+        }
+      }
+    }
+  }
+}

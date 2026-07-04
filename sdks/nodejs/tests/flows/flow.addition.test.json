@@ -1,0 +1,10 @@
+{
+  "description": "Basic .zv1 file test with simple data flow",
+  "inputs": {
+    "a": 2,
+    "b": 3
+  },
+  "expected": {
+    "data": 5
+  }
+}

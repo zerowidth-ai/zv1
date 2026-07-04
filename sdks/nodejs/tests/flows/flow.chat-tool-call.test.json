@@ -1,0 +1,48 @@
+{
+  "description": "A Gemini calling a tool hopefully",
+  "inputs": {
+    "chat": [
+      {
+        "role": "user",
+        "content": "Using your tool what is 41241241241 + 41412841231? Respond ONLY with the result and always use your tool."
+      }
+    ]
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "chat"
+        ],
+        "properties": {
+          "chat": {
+            "type": "array",
+            "minItems": 1,
+            "contains": {
+              "type": "object",
+              "required": [
+                "role",
+                "content"
+              ],
+              "properties": {
+                "role": {
+                  "const": "assistant"
+                },
+                "content": {
+                  "type": "string",
+                  "pattern": "82654082472"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "retries": 2
+}

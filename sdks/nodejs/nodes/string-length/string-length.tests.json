@@ -1,0 +1,22 @@
+[
+  {
+    "description": "Empty string",
+    "inputs": { "text": "" },
+    "expected": { "length": 0 }
+  },
+  {
+    "description": "Simple string",
+    "inputs": { "text": "hello" },
+    "expected": { "length": 5 }
+  },
+  {
+    "description": "String with spaces",
+    "inputs": { "text": "hello world" },
+    "expected": { "length": 11 }
+  },
+  {
+    "description": "String with special characters",
+    "inputs": { "text": "hello 世界!" },
+    "expected": { "length": 9 }
+  }
+] 

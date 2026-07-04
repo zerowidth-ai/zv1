@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Convert to uppercase",
+    "inputs": { "text": "Hello World" },
+    "settings": { "case": "upper" },
+    "expected": { "text": "HELLO WORLD" }
+  },
+  {
+    "description": "Convert to lowercase",
+    "inputs": { "text": "Hello World" },
+    "settings": { "case": "lower" },
+    "expected": { "text": "hello world" }
+  },
+  {
+    "description": "Convert to title case",
+    "inputs": { "text": "hello world example" },
+    "settings": { "case": "title" },
+    "expected": { "text": "Hello World Example" }
+  },
+  {
+    "description": "Convert to sentence case",
+    "inputs": { "text": "hello world. another sentence. third one." },
+    "settings": { "case": "sentence" },
+    "expected": { "text": "Hello world. Another sentence. Third one." }
+  },
+  {
+    "description": "Convert to camel case",
+    "inputs": { "text": "hello world example" },
+    "settings": { "case": "camel" },
+    "expected": { "text": "helloWorldExample" }
+  },
+  {
+    "description": "Convert to snake case",
+    "inputs": { "text": "Hello World Example" },
+    "settings": { "case": "snake" },
+    "expected": { "text": "hello_world_example" }
+  },
+  {
+    "description": "Convert to kebab case",
+    "inputs": { "text": "Hello World Example" },
+    "settings": { "case": "kebab" },
+    "expected": { "text": "hello-world-example" }
+  }
+] 
