@@ -1,10 +1,24 @@
 {
-  "description": "A Gemini calling a tool hopefully",
+  "description": "THE EXACT SHAPE of the 2026-07-03 stripping bug: a role:tool response whose assistant tool_call is MISSING from history. The chain must drop/repair the orphan rather than letting the provider 400.",
   "inputs": {
     "chat": [
       {
         "role": "user",
-        "content": "Using your tool what is 41241241241 + 41412841231? Respond ONLY with the result and always use your tool."
+        "content": "What is 40 + 2?"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "call_gone",
+        "name": "TestsAddition",
+        "content": "{\"data\":42}"
+      },
+      {
+        "role": "assistant",
+        "content": "It's 42."
+      },
+      {
+        "role": "user",
+        "content": "Thanks, that's all correct! As a connection check, please reply with exactly one word: READY"
       }
     ]
   },
@@ -35,7 +49,7 @@
                 },
                 "content": {
                   "type": "string",
-                  "pattern": "82654082472"
+                  "pattern": "READY"
                 }
               }
             }

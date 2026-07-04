@@ -6,6 +6,7 @@
   "category": "messages",
   "custom_render_height": 200,
   "is_constant": true,
+  "is_plugin": true,
   "is_resizable": true,
   "inputs": [
     {

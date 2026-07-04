@@ -5,6 +5,7 @@
   "icon": "fa-plug",
   "category": "tools",
   "is_constant": true,
+  "is_plugin": true,
   "inputs": [],
   "outputs": [],
   "settings": [

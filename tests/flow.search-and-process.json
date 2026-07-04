@@ -65,5 +65,9 @@
   },
   "expected": {
     "searchSummary": 10
-  }
+  },
+  "requiresEnv": [
+    "GOOGLE_CUSTOM_SEARCH_KEY",
+    "GOOGLE_CUSTOM_SEARCH_CX"
+  ]
 }

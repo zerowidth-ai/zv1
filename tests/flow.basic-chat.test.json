@@ -8,13 +8,41 @@
       }
     ]
   },
-  "expected": {
-    "chat": [
-      {
-        "role": "assistant",
-        "content": "Simon says, 'Hello'\n",
-        "tool_calls": []
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "chat"
+        ],
+        "properties": {
+          "chat": {
+            "type": "array",
+            "minItems": 1,
+            "contains": {
+              "type": "object",
+              "required": [
+                "role",
+                "content"
+              ],
+              "properties": {
+                "role": {
+                  "const": "assistant"
+                },
+                "content": {
+                  "type": "string",
+                  "pattern": "Simon says"
+                }
+              }
+            }
+          }
+        }
       }
-    ]
-  }
+    }
+  },
+  "retries": 2
 }

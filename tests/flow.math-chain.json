@@ -1,0 +1,165 @@
+{
+  "description": "subtract \u2192 multiply \u2192 divide chained through number constants: ((20-5)*4)/3 = 20. First coverage of the three non-add arithmetic nodes + a three-deep sequential dependency chain.",
+  "flow": {
+    "id": "testMathChain",
+    "metadata": {
+      "display_name": "Test: math chain"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "a",
+          "type": "number",
+          "default_value": "0"
+        }
+      },
+      {
+        "id": "n5",
+        "type": "number",
+        "settings": {
+          "value": 5,
+          "min": 0,
+          "max": 1000,
+          "step": 1
+        }
+      },
+      {
+        "id": "n4",
+        "type": "number",
+        "settings": {
+          "value": 4,
+          "min": 0,
+          "max": 1000,
+          "step": 1
+        }
+      },
+      {
+        "id": "n3",
+        "type": "number",
+        "settings": {
+          "value": 3,
+          "min": 0,
+          "max": 1000,
+          "step": 1
+        }
+      },
+      {
+        "id": "sub",
+        "type": "subtract",
+        "settings": {}
+      },
+      {
+        "id": "mul",
+        "type": "multiply",
+        "settings": {}
+      },
+      {
+        "id": "div",
+        "type": "divide",
+        "settings": {}
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "sub",
+          "port_name": "a"
+        }
+      },
+      {
+        "from": {
+          "node_id": "n5",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "sub",
+          "port_name": "b"
+        }
+      },
+      {
+        "from": {
+          "node_id": "sub",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "mul",
+          "port_name": "a"
+        }
+      },
+      {
+        "from": {
+          "node_id": "n4",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "mul",
+          "port_name": "b"
+        }
+      },
+      {
+        "from": {
+          "node_id": "mul",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "div",
+          "port_name": "a"
+        }
+      },
+      {
+        "from": {
+          "node_id": "n3",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "div",
+          "port_name": "b"
+        }
+      },
+      {
+        "from": {
+          "node_id": "div",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {
+    "a": 20
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "const": 20
+          }
+        }
+      }
+    }
+  }
+}

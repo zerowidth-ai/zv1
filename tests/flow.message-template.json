@@ -1,0 +1,106 @@
+{
+  "description": "message node builds a {role, content} message with {{variable}} substitution \u2014 and DOCUMENTS the wire contract: content is an Anthropic-style BLOCK ARRAY ([{type:'text',text}]), not a plain string. Consumers that string-match on content must flatten blocks first.",
+  "flow": {
+    "id": "testMessage",
+    "metadata": {
+      "display_name": "Test: message template"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "name",
+          "type": "string",
+          "default_value": ""
+        }
+      },
+      {
+        "id": "msg",
+        "type": "message",
+        "settings": {
+          "role": "user",
+          "content": "Hello {{name}}!"
+        }
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "data"
+        },
+        "to": {
+          "node_id": "msg",
+          "port_name": "variables"
+        }
+      },
+      {
+        "from": {
+          "node_id": "msg",
+          "port_name": "message"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {
+    "name": "Ada"
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "role",
+              "content"
+            ],
+            "properties": {
+              "role": {
+                "const": "user"
+              },
+              "content": {
+                "type": "array",
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "text"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "text"
+                    },
+                    "text": {
+                      "const": "Hello Ada!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
