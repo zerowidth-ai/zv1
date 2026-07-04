@@ -2290,6 +2290,74 @@
         "id": "filter-messages"
     },
     {
+        "display_name": "Keyword Search",
+        "tagline": "Search by exact words",
+        "description": "Search a knowledge base for chunks containing a word or phrase (case-insensitive substring match). Free and instant \u2014 no embeddings. The exact-term complement to Semantic Search; wire a Knowledge Base node into its knowledge_base input the same way.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "query",
+                "display_name": "Search Text",
+                "type": "string",
+                "description": "Word or phrase to match within chunk content",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to search, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "limit",
+                "display_name": "Result Limit",
+                "type": "number",
+                "description": "Maximum number of results to return",
+                "default": 10
+            },
+            {
+                "name": "document_id",
+                "display_name": "Document ID Filter",
+                "type": "string",
+                "description": "Optional: restrict results to a specific document uuid.",
+                "default": null
+            }
+        ],
+        "outputs": [
+            {
+                "name": "results",
+                "display_name": "Search Results",
+                "type": "array",
+                "description": "Matching chunks, most matches first"
+            },
+            {
+                "name": "count",
+                "display_name": "Result Count",
+                "type": "number",
+                "description": "Number of results returned"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the search completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if search failed"
+            }
+        ],
+        "settings": [],
+        "id": "keyword-search"
+    },
+    {
         "display_name": "DeepSeek: DeepSeek V4 Pro",
         "tagline": "Generate text",
         "description": "DeepSeek V4 Pro is a large-scale Mixture-of-Experts model from DeepSeek with 1.6T total parameters and 49B activated parameters, supporting a 1M-token context window. It is designed for advanced reasoning, coding,...",
@@ -4401,6 +4469,14 @@
                 "type": "string",
                 "description": "String to use as separator between chunks",
                 "default": "\n\n---\n\n"
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
             }
         ],
         "outputs": [
@@ -16276,6 +16352,67 @@
         "id": "firecrawl-scrape"
     },
     {
+        "display_name": "List Documents",
+        "tagline": "List everything in a KB",
+        "description": "List the documents in a knowledge base (id, name, type, size, chunk count) \u2014 for browsing or letting an agent pick a document to read. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to list, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "limit",
+                "display_name": "Limit",
+                "type": "number",
+                "description": "Maximum number of documents to return",
+                "default": 100
+            },
+            {
+                "name": "offset",
+                "display_name": "Offset",
+                "type": "number",
+                "description": "Number of documents to skip (pagination)",
+                "default": 0
+            }
+        ],
+        "outputs": [
+            {
+                "name": "documents",
+                "display_name": "Documents",
+                "type": "array",
+                "description": "Document rows (id, display_name, file_type, file_size, chunk_count, \u2026)"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of documents returned"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the listing completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "list-documents"
+    },
+    {
         "display_name": "Embedding",
         "tagline": "Generate embeddings (any model)",
         "description": "Generate vector embeddings using any OpenRouter embedding model. The model is an input, so it can be specified or swapped from outside the flow rather than baked into the node.",
@@ -22192,7 +22329,7 @@
         "is_plugin": true,
         "is_output": false,
         "needs_key_from": [
-            "openai"
+            "openrouter"
         ],
         "inputs": [
             {
@@ -22201,6 +22338,14 @@
                 "type": "string",
                 "description": "Text query to search for semantically similar content",
                 "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to search, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
             },
             {
                 "name": "limit",
@@ -22305,6 +22450,92 @@
             }
         ],
         "id": "xml-to-json"
+    },
+    {
+        "display_name": "Get Entity Neighbors",
+        "tagline": "Walk one hop in a graph",
+        "description": "Look up an entity in a Graph knowledge base (by name or id) and return every relation touching it, each with the entity on the far side \u2014 one hop of graph traversal. Filter by direction or relation type. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "entity",
+                "display_name": "Entity",
+                "type": "string",
+                "description": "The entity to look up \u2014 its name (case-insensitive) or id.",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to traverse, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "direction",
+                "display_name": "Direction",
+                "type": "string",
+                "description": "Which relations to include: both, out (entity is the source), or in (entity is the target).",
+                "default": "both",
+                "options": [
+                    "both",
+                    "out",
+                    "in"
+                ]
+            },
+            {
+                "name": "relation_type",
+                "display_name": "Relation Type",
+                "type": "string",
+                "description": "Optional: only relations of this type (e.g. works_at). Case-insensitive.",
+                "default": null
+            },
+            {
+                "name": "limit",
+                "display_name": "Limit",
+                "type": "number",
+                "description": "Maximum number of neighbors to return",
+                "default": 50
+            }
+        ],
+        "outputs": [
+            {
+                "name": "entity",
+                "display_name": "Entity",
+                "type": "object",
+                "description": "The resolved entity row (null if not found)"
+            },
+            {
+                "name": "neighbors",
+                "display_name": "Neighbors",
+                "type": "array",
+                "description": "Relations touching the entity: { edge_id, relation_type, description, direction, node }"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of neighbors returned"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the lookup completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed (including entity not found)"
+            }
+        ],
+        "settings": [],
+        "id": "get-entity-neighbors"
     },
     {
         "display_name": "Qwen: Qwen3.5-27B",
@@ -24599,6 +24830,80 @@
             ]
         },
         "id": "anthropic-claude-opus-4-8-fast"
+    },
+    {
+        "display_name": "Find Entity Path",
+        "tagline": "Connect two graph entities",
+        "description": "Find the shortest chain of relations connecting two entities in a Graph knowledge base (breadth-first, direction-agnostic). Answers \"how are X and Y related?\" with the hop-by-hop path. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "from",
+                "display_name": "From Entity",
+                "type": "string",
+                "description": "The starting entity \u2014 its name (case-insensitive) or id.",
+                "required": true
+            },
+            {
+                "name": "to",
+                "display_name": "To Entity",
+                "type": "string",
+                "description": "The target entity \u2014 its name (case-insensitive) or id.",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to traverse, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "max_depth",
+                "display_name": "Max Depth",
+                "type": "number",
+                "description": "Maximum number of hops to search before giving up.",
+                "default": 4
+            }
+        ],
+        "outputs": [
+            {
+                "name": "found",
+                "display_name": "Found",
+                "type": "boolean",
+                "description": "Whether a path exists within max_depth"
+            },
+            {
+                "name": "hops",
+                "display_name": "Hops",
+                "type": "number",
+                "description": "Number of relations in the path (0 when from = to)"
+            },
+            {
+                "name": "steps",
+                "display_name": "Steps",
+                "type": "array",
+                "description": "The path, node by node: [{ node, via_edge? }] \u2014 via_edge names the relation that reached each node"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the search completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed (including unknown entities)"
+            }
+        ],
+        "settings": [],
+        "id": "find-entity-path"
     },
     {
         "display_name": "Extract Hashtags",
@@ -30076,6 +30381,94 @@
         "id": "openai-o3-deep-research"
     },
     {
+        "display_name": "Expand Chunk Context",
+        "tagline": "Grab chunks around a hit",
+        "description": "Given a chunk (its document_id + chunk_index, e.g. from a search result), return the surrounding chunks \u2014 the N before and N after \u2014 plus their combined text. The classic RAG move: search finds one chunk, this widens the window so the model has the context around it.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": false,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "document_id",
+                "display_name": "Document ID",
+                "type": "string",
+                "description": "The document the anchor chunk belongs to",
+                "required": true
+            },
+            {
+                "name": "chunk_index",
+                "display_name": "Chunk Index",
+                "type": "number",
+                "description": "The anchor chunk's index (e.g. from a search result)",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "before",
+                "display_name": "Chunks Before",
+                "type": "number",
+                "description": "How many chunks before the anchor to include",
+                "default": 1
+            },
+            {
+                "name": "after",
+                "display_name": "Chunks After",
+                "type": "number",
+                "description": "How many chunks after the anchor to include",
+                "default": 2
+            },
+            {
+                "name": "separator",
+                "display_name": "Separator",
+                "type": "string",
+                "description": "Joins chunk contents in the combined output",
+                "default": "\n\n"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "chunks",
+                "display_name": "Chunks",
+                "type": "array",
+                "description": "The window of chunks, ascending by index"
+            },
+            {
+                "name": "content",
+                "display_name": "Combined Content",
+                "type": "string",
+                "description": "The window's chunk contents joined by the separator"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of chunks in the window"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether it completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "expand-chunk-context"
+    },
+    {
         "display_name": "OpenAI: o3",
         "tagline": "Generate text",
         "description": "o3 is a well-rounded and powerful model across domains. It sets a new standard for math, science, coding, and visual reasoning tasks. It also excels at technical writing and instruction-following....",
@@ -30362,6 +30755,39 @@
         "id": "absolute-value"
     },
     {
+        "display_name": "Knowledge Base",
+        "tagline": "Reference a knowledge base",
+        "description": "References a workspace knowledge base by id and emits a handle to it. Wire this node's output into a Semantic Search (or Query Knowledge Base) node to search that KB. Attach one Knowledge Base node to several search nodes to reuse the same KB \u2014 like importing a subflow, the KB is one thing they all depend on.",
+        "icon": "database",
+        "category": "knowledge",
+        "is_constant": true,
+        "is_plugin": false,
+        "is_output": false,
+        "custom_render_height": 76,
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "knowledge_base",
+                "primary": true,
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "A reference (handle) to the selected knowledge base."
+            }
+        ],
+        "settings": [
+            {
+                "name": "uuid",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base_ref",
+                "description": "The knowledge base this node references.",
+                "default": null
+            }
+        ],
+        "timeout": 3000,
+        "retry_limit": 1,
+        "id": "knowledge-base"
+    },
+    {
         "display_name": "String Match",
         "tagline": "Match text patterns",
         "description": "Performs regex matching on text with capture groups",
@@ -30449,6 +30875,81 @@
             }
         ],
         "id": "array-reverse"
+    },
+    {
+        "display_name": "List Entities",
+        "tagline": "Browse a knowledge graph",
+        "description": "List the entities in a Graph knowledge base, highest-degree (most-connected) first \u2014 for browsing the graph or letting an agent discover what it can traverse. Optionally filter by entity type or a name substring. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to list, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "type",
+                "display_name": "Entity Type",
+                "type": "string",
+                "description": "Optional: only entities of this type (e.g. person, organization). Case-insensitive.",
+                "default": null
+            },
+            {
+                "name": "search",
+                "display_name": "Name Search",
+                "type": "string",
+                "description": "Optional: only entities whose name contains this text (case-insensitive).",
+                "default": null
+            },
+            {
+                "name": "limit",
+                "display_name": "Limit",
+                "type": "number",
+                "description": "Maximum number of entities to return",
+                "default": 100
+            },
+            {
+                "name": "offset",
+                "display_name": "Offset",
+                "type": "number",
+                "description": "Number of entities to skip (pagination)",
+                "default": 0
+            }
+        ],
+        "outputs": [
+            {
+                "name": "entities",
+                "display_name": "Entities",
+                "type": "array",
+                "description": "Entity rows (id, name, type, description, degree, \u2026), most-connected first"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of entities returned"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the listing completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "list-entities"
     },
     {
         "display_name": "Stripe List Customers",
@@ -30728,6 +31229,14 @@
                 "required": true
             },
             {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to query, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
                 "name": "params",
                 "display_name": "Parameters",
                 "type": "array",
@@ -30768,6 +31277,12 @@
                 "description": "Number of rows affected or returned"
             },
             {
+                "name": "truncated",
+                "display_name": "Truncated",
+                "type": "boolean",
+                "description": "True when the returned data was capped (>1000 rows) \u2014 add a LIMIT to the query for the full set"
+            },
+            {
                 "name": "operation",
                 "display_name": "Operation",
                 "type": "string",
@@ -30781,13 +31296,6 @@
             }
         ],
         "settings": [
-            {
-                "name": "database_path",
-                "display_name": "Database Path",
-                "type": "string",
-                "description": "Path to the knowledge database file (relative to orchestration)",
-                "default": "knowledge.db"
-            },
             {
                 "name": "timeout",
                 "display_name": "Query Timeout",
@@ -32244,6 +32752,86 @@
             ]
         },
         "id": "openai-gpt-5-2"
+    },
+    {
+        "display_name": "Read Chunks",
+        "tagline": "Paginate through a document",
+        "description": "Read a document's chunks in order starting at a chunk index \u2014 paginate through a document, or read what came AFTER a chunk you found via search (set start_index to that chunk's index + 1). Feed next_index back in to page forward.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": true,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "document_id",
+                "display_name": "Document ID",
+                "type": "string",
+                "description": "The document to read chunks from",
+                "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "start_index",
+                "display_name": "Start Index",
+                "type": "number",
+                "description": "First chunk index to read (0-based). To continue after a found chunk, use its index + 1.",
+                "default": 0
+            },
+            {
+                "name": "limit",
+                "display_name": "Limit",
+                "type": "number",
+                "description": "Maximum number of chunks to return",
+                "default": 10
+            }
+        ],
+        "outputs": [
+            {
+                "name": "chunks",
+                "display_name": "Chunks",
+                "type": "array",
+                "description": "Chunks with index >= start_index, ascending"
+            },
+            {
+                "name": "count",
+                "display_name": "Count",
+                "type": "number",
+                "description": "Number of chunks returned"
+            },
+            {
+                "name": "next_index",
+                "display_name": "Next Index",
+                "type": "number",
+                "description": "start_index for the next page, or null if there are no more chunks"
+            },
+            {
+                "name": "has_more",
+                "display_name": "Has More",
+                "type": "boolean",
+                "description": "Whether more chunks remain after this page"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether the read completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "read-chunks"
     },
     {
         "display_name": "Normalize Whitespace",
@@ -35693,6 +36281,7 @@
         "icon": "fa-plug",
         "category": "tools",
         "is_constant": true,
+        "is_plugin": true,
         "inputs": [],
         "outputs": [],
         "settings": [
@@ -38874,6 +39463,66 @@
             ]
         },
         "id": "mistralai-mistral-small-2603"
+    },
+    {
+        "display_name": "Describe Tables",
+        "tagline": "See a KB's tables + columns",
+        "description": "List the tables in a Tabular knowledge base with their columns, types, and row counts \u2014 so a model can discover the schema before writing SQL for the Query Knowledge Base node. Wire a Knowledge Base node into knowledge_base, same as the other KB nodes. Returns [] for a docs KB.",
+        "category": "knowledge",
+        "is_constant": false,
+        "is_plugin": false,
+        "is_output": false,
+        "inputs": [
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base to describe, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
+            },
+            {
+                "name": "sample_rows",
+                "display_name": "Sample Rows",
+                "type": "number",
+                "description": "Rows to sample per table (0 = none). Samples help an LLM write correct SQL.",
+                "default": 5
+            }
+        ],
+        "outputs": [
+            {
+                "name": "schema",
+                "display_name": "Schema (for LLM)",
+                "type": "string",
+                "description": "Ready-to-paste schema block: CREATE TABLE DDL + a few sample rows (as comments) per table. Feed into an LLM node's context to write SQL."
+            },
+            {
+                "name": "tables",
+                "display_name": "Tables",
+                "type": "array",
+                "description": "[{ table_name, source_name, row_count, columns: [{ name, type }], ddl, sample_rows }]"
+            },
+            {
+                "name": "count",
+                "display_name": "Table Count",
+                "type": "number",
+                "description": "Number of tables"
+            },
+            {
+                "name": "success",
+                "display_name": "Success",
+                "type": "boolean",
+                "description": "Whether it completed successfully"
+            },
+            {
+                "name": "error",
+                "display_name": "Error",
+                "type": "string",
+                "description": "Error message if it failed"
+            }
+        ],
+        "settings": [],
+        "id": "describe-tables"
     },
     {
         "display_name": "OpenAI: GPT-5 Codex",
@@ -45244,6 +45893,14 @@
                 "type": "number",
                 "description": "The index of the chunk to retrieve (0-based)",
                 "required": true
+            },
+            {
+                "name": "knowledge_base",
+                "display_name": "Knowledge Base",
+                "type": "knowledge_base",
+                "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+                "required": false,
+                "default": null
             }
         ],
         "outputs": [
@@ -48549,6 +49206,7 @@
         "category": "messages",
         "custom_render_height": 200,
         "is_constant": true,
+        "is_plugin": true,
         "is_resizable": true,
         "inputs": [
             {

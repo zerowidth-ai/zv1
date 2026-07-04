@@ -1,0 +1,144 @@
+[
+  {
+    "description": "Preserve system messages while truncating others",
+    "inputs": {
+      "messages": [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello there, how are you doing today? I hope you're having a wonderful day."},
+        {"role": "assistant", "content": "Hi there! I'm doing great, thank you for asking. I'm here to help you with any questions you might have."},
+        {"role": "user", "content": "That's fantastic to hear! I really appreciate your help and support."},
+        {"role": "assistant", "content": "You're very welcome! I'm always happy to assist you with whatever you need. Feel free to ask me anything."}
+      ],
+      "max_tokens": 15
+    },
+    "expected": {
+      "truncated": true,
+      "system_count": 1
+    }
+  },
+  {
+    "description": "All messages fit within token limit",
+    "inputs": {
+      "messages": [
+        {"role": "system", "content": "You are helpful."},
+        {"role": "user", "content": "Hi"},
+        {"role": "assistant", "content": "Hello!"}
+      ],
+      "max_tokens": 50
+    },
+    "expected": {
+      "truncated": false,
+      "system_count": 1
+    }
+  },
+  {
+    "description": "Multiple system messages preserved",
+    "inputs": {
+      "messages": [
+        {"role": "system", "content": "You are helpful."},
+        {"role": "user", "content": "Hello"},
+        {"role": "system", "content": "Be concise."},
+        {"role": "assistant", "content": "Hi there!"}
+      ],
+      "max_tokens": 10
+    },
+    "expected": {
+      "truncated": true,
+      "system_count": 2
+    }
+  },
+  {
+    "description": "No system messages",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello there, how are you doing today? I hope you're having a wonderful day."},
+        {"role": "assistant", "content": "Hi there! I'm doing great, thank you for asking. I'm here to help you with any questions you might have."},
+        {"role": "user", "content": "That's fantastic to hear! I really appreciate your help and support."}
+      ],
+      "max_tokens": 10
+    },
+    "expected": {
+      "truncated": true,
+      "system_count": 0
+    }
+  },
+  {
+    "description": "System messages exceed token limit",
+    "inputs": {
+      "messages": [
+        {"role": "system", "content": "This is a very long system message that exceeds the token limit"},
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"}
+      ],
+      "max_tokens": 5
+    },
+    "expected": {
+      "truncated": true,
+      "system_count": 1
+    }
+  },
+  {
+    "description": "Empty message array",
+    "inputs": {
+      "messages": [],
+      "max_tokens": 10
+    },
+    "expected": {
+      "token_count": 0,
+      "truncated": false,
+      "system_count": 0
+    }
+  },
+  {
+    "description": "Zero token limit",
+    "inputs": {
+      "messages": [
+        {"role": "system", "content": "You are helpful."},
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"}
+      ],
+      "max_tokens": 0
+    },
+    "expected": {
+      "token_count": 0,
+      "truncated": true,
+      "system_count": 0
+    }
+  },
+  {
+    "description": "Count system enabled - system messages excluded when they exceed limit",
+    "inputs": {
+      "messages": [
+        {"role": "system", "content": "This is an extremely long system message that definitely exceeds the token limit and should be excluded when count_system is enabled"},
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"}
+      ],
+      "max_tokens": 5
+    },
+    "settings": {
+      "count_system": true
+    },
+    "expected": {
+      "truncated": true,
+      "system_count": 0
+    }
+  },
+  {
+    "description": "Count system disabled - system messages included even when they exceed limit",
+    "inputs": {
+      "messages": [
+        {"role": "system", "content": "This is an extremely long system message that definitely exceeds the token limit and should be included when count_system is disabled"},
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"}
+      ],
+      "max_tokens": 5
+    },
+    "settings": {
+      "count_system": false
+    },
+    "expected": {
+      "truncated": true,
+      "system_count": 1
+    }
+  }
+]

@@ -1,0 +1,112 @@
+[
+  {
+    "description": "True condition passes value through",
+    "inputs": {
+      "value": "test data",
+      "condition": true
+    },
+    "expected": {
+      "passed": "test data",
+      "blocked": null
+    }
+  },
+  {
+    "description": "False condition blocks value",
+    "inputs": {
+      "value": "test data",
+      "condition": false
+    },
+    "expected": {
+      "passed": null,
+      "blocked": "test data"
+    }
+  },
+  {
+    "description": "Object value passes through on true",
+    "inputs": {
+      "value": {"name": "Alice", "score": 95},
+      "condition": true
+    },
+    "expected": {
+      "passed": {"name": "Alice", "score": 95},
+      "blocked": null
+    }
+  },
+  {
+    "description": "Array value gets blocked on false",
+    "inputs": {
+      "value": ["item1", "item2", "item3"],
+      "condition": false
+    },
+    "expected": {
+      "passed": null,
+      "blocked": ["item1", "item2", "item3"]
+    }
+  },
+  {
+    "description": "Number value passes with truthy condition",
+    "inputs": {
+      "value": 100,
+      "condition": 1
+    },
+    "expected": {
+      "passed": 100,
+      "blocked": null
+    }
+  },
+  {
+    "description": "String value gets blocked with falsy condition",
+    "inputs": {
+      "value": "important message",
+      "condition": 0
+    },
+    "expected": {
+      "passed": null,
+      "blocked": "important message"
+    }
+  },
+  {
+    "description": "Null value passes through on true",
+    "inputs": {
+      "value": null,
+      "condition": true
+    },
+    "expected": {
+      "passed": null,
+      "blocked": null
+    }
+  },
+  {
+    "description": "Empty string gets blocked on false",
+    "inputs": {
+      "value": "",
+      "condition": false
+    },
+    "expected": {
+      "passed": null,
+      "blocked": ""
+    }
+  },
+  {
+    "description": "Boolean false value passes through on true",
+    "inputs": {
+      "value": false,
+      "condition": true
+    },
+    "expected": {
+      "passed": false,
+      "blocked": null
+    }
+  },
+  {
+    "description": "Zero value gets blocked on false",
+    "inputs": {
+      "value": 0,
+      "condition": false
+    },
+    "expected": {
+      "passed": null,
+      "blocked": 0
+    }
+  }
+]

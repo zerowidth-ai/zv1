@@ -1,0 +1,84 @@
+[
+  {
+    "description": "Truncate messages from start to fit within token limit",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello there, how are you doing today? I hope you're having a wonderful day."},
+        {"role": "assistant", "content": "Hi there! I'm doing great, thank you for asking. I'm here to help you with any questions you might have."},
+        {"role": "user", "content": "That's fantastic to hear! I really appreciate your help and support."},
+        {"role": "assistant", "content": "You're very welcome! I'm always happy to assist you with whatever you need. Feel free to ask me anything."}
+      ],
+      "max_tokens": 20
+    },
+    "expected": {
+      "truncated": true
+    }
+  },
+  {
+    "description": "All messages fit within token limit",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hi"},
+        {"role": "assistant", "content": "Hello!"}
+      ],
+      "max_tokens": 50
+    },
+    "expected": {
+      "truncated": false
+    }
+  },
+  {
+    "description": "Empty message array",
+    "inputs": {
+      "messages": [],
+      "max_tokens": 10
+    },
+    "expected": {
+      "token_count": 0,
+      "truncated": false
+    }
+  },
+  {
+    "description": "Zero token limit",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi there!"}
+      ],
+      "max_tokens": 0
+    },
+    "expected": {
+      "token_count": 0,
+      "truncated": true
+    }
+  },
+  {
+    "description": "Single message that exceeds limit",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "This is a very long message that will exceed the token limit"}
+      ],
+      "max_tokens": 5
+    },
+    "expected": {
+      "token_count": 0,
+      "truncated": true
+    }
+  },
+  {
+    "description": "Multi-modal content handling",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": [
+          {"type": "text", "text": "Hi there!"},
+          {"type": "image_url", "image_url": {"url": "https://example.com/image.png"}}
+        ]}
+      ],
+      "max_tokens": 10
+    },
+    "expected": {
+      "truncated": false
+    }
+  }
+]

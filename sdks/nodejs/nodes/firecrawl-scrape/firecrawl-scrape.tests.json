@@ -1,0 +1,57 @@
+[
+  {
+    "inputs": {
+      "url": "https://example.com",
+      "formats": "markdown",
+      "only_main_content": true
+    },
+    "expected": {
+      "success": true,
+      "markdown": "string",
+      "status_code": "number"
+    },
+    "description": "Basic scraping test"
+  },
+  {
+    "inputs": {
+      "url": "https://example.com",
+      "formats": [
+        "markdown",
+        "html",
+        "links"
+      ],
+      "only_main_content": false
+    },
+    "expected": {
+      "success": true,
+      "markdown": "string",
+      "html": "string",
+      "links": "array"
+    },
+    "description": "Multiple formats test"
+  },
+  {
+    "inputs": {
+      "url": "https://example.com",
+      "formats": "markdown",
+      "mobile_device": true,
+      "wait_for": 1000
+    },
+    "expected": {
+      "success": true,
+      "markdown": "string"
+    },
+    "description": "Mobile device test"
+  },
+  {
+    "inputs": {
+      "url": "not-a-valid-url",
+      "formats": "markdown"
+    },
+    "expectedError": {
+      "type": "node",
+      "message": "Firecrawl API Error"
+    },
+    "description": "Error handling test - invalid URL"
+  }
+]

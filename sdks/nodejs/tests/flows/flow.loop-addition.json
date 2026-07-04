@@ -1,0 +1,82 @@
+{
+  "flow": {
+    "nodes": [
+      {
+        "id": "input_start",
+        "type": "input-data",
+        "settings": {
+          "key": "start_value"
+        }
+      },
+      {
+        "id": "loop_start",
+        "type": "loop-start"
+      },
+      {
+        "id": "add_one",
+        "type": "add"
+      },
+      {
+        "id": "constant_one",
+        "type": "number",
+        "settings": {
+          "value": 1
+        }
+      },
+      {
+        "id": "loop_limit",
+        "type": "number",
+        "settings": {
+          "value": 5
+        }
+      },
+      {
+        "id": "loop_end",
+        "type": "loop-end"
+      },
+      {
+        "id": "output_final",
+        "type": "output-data",
+        "settings": {
+          "key": "final_value"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "input_start", "port_name": "value" },
+        "to": { "node_id": "loop_start", "port_name": "value" }
+      },
+      {
+        "from": { "node_id": "loop_start", "port_name": "value" },
+        "to": { "node_id": "add_one", "port_name": "a" }
+      },
+      {
+        "from": { "node_id": "constant_one", "port_name": "value" },
+        "to": { "node_id": "add_one", "port_name": "b" }
+      },
+      {
+        "from": { "node_id": "add_one", "port_name": "result" },
+        "to": { "node_id": "loop_end", "port_name": "value" }
+      },
+      {
+        "from": { "node_id": "loop_limit", "port_name": "value" },
+        "to": { "node_id": "loop_end", "port_name": "loop_limit" }
+      },
+      {
+        "from": { "node_id": "loop_end", "port_name": "loop_back" },
+        "to": { "node_id": "loop_start", "port_name": "value" }
+      },
+      {
+        "from": { "node_id": "loop_end", "port_name": "final_value" },
+        "to": { "node_id": "output_final", "port_name": "value" }
+      }
+    ]
+  },
+  "inputs": {
+    "start_value": 0
+  },
+  "expected": {
+    "final_value": 5
+  }
+}

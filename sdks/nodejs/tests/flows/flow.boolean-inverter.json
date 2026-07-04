@@ -1,0 +1,71 @@
+{
+  "description": "boolean(true) \u2192 inverter \u2192 false.",
+  "flow": {
+    "id": "testInvert",
+    "metadata": {
+      "display_name": "Test: boolean inverter"
+    },
+    "nodes": [
+      {
+        "id": "b1",
+        "type": "boolean",
+        "settings": {
+          "value": true
+        }
+      },
+      {
+        "id": "inv",
+        "type": "boolean-inverter",
+        "settings": {}
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "b1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "inv",
+          "port_name": "input"
+        }
+      },
+      {
+        "from": {
+          "node_id": "inv",
+          "port_name": "output"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {},
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "const": false
+          }
+        }
+      }
+    }
+  }
+}

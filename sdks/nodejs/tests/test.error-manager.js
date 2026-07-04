@@ -3,7 +3,7 @@
  * Run with: node test-error-manager.js
  */
 
-import ErrorManager from '../src/classes/ErrorManager';
+import ErrorManager from '../src/classes/ErrorManager.js';
 
 // Test basic functionality
 console.log('Testing ErrorManager...\n');

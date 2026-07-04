@@ -3,7 +3,7 @@ import fs from "fs";
 import AdmZip from "adm-zip";
 
 import { convertImportToNodeType } from "./typers.js";
-import { getDirname } from "./helpers.js";
+import { getDirname, isRemoteMCPTool } from "./helpers.js";
 import { isOAuthKey, OAuthRefreshManager } from "./oauth.js";
 
 
@@ -59,10 +59,22 @@ export async function loadNodes(flow) {
           // Regular node - needs both config and process
           const processFileUrl = `file://${path.resolve(processPath)}`;
           const processModule = await import(processFileUrl);
-          
+
           nodes[type] = {
             config: configModule.default,
             process: processModule.default || processModule,
+          };
+        } else if (isRemoteMCPTool({ type })) {
+          // MCP tool nodes are config-only BY DESIGN: dispatch happens
+          // through the LLM plugin loop (see isRemoteMCPTool call
+          // sites), never a process function. Register them so flow
+          // validation recognizes the type — and force is_plugin so
+          // the entry-node scan excludes them (the shipped config says
+          // is_constant without is_plugin, which would otherwise queue
+          // the node for direct execution it can't perform).
+          nodes[type] = {
+            config: { ...configModule.default, is_plugin: true },
+            process: null,
           };
         } else {
           console.warn(`Missing process file for regular node ${type}:`, { processPath });
@@ -118,7 +130,23 @@ export async function loadIntegrations(config, flow = null) {
   // Load knowledge base integration if available
   const knowledgeBaseType = config.knowledgeBase?.type || 'sqlite';
   const knowledgeBaseConfig = config.knowledgeBase || {};
-  
+
+  // Bring-your-own knowledge base: the host passes a ready instance
+  // (anything implementing KnowledgeBaseInterface — your own SQL
+  // database, a vector store, an HTTP service) and every knowledge
+  // node uses it as the flow-global knowledge base. Skips the
+  // built-in loader entirely. `instances` (keyed by knowledge-base
+  // uuid) covers flows whose nodes reference specific KBs via a
+  // Knowledge Base node.
+  if (knowledgeBaseConfig.instance) {
+      integrations.knowledgeBase = knowledgeBaseConfig.instance;
+  }
+  if (knowledgeBaseConfig.instances && typeof knowledgeBaseConfig.instances === 'object') {
+      for (const [kbUuid, instance] of Object.entries(knowledgeBaseConfig.instances)) {
+          if (instance) integrations[`knowledgeBase:${kbUuid}`] = instance;
+      }
+  }
+
   if (flow?.knowledgeDbPath || knowledgeBaseConfig.enabled !== false) {
     
       try {
@@ -133,9 +161,12 @@ export async function loadIntegrations(config, flow = null) {
           };
           
           if (knowledgeBaseType === 'sqlite' && flow?.knowledgeDbPath) {
-              integrations.knowledgeBase = new KnowledgeBaseIntegration(flow.knowledgeDbPath, integrationOptions);
-              
-          } else if (knowledgeBaseType !== 'sqlite') {
+              // A host-injected global instance wins over the built-in.
+              if (!integrations.knowledgeBase) {
+                  integrations.knowledgeBase = new KnowledgeBaseIntegration(flow.knowledgeDbPath, integrationOptions);
+              }
+
+          } else if (knowledgeBaseType !== 'sqlite' && !integrations.knowledgeBase) {
               // For other knowledge base types, pass the config directly
               integrations.knowledgeBase = new KnowledgeBaseIntegration(knowledgeBaseConfig, integrationOptions);
               
@@ -145,7 +176,24 @@ export async function loadIntegrations(config, flow = null) {
           if (knowledgeBaseType === 'sqlite') {
               integrations.sqlite = integrations.knowledgeBase;
           }
-          
+
+          // Node-level knowledge bases (ADR 0023): a flow can reference several
+          // KBs, each attached to a specific search node via a Knowledge Base
+          // node. The host resolves every referenced KB's `.db` and passes them
+          // keyed by uuid in `flow.knowledgeDbPaths`. Register each as its own
+          // first-class integration under `knowledgeBase:<uuid>` — a flat key
+          // (not a nested map) so it gets the same `_engineConfig` wiring as
+          // any other integration; nodes look theirs up by uuid. Coexists with
+          // the flow-global KB above (the fallback when a node has none).
+          if (knowledgeBaseType === 'sqlite' && flow?.knowledgeDbPaths && typeof flow.knowledgeDbPaths === 'object') {
+              for (const [kbUuid, dbPath] of Object.entries(flow.knowledgeDbPaths)) {
+                  if (!dbPath) continue;
+                  // Host-injected per-uuid instances win over file paths.
+                  if (integrations[`knowledgeBase:${kbUuid}`]) continue;
+                  integrations[`knowledgeBase:${kbUuid}`] = new KnowledgeBaseIntegration(dbPath, integrationOptions);
+              }
+          }
+
       } catch (error) {
           console.warn(`[WARN] Failed to load ${knowledgeBaseType} knowledge base integration:`, error.message);
           console.warn('[WARN] Error details:', error);
@@ -540,19 +588,27 @@ async function loadFlowImportFolder(folderName, folderEntries) {
     }
   }
 
-  // Return import definition with metadata
+  // Return import definition with metadata. Field order matters:
+  // `...orchestrationData` used to be spread LAST, which clobbered
+  // `imports: nestedImports` (the loaded definitions array) with the
+  // raw orchestration's `imports` — the {id: snapshot} REQUEST map.
+  // Nested imports were loaded and then silently discarded, so any
+  // import-within-import never resolved. The spread now sits before
+  // the fields the loader owns.
   return {
     id: `imported-${importId}`,
     display_name: displayName,
     snapshot: snapshot,
     unique_id: importId,
     folder_name: folderName,
+    knowledgeDbPath: knowledgeDbPath,
+    // Preserve any additional metadata from orchestration.json
+    // (including `id`, which zv1 orchestrations carry and node-type
+    // lookups key on — same effective value as before this fix).
+    ...orchestrationData,
     nodes: orchestrationData.nodes,
     links: orchestrationData.links,
     imports: nestedImports,
-    knowledgeDbPath: knowledgeDbPath,
-    // Preserve any additional metadata from orchestration.json
-    ...orchestrationData
   };
 }
 

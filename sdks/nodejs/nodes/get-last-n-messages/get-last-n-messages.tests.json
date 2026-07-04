@@ -1,0 +1,66 @@
+[
+  {
+    "description": "Get last 2 messages from array of 4",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "First message"},
+        {"role": "assistant", "content": "Second message"},
+        {"role": "user", "content": "Third message"},
+        {"role": "assistant", "content": "Fourth message"}
+      ],
+      "count": 2
+    },
+    "expected": {
+      "count": 2
+    }
+  },
+  {
+    "description": "Get last 5 messages from array of 3",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Message 1"},
+        {"role": "assistant", "content": "Message 2"},
+        {"role": "user", "content": "Message 3"}
+      ],
+      "count": 5
+    },
+    "expected": {
+      "count": 3
+    }
+  },
+  {
+    "description": "Get last 0 messages",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Message 1"},
+        {"role": "assistant", "content": "Message 2"}
+      ],
+      "count": 0
+    },
+    "expected": {
+      "count": 0
+    }
+  },
+  {
+    "description": "Get last 1 message from single message array",
+    "inputs": {
+      "messages": [
+        {"role": "user", "content": "Only message"}
+      ],
+      "count": 1
+    },
+    "expected": {
+      "count": 1
+    }
+  },
+  {
+    "description": "Handle empty message array",
+    "inputs": {
+      "messages": [],
+      "count": 3
+    },
+    "expected": {
+      "count": 0
+    }
+  }
+]

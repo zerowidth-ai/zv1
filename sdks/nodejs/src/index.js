@@ -364,6 +364,21 @@ export default class Workbench {
         id: node.id
       };
 
+      // Config-only nodes (remote-mcp-tool) have no process function —
+      // they exist for the plugin loop, not direct execution. If one
+      // lands in the queue anyway (e.g. a dangling MCP node with no
+      // plugin link), no-op instead of crashing the whole run.
+      if (typeof nodeDefinition.process !== 'function') {
+        this.logDebug(`Node [${node.id}] (${node.type}) is config-only; skipping direct execution.`);
+        const endDate = new Date();
+        timelineEntry.outputs = {};
+        timelineEntry.endTime = endDate.toISOString();
+        timelineEntry.durationMs = endDate - startDate;
+        timelineEntry.status = 'success';
+        this.timeline.push(timelineEntry);
+        return {};
+      }
+
       const outputs = await this._raceAbort(
         nodeDefinition.process({inputs, settings, config: this.config, nodeConfig})
       );
@@ -1077,7 +1092,21 @@ export default class Workbench {
         await this.config.integrations.sqlite.disconnect();
         delete this.config.integrations.sqlite;
       }
-      
+
+      // Clean up node-level knowledge base integrations (keyed knowledgeBase:<uuid>).
+      if (this.config.integrations) {
+        for (const key of Object.keys(this.config.integrations)) {
+          if (!key.startsWith('knowledgeBase:')) continue;
+          this.logDebug(`Cleaning up node-level knowledge base integration ${key}...`);
+          try {
+            await this.config.integrations[key].disconnect();
+          } catch (err) {
+            this.logDebug(`Failed to disconnect ${key}: ${err.message}`);
+          }
+          delete this.config.integrations[key];
+        }
+      }
+
       // Clean up any imported engines that were created
       // These are stored in the cache when import nodes are processed
       const rawStore = this.cache.getRawStore();
@@ -2464,6 +2493,15 @@ export default class Workbench {
    * @returns {boolean} True if the node is a plugin or macro
    */
   isLocalNodePlugin(node) {
+    // Remote MCP tool nodes and manual tool nodes carry is_plugin —
+    // the flag drives shared plugin BEHAVIOR (entry-node exclusion,
+    // propagation skip, the canvas's plugin drag-and-dock UX) — but
+    // neither is a LOCAL plugin: MCP tools load their schemas from
+    // the remote server (isRemoteMCPTool branch) and manual tools
+    // are caller-executed pass-throughs (isManualToolNode branch).
+    // Classifying either as local would misroute them in the plugin
+    // loop (bogus single-tool schema / unwanted process execution).
+    if (isRemoteMCPTool(node) || isManualToolNode(node)) return false;
     const thisNodeConfig = this.nodes[node.type]?.config || {};
     return thisNodeConfig.is_plugin || thisNodeConfig.is_macro;
   }
@@ -2879,18 +2917,41 @@ export default class Workbench {
    * @private
    */
   _trackKnowledgeFiles() {
-    // Track main flow's knowledge base file
-    if (this.flow.knowledgeDbPath) {
-      this.trackKnowledgeFile(this.flow.knowledgeDbPath);
-    }
+    // Host-provided knowledge db paths are HOST-OWNED: the engine must
+    // never delete them unless the host explicitly opts in (hosted
+    // runners that hand the engine per-run temp copies set
+    // config.knowledgeBase.cleanupDbFiles = true). The engine's own
+    // archive extractions live under ./.temp and are always cleaned.
+    const optIn = this.config?.knowledgeBase?.cleanupDbFiles === true;
+    const track = (filePath) => {
+      if (!filePath) return;
+      if (optIn || this._isEngineTempPath(filePath)) {
+        this.trackKnowledgeFile(filePath);
+      }
+    };
 
-    // Track import knowledge base files
+    track(this.flow.knowledgeDbPath);
+
     if (this.flow.imports && Array.isArray(this.flow.imports)) {
       for (const importDef of this.flow.imports) {
-        if (importDef.knowledgeDbPath) {
-          this.trackKnowledgeFile(importDef.knowledgeDbPath);
-        }
+        track(importDef.knowledgeDbPath);
       }
+    }
+
+    if (this.flow.knowledgeDbPaths && typeof this.flow.knowledgeDbPaths === 'object') {
+      for (const dbPath of Object.values(this.flow.knowledgeDbPaths)) {
+        track(dbPath);
+      }
+    }
+  }
+
+  /** Paths inside the engine's own ./.temp extraction dir. @private */
+  _isEngineTempPath(filePath) {
+    try {
+      const tempDir = path.resolve(process.cwd(), '.temp') + path.sep;
+      return path.resolve(filePath).startsWith(tempDir);
+    } catch {
+      return false;
     }
   }
 
@@ -2996,3 +3057,9 @@ export default class Workbench {
     }
   }
 }
+
+// Base class for bring-your-own knowledge bases: implement its methods
+// over your own store (SQL database, vector store, HTTP service) and
+// pass an instance via `config.knowledgeBase.instance` (flow-global)
+// or `config.knowledgeBase.instances[kbUuid]` (per Knowledge Base node).
+export { KnowledgeBaseInterface } from './integrations/knowledge-base-interface.js';

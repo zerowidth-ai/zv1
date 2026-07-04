@@ -1,0 +1,50 @@
+[
+  {
+    "description": "Format date with default format",
+    "inputs": {"date": "2023-05-15T12:30:45Z"},
+    "expected": {
+      "formatted": "2023-05-15",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Format date with custom format",
+    "inputs": {"date": "2023-05-15T12:30:45Z"},
+    "settings": {"format": "YYYY-MM-DD HH:mm:ss", "timezone": "UTC"},
+    "expected": {
+      "formatted": "2023-05-15 12:30:45",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Format timestamp",
+    "inputs": {"date": 1684154445000},
+    "settings": {"format": "YYYY-MM-DD", "timezone": "UTC"},
+    "expected": {
+      "formatted": "2023-05-15",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Format current date when no input is provided",
+    "inputs": {"date": null},
+    "expected": {
+      "success": true,
+      "error": ""
+    }
+  },
+  {
+    "description": "Handle invalid date",
+    "inputs": {"date": "not a date"},
+    "expected": {
+      "formatted": "",
+      "timestamp": 0,
+      "iso": "",
+      "success": false,
+      "error": "Invalid date"
+    }
+  }
+] 

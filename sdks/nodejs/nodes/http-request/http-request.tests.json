@@ -1,0 +1,115 @@
+[
+  {
+    "description": "GET request to httpbin returns status 200 and JSON body",
+    "inputs": {
+      "url": "https://httpbin.org/get",
+      "method": "GET"
+    },
+    "settings": {},
+    "expectedSchema": {
+      "status": { "type": "number", "const": 200 },
+      "headers": { "type": "object" },
+      "body": { "type": "object", "required": ["url"] }
+    }
+  },
+  {
+    "description": "GET request with query params",
+    "inputs": {
+      "url": "https://httpbin.org/get",
+      "method": "GET",
+      "query": { "foo": "bar", "baz": "qux" }
+    },
+    "settings": {},
+    "expectedSchema": {
+      "status": { "type": "number", "const": 200 },
+      "body": {
+        "type": "object",
+        "properties": {
+          "args": {
+            "type": "object",
+            "properties": {
+              "foo": { "type": "string", "const": "bar" },
+              "baz": { "type": "string", "const": "qux" }
+            },
+            "required": ["foo", "baz"]
+          }
+        },
+        "required": ["args"]
+      }
+    }
+  },
+  {
+    "description": "POST request with JSON body",
+    "inputs": {
+      "url": "https://httpbin.org/post",
+      "method": "POST",
+      "headers": { "Content-Type": "application/json" },
+      "body": { "hello": "world" }
+    },
+    "settings": {},
+    "expectedSchema": {
+      "status": { "type": "number", "const": 200 },
+      "body": {
+        "type": "object",
+        "properties": {
+          "json": {
+            "type": "object",
+            "properties": {
+              "hello": { "type": "string", "const": "world" }
+            },
+            "required": ["hello"]
+          }
+        },
+        "required": ["json"]
+      }
+    }
+  },
+  {
+    "description": "Custom headers are sent and received",
+    "inputs": {
+      "url": "https://httpbin.org/headers",
+      "method": "GET",
+      "headers": { "X-Test-Header": "test-value" }
+    },
+    "settings": {},
+    "expectedSchema": {
+      "status": { "type": "number", "const": 200 },
+      "body": {
+        "type": "object",
+        "properties": {
+          "headers": {
+            "type": "object",
+            "properties": {
+              "X-Test-Header": { "type": "string", "const": "test-value" }
+            },
+            "required": ["X-Test-Header"]
+          }
+        },
+        "required": ["headers"]
+      }
+    }
+  },
+  {
+    "description": "404 error returns status and error message",
+    "inputs": {
+      "url": "https://httpbin.org/status/404",
+      "method": "GET"
+    },
+    "settings": {},
+    "expectedSchema": {
+      "status": { "type": "number", "const": 404 },
+      "error": { "type": "string" }
+    }
+  },
+  {
+    "description": "Timeout triggers error",
+    "inputs": {
+      "url": "https://httpbin.org/delay/3",
+      "method": "GET"
+    },
+    "settings": { "timeout": 1000 },
+    "expectedSchema": {
+      "error": { "type": "string" }
+    }
+  }
+] 

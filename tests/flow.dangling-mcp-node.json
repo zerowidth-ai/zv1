@@ -1,0 +1,67 @@
+{
+  "description": "REGRESSION (cecaf0d/3d3c3d1): a remote-mcp-tool node NOT linked as a plugin is config-only with no process function \u2014 it must no-op, not crash ('nodeDefinition.process is not a function') and not fail validation ('unknown node type').",
+  "flow": {
+    "id": "testDanglingMcp",
+    "metadata": {
+      "display_name": "Test: dangling MCP node"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "a",
+          "type": "number",
+          "default_value": "5"
+        }
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      },
+      {
+        "id": "ghostMcp",
+        "type": "remote-mcp-tool",
+        "settings": {
+          "mcp_integration": "nonexistent"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {
+    "a": 5
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "const": 5
+          }
+        }
+      }
+    }
+  }
+}

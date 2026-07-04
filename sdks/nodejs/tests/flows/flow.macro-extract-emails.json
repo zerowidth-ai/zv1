@@ -1,0 +1,88 @@
+{
+  "description": "Macro-node execution path (is_macro, config-only with internal macro_flow). Zero coverage before this: loaders' macro branch + processMacroNode.",
+  "flow": {
+    "id": "testMacroEmails",
+    "metadata": {
+      "display_name": "Test: extract-emails macro"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "text",
+          "type": "string",
+          "default_value": ""
+        }
+      },
+      {
+        "id": "macro1",
+        "type": "extract-emails",
+        "settings": {}
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "macro1",
+          "port_name": "text"
+        }
+      },
+      {
+        "from": {
+          "node_id": "macro1",
+          "port_name": "emails"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {
+    "text": "Reach us at ada@example.com or grace@example.io for details."
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "minItems": 2,
+            "allOf": [
+              {
+                "contains": {
+                  "const": "ada@example.com"
+                }
+              },
+              {
+                "contains": {
+                  "const": "grace@example.io"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

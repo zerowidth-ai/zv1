@@ -1,0 +1,53 @@
+[
+  {
+    "description": "Basic sources request with no filters",
+    "inputs": {},
+    "expectedSchema": {
+      "sources": "array",
+      "total_sources": "number",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Sources with country filter (string input)",
+    "inputs": {
+      "countries": "us,ca"
+    },
+    "expectedSchema": {
+      "sources": "array",
+      "total_sources": "number",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Sources with country filter (array input)",
+    "inputs": {
+      "countries": ["us", "ca", "gb"]
+    },
+    "expectedSchema": {
+      "sources": "array",
+      "total_sources": "number",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  },
+  {
+    "description": "Sources with categories and languages",
+    "inputs": {
+      "categories": "technology,business",
+      "languages": "en,es"
+    },
+    "expectedSchema": {
+      "sources": "array",
+      "total_sources": "number",
+      "status": "string",
+      "success": "boolean",
+      "error": "string or null"
+    }
+  }
+]

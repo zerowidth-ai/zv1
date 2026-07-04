@@ -1,0 +1,43 @@
+[
+  {
+    "description": "Slice middle portion",
+    "inputs": {
+      "array": [1, 2, 3, 4, 5],
+      "start": 1,
+      "end": 4
+    },
+    "expected": {
+      "array": [2, 3, 4]
+    }
+  },
+  {
+    "description": "Slice from start",
+    "inputs": {
+      "array": [1, 2, 3, 4, 5],
+      "end": 3
+    },
+    "expected": {
+      "array": [1, 2, 3]
+    }
+  },
+  {
+    "description": "Slice to end",
+    "inputs": {
+      "array": [1, 2, 3, 4, 5],
+      "start": 2
+    },
+    "expected": {
+      "array": [3, 4, 5]
+    }
+  },
+  {
+    "description": "Slice with negative indices",
+    "inputs": {
+      "array": [1, 2, 3, 4, 5],
+      "start": -2
+    },
+    "expected": {
+      "array": [4, 5]
+    }
+  }
+] 

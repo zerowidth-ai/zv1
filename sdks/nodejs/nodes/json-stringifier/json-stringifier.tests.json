@@ -1,0 +1,58 @@
+[
+  {
+    "description": "Stringify simple object",
+    "inputs": {"value": {"name":"John","age":30}},
+    "expected": {
+      "json": "{\"name\":\"John\",\"age\":30}",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Stringify array",
+    "inputs": {"value": [1,2,3,4,5]},
+    "expected": {
+      "json": "[1,2,3,4,5]",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Pretty print with default indent",
+    "inputs": {"value": {"name":"John","age":30}},
+    "settings": {"pretty": true},
+    "expected": {
+      "json": "{\n  \"name\": \"John\",\n  \"age\": 30\n}",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Pretty print with custom indent",
+    "inputs": {"value": {"name":"John","age":30}},
+    "settings": {"pretty": true, "indent": 4},
+    "expected": {
+      "json": "{\n    \"name\": \"John\",\n    \"age\": 30\n}",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Stringify null value",
+    "inputs": {"value": null},
+    "expected": {
+      "json": "null",
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Stringify primitive values",
+    "inputs": {"value": 42},
+    "expected": {
+      "json": "42",
+      "error": "",
+      "success": true
+    }
+  }
+] 

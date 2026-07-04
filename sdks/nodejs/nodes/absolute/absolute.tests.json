@@ -1,0 +1,38 @@
+[
+  {
+    "description": "Positive number",
+    "inputs": {
+      "number": 5.7
+    },
+    "expected": {
+      "result": 5.7
+    }
+  },
+  {
+    "description": "Negative number",
+    "inputs": {
+      "number": -3.2
+    },
+    "expected": {
+      "result": 3.2
+    }
+  },
+  {
+    "description": "Zero",
+    "inputs": {
+      "number": 0
+    },
+    "expected": {
+      "result": 0
+    }
+  },
+  {
+    "description": "Large negative",
+    "inputs": {
+      "number": -999999
+    },
+    "expected": {
+      "result": 999999
+    }
+  }
+] 

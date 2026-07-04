@@ -1,0 +1,111 @@
+{
+  "description": "if-else picks if_false when the condition is falsy (boolean node value:false).",
+  "flow": {
+    "id": "testIfFalse",
+    "metadata": {
+      "display_name": "Test: if-else false"
+    },
+    "nodes": [
+      {
+        "id": "cond",
+        "type": "boolean",
+        "settings": {
+          "value": false
+        }
+      },
+      {
+        "id": "nA",
+        "type": "number",
+        "settings": {
+          "value": 11,
+          "min": 0,
+          "max": 100,
+          "step": 1
+        }
+      },
+      {
+        "id": "nB",
+        "type": "number",
+        "settings": {
+          "value": 22,
+          "min": 0,
+          "max": 100,
+          "step": 1
+        }
+      },
+      {
+        "id": "gate",
+        "type": "if-else",
+        "settings": {}
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "cond",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "gate",
+          "port_name": "condition"
+        }
+      },
+      {
+        "from": {
+          "node_id": "nA",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "gate",
+          "port_name": "if_true"
+        }
+      },
+      {
+        "from": {
+          "node_id": "nB",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "gate",
+          "port_name": "if_false"
+        }
+      },
+      {
+        "from": {
+          "node_id": "gate",
+          "port_name": "result"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {},
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "const": 22
+          }
+        }
+      }
+    }
+  }
+}

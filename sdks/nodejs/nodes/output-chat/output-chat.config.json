@@ -1,0 +1,49 @@
+{
+  "display_name": "Chat Output",
+  "tagline": "Send chat response",
+  "description": "Outputs a chat message to the user",
+  "icon": "comment",
+  "category": "i/o",
+  "is_output": true,
+  "is_resizable": true,
+  "custom_render_height": 120,
+  "inputs": [
+    {
+      "name": "message",
+      "display_name": "Message",
+      "type": "message or conversation",
+      "description": "The full generated response message or a full update to the conversation state."
+    },
+    {
+      "name": "content",
+      "display_name": "Content",
+      "type": "string",
+      "description": "Optionally, just set the content portion of the generated response message."
+    },
+    {
+      "name": "role",
+      "display_name": "Role",
+      "type": "string",
+      "description": "Optionally, just set the role of the generated response message.",
+      "default": "assistant"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "chat",
+      "display_name": "Chat",
+      "type": "conversation",
+      "description": "The resulting output messages",
+      "hidden": true
+    }
+  ],
+  "settings": [
+    {
+      "name": "key",
+      "display_name": "Key",
+      "type": "string",
+      "description": "A unique identifier for this chat output",
+      "required": false
+    }
+  ]
+} 

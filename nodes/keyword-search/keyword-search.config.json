@@ -1,0 +1,67 @@
+{
+  "display_name": "Keyword Search",
+  "tagline": "Search by exact words",
+  "description": "Search a knowledge base for chunks containing a word or phrase (case-insensitive substring match). Free and instant — no embeddings. The exact-term complement to Semantic Search; wire a Knowledge Base node into its knowledge_base input the same way.",
+  "category": "knowledge",
+  "is_constant": false,
+  "is_plugin": true,
+  "is_output": false,
+  "inputs": [
+    {
+      "name": "query",
+      "display_name": "Search Text",
+      "type": "string",
+      "description": "Word or phrase to match within chunk content",
+      "required": true
+    },
+    {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base to search, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "limit",
+      "display_name": "Result Limit",
+      "type": "number",
+      "description": "Maximum number of results to return",
+      "default": 10
+    },
+    {
+      "name": "document_id",
+      "display_name": "Document ID Filter",
+      "type": "string",
+      "description": "Optional: restrict results to a specific document uuid.",
+      "default": null
+    }
+  ],
+  "outputs": [
+    {
+      "name": "results",
+      "display_name": "Search Results",
+      "type": "array",
+      "description": "Matching chunks, most matches first"
+    },
+    {
+      "name": "count",
+      "display_name": "Result Count",
+      "type": "number",
+      "description": "Number of results returned"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the search completed successfully"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if search failed"
+    }
+  ],
+  "settings": []
+}

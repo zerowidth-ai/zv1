@@ -1,0 +1,81 @@
+{
+  "display_name": "Get Entity Neighbors",
+  "tagline": "Walk one hop in a graph",
+  "description": "Look up an entity in a Graph knowledge base (by name or id) and return every relation touching it, each with the entity on the far side — one hop of graph traversal. Filter by direction or relation type. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+  "category": "knowledge",
+  "is_constant": false,
+  "is_plugin": true,
+  "is_output": false,
+  "inputs": [
+    {
+      "name": "entity",
+      "display_name": "Entity",
+      "type": "string",
+      "description": "The entity to look up — its name (case-insensitive) or id.",
+      "required": true
+    },
+    {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base to traverse, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "direction",
+      "display_name": "Direction",
+      "type": "string",
+      "description": "Which relations to include: both, out (entity is the source), or in (entity is the target).",
+      "default": "both",
+      "options": ["both", "out", "in"]
+    },
+    {
+      "name": "relation_type",
+      "display_name": "Relation Type",
+      "type": "string",
+      "description": "Optional: only relations of this type (e.g. works_at). Case-insensitive.",
+      "default": null
+    },
+    {
+      "name": "limit",
+      "display_name": "Limit",
+      "type": "number",
+      "description": "Maximum number of neighbors to return",
+      "default": 50
+    }
+  ],
+  "outputs": [
+    {
+      "name": "entity",
+      "display_name": "Entity",
+      "type": "object",
+      "description": "The resolved entity row (null if not found)"
+    },
+    {
+      "name": "neighbors",
+      "display_name": "Neighbors",
+      "type": "array",
+      "description": "Relations touching the entity: { edge_id, relation_type, description, direction, node }"
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Number of neighbors returned"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the lookup completed successfully"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if it failed (including entity not found)"
+    }
+  ],
+  "settings": []
+}

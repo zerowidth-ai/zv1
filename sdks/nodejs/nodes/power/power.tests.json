@@ -1,0 +1,42 @@
+[
+  {
+    "description": "Positive base and exponent",
+    "inputs": {
+      "base": 2,
+      "exponent": 3
+    },
+    "expected": {
+      "result": 8
+    }
+  },
+  {
+    "description": "Negative base",
+    "inputs": {
+      "base": -2,
+      "exponent": 3
+    },
+    "expected": {
+      "result": -8
+    }
+  },
+  {
+    "description": "Zero exponent",
+    "inputs": {
+      "base": 5,
+      "exponent": 0
+    },
+    "expected": {
+      "result": 1
+    }
+  },
+  {
+    "description": "Decimal exponent",
+    "inputs": {
+      "base": 4,
+      "exponent": 0.5
+    },
+    "expected": {
+      "result": 2
+    }
+  }
+] 

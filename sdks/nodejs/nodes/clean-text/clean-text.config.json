@@ -1,0 +1,126 @@
+{
+  "display_name": "Clean Text",
+  "tagline": "Clean and normalize text",
+  "description": "Clean and normalize text by removing extra whitespace and normalizing line breaks",
+  "category": "text",
+  "is_macro": true,
+  "is_plugin": true,
+  "macro_flow": {
+    "nodes": [
+      {
+        "id": "input_text",
+        "type": "input-data",
+        "settings": {
+          "key": "text"
+        }
+      },
+      {
+        "id": "trim",
+        "type": "string-trim"
+      },
+{
+      "id": "whitespace_search",
+      "type": "string",
+      "settings": {
+        "value": "\\s+"
+      }
+    },
+    {
+      "id": "whitespace_replacement",
+      "type": "string",
+      "settings": {
+        "value": " "
+      }
+    },
+    {
+      "id": "normalize_whitespace",
+      "type": "string-replace",
+      "settings": {
+        "regex": true,
+        "case_sensitive": false
+      }
+    },
+    {
+      "id": "newline_search",
+      "type": "string",
+      "settings": {
+        "value": "\\r\\n|\\r|\\n"
+      }
+    },
+    {
+      "id": "newline_replacement",
+      "type": "string",
+      "settings": {
+        "value": "\\n"
+      }
+    },
+    {
+      "id": "normalize_newlines",
+      "type": "string-replace",
+      "settings": {
+        "regex": true,
+        "case_sensitive": false
+      }
+    },
+      {
+        "id": "output_cleaned_text",
+        "type": "output-data",
+        "settings": {
+          "key": "cleaned_text"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": { "node_id": "input_text", "port_name": "value" },
+        "to": { "node_id": "trim", "port_name": "text" }
+      },
+      {
+        "from": { "node_id": "trim", "port_name": "text" },
+        "to": { "node_id": "normalize_whitespace", "port_name": "text" }
+      },
+      {
+        "from": { "node_id": "whitespace_search", "port_name": "value" },
+        "to": { "node_id": "normalize_whitespace", "port_name": "search" }
+      },
+      {
+        "from": { "node_id": "whitespace_replacement", "port_name": "value" },
+        "to": { "node_id": "normalize_whitespace", "port_name": "replacement" }
+      },
+      {
+        "from": { "node_id": "normalize_whitespace", "port_name": "text" },
+        "to": { "node_id": "normalize_newlines", "port_name": "text" }
+      },
+      {
+        "from": { "node_id": "newline_search", "port_name": "value" },
+        "to": { "node_id": "normalize_newlines", "port_name": "search" }
+      },
+      {
+        "from": { "node_id": "newline_replacement", "port_name": "value" },
+        "to": { "node_id": "normalize_newlines", "port_name": "replacement" }
+      },
+      {
+        "from": { "node_id": "normalize_newlines", "port_name": "text" },
+        "to": { "node_id": "output_cleaned_text", "port_name": "value" }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "name": "text",
+      "display_name": "Text",
+      "type": "string",
+      "description": "The text to clean",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "cleaned_text",
+      "display_name": "Cleaned Text",
+      "type": "string",
+      "description": "The cleaned and normalized text"
+    }
+  ],
+  "settings": []
+}

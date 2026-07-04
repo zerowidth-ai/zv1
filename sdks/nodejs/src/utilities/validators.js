@@ -47,7 +47,22 @@ export function validateKeys() {
  * Ensure this flow can run
  */
 export function validateFlow(flow) {
-  // First validate all links reference existing nodes
+  // Every node must resolve to a loaded node type. Without this check a
+  // node whose type isn't in the catalog (removed model, typo, missing
+  // import) simply never executes — the flow "completes" with empty
+  // outputs and no signal. Runs after imports are registered, so
+  // imported-* types are resolvable here.
+  const unknownTypes = [...new Set(
+    flow.nodes.filter((node) => !this.nodes[node.type]).map((node) => node.type)
+  )];
+  if (unknownTypes.length > 0) {
+    throw new Error(
+      `Flow references unknown node type(s): ${unknownTypes.join(", ")}. ` +
+      `The node type may have been removed or renamed, or an import may be missing.`
+    );
+  }
+
+  // Validate all links reference existing nodes
   const nodeIds = new Set(flow.nodes.map(node => node.id));
   const invalidLinks = flow.links.filter(
     link => !nodeIds.has(link.from.node_id) || !nodeIds.has(link.to.node_id)

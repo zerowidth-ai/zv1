@@ -1,0 +1,79 @@
+{
+  "display_name": "Read Chunks",
+  "tagline": "Paginate through a document",
+  "description": "Read a document's chunks in order starting at a chunk index — paginate through a document, or read what came AFTER a chunk you found via search (set start_index to that chunk's index + 1). Feed next_index back in to page forward.",
+  "category": "knowledge",
+  "is_constant": false,
+  "is_plugin": true,
+  "is_output": false,
+  "inputs": [
+    {
+      "name": "document_id",
+      "display_name": "Document ID",
+      "type": "string",
+      "description": "The document to read chunks from",
+      "required": true
+    },
+    {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "start_index",
+      "display_name": "Start Index",
+      "type": "number",
+      "description": "First chunk index to read (0-based). To continue after a found chunk, use its index + 1.",
+      "default": 0
+    },
+    {
+      "name": "limit",
+      "display_name": "Limit",
+      "type": "number",
+      "description": "Maximum number of chunks to return",
+      "default": 10
+    }
+  ],
+  "outputs": [
+    {
+      "name": "chunks",
+      "display_name": "Chunks",
+      "type": "array",
+      "description": "Chunks with index >= start_index, ascending"
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Number of chunks returned"
+    },
+    {
+      "name": "next_index",
+      "display_name": "Next Index",
+      "type": "number",
+      "description": "start_index for the next page, or null if there are no more chunks"
+    },
+    {
+      "name": "has_more",
+      "display_name": "Has More",
+      "type": "boolean",
+      "description": "Whether more chunks remain after this page"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the read completed successfully"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if it failed"
+    }
+  ],
+  "settings": []
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "description": "Invert true to false",
+    "inputs": { "input": true },
+    "expected": { "output": false }
+  },
+  {
+    "description": "Invert false to true",
+    "inputs": { "input": false },
+    "expected": { "output": true }
+  },
+  {
+    "description": "Input is not a boolean (number)",
+    "inputs": { "input": 1 },
+    "expectedError": "Input must be a boolean value."
+  },
+  {
+    "description": "Input is not a boolean (string)",
+    "inputs": { "input": "true" },
+    "expectedError": "Input must be a boolean value."
+  }
+]

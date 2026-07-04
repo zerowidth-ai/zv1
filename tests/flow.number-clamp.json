@@ -1,0 +1,56 @@
+{
+  "description": "REGRESSION-DOCUMENTATION: the number node clamps to its min/max settings, and max DEFAULTS TO 100 \u2014 a value of 1000 with default settings emits 100. This bit us building the tool-chain test; if this test starts failing, the clamp default changed and every flow relying on it needs a look.",
+  "flow": {
+    "id": "testClamp",
+    "metadata": {
+      "display_name": "Test: number clamp"
+    },
+    "nodes": [
+      {
+        "id": "n1",
+        "type": "number",
+        "settings": {
+          "value": 1000
+        }
+      },
+      {
+        "id": "out1",
+        "type": "output-data",
+        "settings": {}
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "n1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "out1",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {},
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "const": 100
+          }
+        }
+      }
+    }
+  }
+}

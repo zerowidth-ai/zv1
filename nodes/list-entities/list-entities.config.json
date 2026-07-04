@@ -1,0 +1,74 @@
+{
+  "display_name": "List Entities",
+  "tagline": "Browse a knowledge graph",
+  "description": "List the entities in a Graph knowledge base, highest-degree (most-connected) first — for browsing the graph or letting an agent discover what it can traverse. Optionally filter by entity type or a name substring. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+  "category": "knowledge",
+  "is_constant": false,
+  "is_plugin": true,
+  "is_output": false,
+  "inputs": [
+    {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base to list, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "type",
+      "display_name": "Entity Type",
+      "type": "string",
+      "description": "Optional: only entities of this type (e.g. person, organization). Case-insensitive.",
+      "default": null
+    },
+    {
+      "name": "search",
+      "display_name": "Name Search",
+      "type": "string",
+      "description": "Optional: only entities whose name contains this text (case-insensitive).",
+      "default": null
+    },
+    {
+      "name": "limit",
+      "display_name": "Limit",
+      "type": "number",
+      "description": "Maximum number of entities to return",
+      "default": 100
+    },
+    {
+      "name": "offset",
+      "display_name": "Offset",
+      "type": "number",
+      "description": "Number of entities to skip (pagination)",
+      "default": 0
+    }
+  ],
+  "outputs": [
+    {
+      "name": "entities",
+      "display_name": "Entities",
+      "type": "array",
+      "description": "Entity rows (id, name, type, description, degree, …), most-connected first"
+    },
+    {
+      "name": "count",
+      "display_name": "Count",
+      "type": "number",
+      "description": "Number of entities returned"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the listing completed successfully"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if it failed"
+    }
+  ],
+  "settings": []
+}

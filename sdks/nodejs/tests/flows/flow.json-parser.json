@@ -1,0 +1,119 @@
+{
+  "description": "json-parser parses a JSON string into a structured value (success=true) \u2014 the node behind every structurer pattern.",
+  "flow": {
+    "id": "testJsonParse",
+    "metadata": {
+      "display_name": "Test: json parser"
+    },
+    "nodes": [
+      {
+        "id": "in1",
+        "type": "input-data",
+        "settings": {
+          "key": "raw",
+          "type": "string",
+          "default_value": ""
+        }
+      },
+      {
+        "id": "parse",
+        "type": "json-parser",
+        "settings": {}
+      },
+      {
+        "id": "outV",
+        "type": "output-data",
+        "settings": {
+          "key": "value"
+        }
+      },
+      {
+        "id": "outS",
+        "type": "output-data",
+        "settings": {
+          "key": "success"
+        }
+      }
+    ],
+    "links": [
+      {
+        "from": {
+          "node_id": "in1",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "parse",
+          "port_name": "json"
+        }
+      },
+      {
+        "from": {
+          "node_id": "parse",
+          "port_name": "value"
+        },
+        "to": {
+          "node_id": "outV",
+          "port_name": "value"
+        }
+      },
+      {
+        "from": {
+          "node_id": "parse",
+          "port_name": "success"
+        },
+        "to": {
+          "node_id": "outS",
+          "port_name": "value"
+        }
+      }
+    ],
+    "groups": []
+  },
+  "inputs": {
+    "raw": "{\"user\":{\"name\":\"Ada\",\"scores\":[1,2,3]}}"
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "value",
+          "success"
+        ],
+        "properties": {
+          "success": {
+            "const": true
+          },
+          "value": {
+            "type": "object",
+            "required": [
+              "user"
+            ],
+            "properties": {
+              "user": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "scores"
+                ],
+                "properties": {
+                  "name": {
+                    "const": "Ada"
+                  },
+                  "scores": {
+                    "type": "array",
+                    "minItems": 3
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

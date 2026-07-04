@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import Ajv from "ajv";
-import zv1 from "../index.js";
+import Workbench from "../index.js";
 
 import { getDirname } from "./helpers.js";
 import { loadTypeConverter } from "./typeConverters.js";
@@ -40,10 +40,14 @@ export async function loadCustomTypes() {
         // Try to load custom converters for this type
         const customConverter = await loadTypeConverter(typeName);
         
-        // Store both validator and converters
+        // Store both validator and converters. Converters are optional — a
+        // type with no `<type>.converters.js` (e.g. knowledge_base, a plain
+        // reference handle) just gets an empty converter map. (Was referencing
+        // an undeclared `typeConverters`, which threw for converter-less types
+        // and left them unregistered.)
         retval[typeName] = {
           validate: compiledSchema,
-          converters: customConverter || (typeConverters[typeName] || {})
+          converters: customConverter || {}
         };
 
       } catch (err) { 
@@ -185,21 +189,15 @@ export function convertType(value, type, options = {}) {
 export function convertImportToNodeType(importDef) {
   this.logDebug(`Converting import ${importDef.id} to node type`);
 
-  // First ensure any nested imports are processed
+  // Nested imports resolve when the import EXECUTES: the internal
+  // engine's own loadNodes() registers everything in the def's
+  // `imports` array (same path the root engine uses). The old code
+  // here converted nested imports to node-type objects and pushed
+  // them into the flow's NODES array — type definitions aren't flow
+  // nodes, and once nested imports actually load (see the loaders.js
+  // spread-order fix) those pushed objects fail flow validation as
+  // typeless nodes. The def passes through with its imports intact.
   let processedImportDef = { ...importDef };
-  if (importDef.imports && importDef.imports.length > 0) {
-    this.logDebug(`Processing ${importDef.imports.length} nested imports`);
-    
-    // Load nested imports as node types
-    const nestedNodes = [];
-    for (const nestedImport of importDef.imports) {
-      const nodeType = this.convertImportToNodeType(nestedImport);
-      nestedNodes.push(nodeType);
-    }
-
-    // Add the nested import nodes to the flow
-    processedImportDef.nodes = [...processedImportDef.nodes, ...nestedNodes];
-  }
   processedImportDef.nodes = processedImportDef.nodes.filter(node => !node.debug_only);
 
   // Rest of the existing code...

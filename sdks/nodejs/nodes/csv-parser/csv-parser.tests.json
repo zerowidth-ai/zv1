@@ -1,0 +1,93 @@
+[
+  {
+    "description": "Parse simple CSV with headers",
+    "inputs": {"csv": "name,age,city\nJohn,30,New York\nJane,25,Boston"},
+    "expected": {
+      "data": [
+        {"name": "John", "age": "30", "city": "New York"},
+        {"name": "Jane", "age": "25", "city": "Boston"}
+      ],
+      "headers": ["name", "age", "city"],
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Parse CSV without headers",
+    "inputs": {"csv": "John,30,New York\nJane,25,Boston"},
+    "settings": {"has_headers": false},
+    "expected": {
+      "data": [
+        ["John", "30", "New York"],
+        ["Jane", "25", "Boston"]
+      ],
+      "headers": [],
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Parse CSV with custom delimiter",
+    "inputs": {"csv": "name;age;city\nJohn;30;New York\nJane;25;Boston"},
+    "settings": {"delimiter": ";"},
+    "expected": {
+      "data": [
+        {"name": "John", "age": "30", "city": "New York"},
+        {"name": "Jane", "age": "25", "city": "Boston"}
+      ],
+      "headers": ["name", "age", "city"],
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Parse CSV with quoted values",
+    "inputs": {"csv": "name,description\nJohn,\"Developer, Senior\"\nJane,\"Manager, IT\""},
+    "expected": {
+      "data": [
+        {"name": "John", "description": "Developer, Senior"},
+        {"name": "Jane", "description": "Manager, IT"}
+      ],
+      "headers": ["name", "description"],
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Parse CSV with empty lines",
+    "inputs": {"csv": "name,age\nJohn,30\n\nJane,25"},
+    "expected": {
+      "data": [
+        {"name": "John", "age": "30"},
+        {"name": "Jane", "age": "25"}
+      ],
+      "headers": ["name", "age"],
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Parse empty CSV",
+    "inputs": {"csv": ""},
+    "expected": {
+      "data": [],
+      "headers": [],
+      "error": "",
+      "success": true
+    }
+  },
+  {
+    "description": "Parse CSV with whitespace",
+    "inputs": {"csv": " name , age \n John , 30 \n Jane , 25 "},
+    "settings": {"trim_values": true},
+    "expected": {
+      "data": [
+        {"name": "John", "age": "30"},
+        {"name": "Jane", "age": "25"}
+      ],
+      "headers": ["name", "age"],
+      "error": "",
+      "success": true
+    }
+  }
+] 

@@ -1,0 +1,73 @@
+{
+  "display_name": "Find Entity Path",
+  "tagline": "Connect two graph entities",
+  "description": "Find the shortest chain of relations connecting two entities in a Graph knowledge base (breadth-first, direction-agnostic). Answers \"how are X and Y related?\" with the hop-by-hop path. Wire a Knowledge Base node into knowledge_base, same as the search nodes.",
+  "category": "knowledge",
+  "is_constant": false,
+  "is_plugin": true,
+  "is_output": false,
+  "inputs": [
+    {
+      "name": "from",
+      "display_name": "From Entity",
+      "type": "string",
+      "description": "The starting entity — its name (case-insensitive) or id.",
+      "required": true
+    },
+    {
+      "name": "to",
+      "display_name": "To Entity",
+      "type": "string",
+      "description": "The target entity — its name (case-insensitive) or id.",
+      "required": true
+    },
+    {
+      "name": "knowledge_base",
+      "display_name": "Knowledge Base",
+      "type": "knowledge_base",
+      "description": "The knowledge base to traverse, from a Knowledge Base node. If omitted, falls back to the flow's default knowledge base.",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "max_depth",
+      "display_name": "Max Depth",
+      "type": "number",
+      "description": "Maximum number of hops to search before giving up.",
+      "default": 4
+    }
+  ],
+  "outputs": [
+    {
+      "name": "found",
+      "display_name": "Found",
+      "type": "boolean",
+      "description": "Whether a path exists within max_depth"
+    },
+    {
+      "name": "hops",
+      "display_name": "Hops",
+      "type": "number",
+      "description": "Number of relations in the path (0 when from = to)"
+    },
+    {
+      "name": "steps",
+      "display_name": "Steps",
+      "type": "array",
+      "description": "The path, node by node: [{ node, via_edge? }] — via_edge names the relation that reached each node"
+    },
+    {
+      "name": "success",
+      "display_name": "Success",
+      "type": "boolean",
+      "description": "Whether the search completed successfully"
+    },
+    {
+      "name": "error",
+      "display_name": "Error",
+      "type": "string",
+      "description": "Error message if it failed (including unknown entities)"
+    }
+  ],
+  "settings": []
+}

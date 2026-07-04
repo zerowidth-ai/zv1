@@ -1,0 +1,22 @@
+[
+  {
+    "description": "True or true",
+    "inputs": { "input1": true, "input2": true },
+    "expected": { "value": true }
+  },
+  {
+    "description": "True or false",
+    "inputs": { "input1": true, "input2": false },
+    "expected": { "value": true }
+  },
+  {
+    "description": "False or true",
+    "inputs": { "input1": false, "input2": true },
+    "expected": { "value": true }
+  },
+  {
+    "description": "False or false",
+    "inputs": { "input1": false, "input2": false },
+    "expected": { "value": false }
+  }
+] 

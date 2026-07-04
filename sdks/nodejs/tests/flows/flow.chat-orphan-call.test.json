@@ -1,0 +1,66 @@
+{
+  "description": "tool-cleanup's actual job: an assistant tool_call with NO tool response in the resent history (user interrupted mid-loop). The middleware must synthesize/repair so the provider doesn't 400.",
+  "inputs": {
+    "chat": [
+      {
+        "role": "user",
+        "content": "What is 40 + 2? Use your tool."
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_o1",
+            "type": "function",
+            "function": {
+              "name": "TestsAddition",
+              "arguments": "{\"a\": 40, \"b\": 2}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "Thanks, that's all correct! As a connection check, please reply with exactly one word: READY"
+      }
+    ]
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "chat"
+        ],
+        "properties": {
+          "chat": {
+            "type": "array",
+            "minItems": 1,
+            "contains": {
+              "type": "object",
+              "required": [
+                "role",
+                "content"
+              ],
+              "properties": {
+                "role": {
+                  "const": "assistant"
+                },
+                "content": {
+                  "type": "string",
+                  "pattern": "READY"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "retries": 2
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "description": "3 is less than 5",
+    "inputs": { "a": 3, "b": 5 },
+    "expected": { "result": true }
+  },
+  {
+    "description": "5 is equal to 5",
+    "inputs": { "a": 5, "b": 5 },
+    "expected": { "result": true }
+  },
+  {
+    "description": "5 is not less than or equal to 3",
+    "inputs": { "a": 5, "b": 3 },
+    "expected": { "result": false }
+  },
+  {
+    "description": "Negative numbers: -5 is less than or equal to -3",
+    "inputs": { "a": -5, "b": -3 },
+    "expected": { "result": true }
+  },
+  {
+    "description": "Negative numbers: -5 is equal to -5",
+    "inputs": { "a": -5, "b": -5 },
+    "expected": { "result": true }
+  },
+  {
+    "description": "Decimal numbers: 3 is less than or equal to 3.14",
+    "inputs": { "a": 3, "b": 3.14 },
+    "expected": { "result": true }
+  },
+  {
+    "description": "String numbers are converted: '10' is equal to '10'",
+    "inputs": { "a": "10", "b": "10" },
+    "expected": { "result": true }
+  },
+  {
+    "description": "Zero is equal to zero",
+    "inputs": { "a": 0, "b": 0 },
+    "expected": { "result": true }
+  },
+  {
+    "description": "Large numbers comparison",
+    "inputs": { "a": 1000000, "b": 1000000 },
+    "expected": { "result": true }
+  },
+  {
+    "description": "Very small decimal difference",
+    "inputs": { "a": 0.0001, "b": 0.0001 },
+    "expected": { "result": true }
+  }
+] 

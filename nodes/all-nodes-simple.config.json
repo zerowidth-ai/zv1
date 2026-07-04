@@ -83,10 +83,12 @@ deepseek-deepseek-v4-flash,DeepSeek: DeepSeek V4 Flash,DeepSeek V4 Flash is an e
 deepseek-deepseek-v4-pro,DeepSeek: DeepSeek V4 Pro,DeepSeek V4 Pro is a large-scale Mixture-of-Experts model from DeepSeek with 1.6T total parameters and 49B activated parameters, supporting a 1M-token context window. It is designed for advanced reasoning, coding,...
 delay,Delay,Waits for specified time before continuing
 delete-object-property,Delete Object Property,Remove a specific property from an object, returning a new object without that property.
+describe-tables,Describe Tables,List the tables in a Tabular knowledge base with their columns, types, and row counts — so a model can discover the schema before writing SQL for the Query Knowledge Base node. Wire a Knowledge Base node into knowledge_base, same as the other KB nodes. Returns [] for a docs KB.
 divide,Divide,Divides first number by second
 duration-calculator,Duration Calculator,Calculate duration between two timestamps in various units (seconds, minutes, hours, days)
 embedding,Embedding,Generate vector embeddings using any OpenRouter embedding model. The model is an input, so it can be specified or swapped from outside the flow rather than baked into the node.
 equals,Equals,Checks if two values are equal, with deep comparison for objects and arrays
+expand-chunk-context,Expand Chunk Context,Given a chunk (its document_id + chunk_index, e.g. from a search result), return the surrounding chunks — the N before and N after — plus their combined text. The classic RAG move: search finds one chunk, this widens the window so the model has the context around it.
 extract-code,Extract Code,Extracts code blocks from LLM responses that use markdown formatting. Returns the code content and detected language.
 extract-emails,Extract Emails,Extract all email addresses from text using regex patterns
 extract-hashtags,Extract Hashtags,Extract all hashtags from text
@@ -97,10 +99,12 @@ extract-text-content,Extract Text Content,Extract text content from messages, su
 extract-urls,Extract URLs,Extract all URLs from text using regex patterns
 filter-messages,Filter Messages,Filter messages by custom criteria (length, content, role, etc.).
 filter-tools,Filter Tools,Filter tools by name for dynamic tool selection
+find-entity-path,Find Entity Path,Find the shortest chain of relations connecting two entities in a Graph knowledge base (breadth-first, direction-agnostic). Answers "how are X and Y related?" with the hop-by-hop path. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
 firecrawl-scrape,Firecrawl: Scrape URL,Scrape content from any URL with advanced options including format selection, content filtering, mobile emulation, and more
 floor,Floor,Rounds down to nearest integer
 generate-uuid,Generate UUID,Generates a random UUID v4.
 get-chunk-by-index,Get Chunk by Index,Retrieve a specific chunk from a knowledge base by document ID and chunk index
+get-entity-neighbors,Get Entity Neighbors,Look up an entity in a Graph knowledge base (by name or id) and return every relation touching it, each with the entity on the far side — one hop of graph traversal. Filter by direction or relation type. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
 get-first-n-messages,Get First N Messages,Extract the first N messages from an array of messages.
 get-last-n-messages,Get Last N Messages,Extract the most recent N messages from an array of messages.
 get-messages-by-role,Get Messages by Role,Filter messages by specific role (user, assistant, system, etc.).
@@ -162,6 +166,8 @@ json-stringifier,JSON Stringifier,Converts an object or array to a JSON string
 json-to-xml,JSON to XML,Converts a JSON object to XML format. Useful for Claude prompts which work well with XML structure.
 json-to-yaml,JSON to YAML,Converts a JSON object to YAML format. Useful for configuration files or human-readable output.
 keep-bookends,Keep Bookends,Keeps the first N and last M messages from a conversation, removing the middle. System messages are always preserved regardless of counts. Useful for managing context length while retaining initial context and recent messages.
+keyword-search,Keyword Search,Search a knowledge base for chunks containing a word or phrase (case-insensitive substring match). Free and instant — no embeddings. The exact-term complement to Semantic Search; wire a Knowledge Base node into its knowledge_base input the same way.
+knowledge-base,Knowledge Base,References a workspace knowledge base by id and emits a handle to it. Wire this node's output into a Semantic Search (or Query Knowledge Base) node to search that KB. Attach one Knowledge Base node to several search nodes to reuse the same KB — like importing a subflow, the KB is one thing they all depend on.
 less-than,Less Than,Checks if the first number is less than the second number
 less-than-equal,Less Than or Equal,Checks if the first number is less than or equal to the second number
 linear-create-issue,Linear Create Issue,Create a new issue in Linear using the GraphQL API.
@@ -170,6 +176,8 @@ linear-update-issue,Linear Update Issue,Update an existing issue in Linear by ID
 liquid-lfm-2-24b-a2b,LiquidAI: LFM2-24B-A2B,LFM2-24B-A2B is the largest model in the LFM2 family of hybrid architectures designed for efficient on-device deployment. Built as a 24B parameter Mixture-of-Experts model with only 2B active parameters per...
 liquid-lfm-2-5-1-2b-instruct-free,LiquidAI: LFM2.5-1.2B-Instruct (free),LFM2.5-1.2B-Instruct is a compact, high-performance instruction-tuned model built for fast on-device AI. It delivers strong chat quality in a 1.2B parameter footprint, with efficient edge inference and broad runtime support.
 liquid-lfm-2-5-1-2b-thinking-free,LiquidAI: LFM2.5-1.2B-Thinking (free),LFM2.5-1.2B-Thinking is a lightweight reasoning-focused model optimized for agentic tasks, data extraction, and RAG—while still running comfortably on edge devices. It supports long context (up to 32K tokens) and is...
+list-documents,List Documents,List the documents in a knowledge base (id, name, type, size, chunk count) — for browsing or letting an agent pick a document to read. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
+list-entities,List Entities,List the entities in a Graph knowledge base, highest-degree (most-connected) first — for browsing the graph or letting an agent discover what it can traverse. Optionally filter by entity type or a name substring. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
 loop-end,Loop End,Loop exit point that decides whether to continue looping or exit. Tracks loop count and evaluates conditions to send value to loop_back or loop_end output.
 loop-start,Loop Start,Entry point for loops - receives values and passes them through. Refires on each new value, enabling iterative processing.
 mean,Mean,Calculates arithmetic mean (average) of numbers
@@ -374,6 +382,7 @@ qwen-qwen3-vl-8b-thinking,Qwen: Qwen3 VL 8B Thinking,Qwen3-VL-8B-Thinking is the
 random-error,Random Error,Randomly throws an error based on probability, useful for testing error handling and flow robustness.
 random-number,Random Number,Generates random numbers with configurable range and distribution
 range,Range,Calculates range statistics of numbers
+read-chunks,Read Chunks,Read a document's chunks in order starting at a chunk index — paginate through a document, or read what came AFTER a chunk you found via search (set start_index to that chunk's index + 1). Feed next_index back in to page forward.
 read-website,Read Website (beta),Simple website reader - scrapes content and extracts main text
 remote-mcp-tool,Remote MCP Tool,Connect a remote MCP (Model Context Protocol) server as a tool provider for an LLM node.
 resend-send-email,Resend Send Email,Send an email using the Resend API.

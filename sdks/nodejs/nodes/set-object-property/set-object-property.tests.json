@@ -1,0 +1,173 @@
+[
+  {
+    "description": "Set new property on object",
+    "inputs": {
+      "object": {"name": "John", "age": 30},
+      "key": "city",
+      "value": "New York"
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30, "city": "New York"},
+      "key": "city",
+      "value": "New York",
+      "was_new": true
+    }
+  },
+  {
+    "description": "Overwrite existing property",
+    "inputs": {
+      "object": {"name": "John", "age": 30},
+      "key": "age",
+      "value": 31
+    },
+    "expected": {
+      "object": {"name": "John", "age": 31},
+      "key": "age",
+      "value": 31,
+      "was_new": false
+    }
+  },
+  {
+    "description": "Set property without overwriting existing",
+    "inputs": {
+      "object": {"name": "John", "age": 30},
+      "key": "age",
+      "value": 31
+    },
+    "settings": {
+      "overwrite": false
+    },
+    "expected": {
+      "object": {"name": "John", "age": 30},
+      "key": "age",
+      "value": 30,
+      "was_new": false
+    }
+  },
+  {
+    "description": "Set property on empty object",
+    "inputs": {
+      "object": {},
+      "key": "first",
+      "value": "value"
+    },
+    "expected": {
+      "object": {"first": "value"},
+      "key": "first",
+      "value": "value",
+      "was_new": true
+    }
+  },
+  {
+    "description": "Set nested object as value",
+    "inputs": {
+      "object": {"user": "john"},
+      "key": "profile",
+      "value": {"name": "John", "age": 30}
+    },
+    "expected": {
+      "object": {"user": "john", "profile": {"name": "John", "age": 30}},
+      "key": "profile",
+      "value": {"name": "John", "age": 30},
+      "was_new": true
+    }
+  },
+  {
+    "description": "Set array as value",
+    "inputs": {
+      "object": {"id": 1},
+      "key": "tags",
+      "value": ["javascript", "nodejs"]
+    },
+    "expected": {
+      "object": {"id": 1, "tags": ["javascript", "nodejs"]},
+      "key": "tags",
+      "value": ["javascript", "nodejs"],
+      "was_new": true
+    }
+  },
+  {
+    "description": "Create new object from null input",
+    "inputs": {
+      "object": null,
+      "key": "test",
+      "value": "value"
+    },
+    "expected": {
+      "object": {"test": "value"},
+      "key": "test",
+      "value": "value",
+      "was_new": true
+    }
+  },
+  {
+    "description": "Handle non-string key",
+    "inputs": {
+      "object": {"name": "John"},
+      "key": 123,
+      "value": "value"
+    },
+    "expected": {
+      "object": {"name": "John"},
+      "key": 123,
+      "value": "value",
+      "was_new": false
+    }
+  },
+  {
+    "description": "Set property with special characters in key",
+    "inputs": {
+      "object": {"name": "John"},
+      "key": "user-email",
+      "value": "john@example.com"
+    },
+    "expected": {
+      "object": {"name": "John", "user-email": "john@example.com"},
+      "key": "user-email",
+      "value": "john@example.com",
+      "was_new": true
+    }
+  },
+  {
+    "description": "Create new object from undefined input",
+    "inputs": {
+      "object": null,
+      "key": "name",
+      "value": "Jane"
+    },
+    "expected": {
+      "object": {"name": "Jane"},
+      "key": "name",
+      "value": "Jane",
+      "was_new": true
+    }
+  },
+  {
+    "description": "Create new object from non-object input",
+    "inputs": {
+      "object": "not an object",
+      "key": "type",
+      "value": "string"
+    },
+    "expected": {
+      "object": {"type": "string"},
+      "key": "type",
+      "value": "string",
+      "was_new": true
+    }
+  },
+  {
+    "description": "Create empty object when key is invalid",
+    "inputs": {
+      "object": null,
+      "key": 123,
+      "value": "value"
+    },
+    "expected": {
+      "object": {},
+      "key": 123,
+      "value": "value",
+      "was_new": true
+    }
+  }
+]
