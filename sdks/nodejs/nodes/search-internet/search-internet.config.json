@@ -1,10 +1,10 @@
 {
   "display_name": "Search the Internet",
   "tagline": "Search the internet",
-  "description": "Search the web using Google Custom Search - returns clean search results with titles, links, and snippets",
+  "description": "Search the web using Firecrawl Search - returns clean search results with titles, links, and snippets",
   "category": "third-party",
-  "provider": "google",
-  "needs_key_from": ["google_custom_search"],
+  "provider": "firecrawl",
+  "needs_key_from": ["firecrawl"],
   "is_macro": true,
   "is_plugin": true,
   "macro_flow": {
@@ -18,13 +18,13 @@
       },
       {
         "id": "search",
-        "type": "google-custom-search"
+        "type": "firecrawl-search"
       },
       {
         "id": "num_results",
-        "type": "string",
+        "type": "number",
         "settings": {
-          "value": "10"
+          "value": 5
         }
       },
       {
@@ -42,7 +42,7 @@
       },
       {
         "from": { "node_id": "num_results", "port_name": "value" },
-        "to": { "node_id": "search", "port_name": "num" }
+        "to": { "node_id": "search", "port_name": "limit" }
       },
       {
         "from": { "node_id": "search", "port_name": "items" },

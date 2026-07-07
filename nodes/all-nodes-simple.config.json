@@ -101,6 +101,7 @@ filter-messages,Filter Messages,Filter messages by custom criteria (length, cont
 filter-tools,Filter Tools,Filter tools by name for dynamic tool selection
 find-entity-path,Find Entity Path,Find the shortest chain of relations connecting two entities in a Graph knowledge base (breadth-first, direction-agnostic). Answers "how are X and Y related?" with the hop-by-hop path. Wire a Knowledge Base node into knowledge_base, same as the search nodes.
 firecrawl-scrape,Firecrawl: Scrape URL,Scrape content from any URL with advanced options including format selection, content filtering, mobile emulation, and more
+firecrawl-search,Firecrawl Search,Search the web using the Firecrawl Search API - returns clean search results with titles, links, and snippets
 floor,Floor,Rounds down to nearest integer
 generate-uuid,Generate UUID,Generates a random UUID v4.
 get-chunk-by-index,Get Chunk by Index,Retrieve a specific chunk from a knowledge base by document ID and chunk index
@@ -389,7 +390,7 @@ resend-send-email,Resend Send Email,Send an email using the Resend API.
 response-format,Response Format,Define a JSON Schema response format for structured outputs from LLMs.
 round,Round,Rounds a number to nearest integer
 route,Route,Routes a single value to one of two outputs based on a boolean condition
-search-internet,Search the Internet,Search the web using Google Custom Search - returns clean search results with titles, links, and snippets
+search-internet,Search the Internet,Search the web using Firecrawl Search - returns clean search results with titles, links, and snippets
 self-healing-error,Self Healing Error,Throws an error initially but succeeds on retry, useful for testing retry logic and error recovery.
 semantic-search,Semantic Search,Search knowledge base using semantic similarity and vector embeddings
 sendgrid-send-email,SendGrid Send Email,Send an email using the SendGrid Mail Send API.

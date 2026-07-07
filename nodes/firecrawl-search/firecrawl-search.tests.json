@@ -1,0 +1,9 @@
+[
+  {
+    "inputs": {
+      "query": "zerowidth ai"
+    },
+    "expectedError": "Firecrawl integration not found",
+    "description": "Missing integration test - node throws when no firecrawl key is configured"
+  }
+]
