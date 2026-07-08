@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.0 — 2026-07
 
 - **`search-internet` is backed by Firecrawl Search.** Google's Custom Search JSON API is closed to new customers, so the macro now wraps a new `firecrawl-search` node (`POST /v2/search`) and requires a `firecrawl` key instead of `google_custom_search`. The macro's surface is unchanged: `query` in, `results` out — an array of `{ title, link, displayLink, snippet }` (each item also carries `position`). Default result count is 5 (was 10).
 - New vendor node `firecrawl-search`: `query` + `limit` (default 5, clamped 1–100) in; `items` / `total_results` / `warning` out. `FirecrawlIntegration` gains a matching `search()` method (JS + Python).
