@@ -85,10 +85,13 @@ async function runFlowTest(testFile) {
       debug: false,
       keys: {
         openrouter: process.env.OPENROUTER_API_KEY,
-        google_custom_search: {
-          key: process.env.GOOGLE_CUSTOM_SEARCH_KEY,
-          cx: process.env.GOOGLE_CUSTOM_SEARCH_CX
-        }
+        firecrawl: process.env.FIRECRAWL_API_KEY,
+        ...(process.env.GOOGLE_CUSTOM_SEARCH_KEY && {
+          google_custom_search: {
+            key: process.env.GOOGLE_CUSTOM_SEARCH_KEY,
+            cx: process.env.GOOGLE_CUSTOM_SEARCH_CX
+          }
+        })
       }
     });
     const result = await engine.run(inputs);

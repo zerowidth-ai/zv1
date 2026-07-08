@@ -64,10 +64,9 @@
     "topic": "artificial intelligence trends 2024"
   },
   "expected": {
-    "searchSummary": 10
+    "searchSummary": 5
   },
   "requiresEnv": [
-    "GOOGLE_CUSTOM_SEARCH_KEY",
-    "GOOGLE_CUSTOM_SEARCH_CX"
+    "FIRECRAWL_API_KEY"
   ]
 }

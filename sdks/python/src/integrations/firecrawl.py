@@ -114,6 +114,60 @@ class FirecrawlIntegration:
         except httpx.RequestError as e:
             raise Exception(f"Firecrawl API Error: {e}") from e
 
+    async def search(self, params: dict[str, Any]) -> dict[str, Any]:
+        """
+        Search the web with the Firecrawl Search API.
+
+        Args:
+            params: Search parameters (query, limit, ...).
+
+        Returns:
+            Search response.
+
+        Raises:
+            Exception: On API errors.
+        """
+        # Remove empty params
+        clean_params = self._clean_params(params)
+
+        start_time = int(time.time() * 1000)
+        request_url = f"{self.base_url}/search"
+
+        try:
+            response = await self.client.post("/search", json=clean_params)
+
+            await emit_api_call_event(getattr(self, "_engine_config", None), {
+                "timestamp": start_time, "integration": "firecrawl", "nodeId": None, "nodeType": None,
+                "request": {"method": "POST", "url": request_url, "headers": dict(self.client.headers), "body": clean_params},
+                "response": {"status": response.status_code, "statusText": response.reason_phrase or ""},
+                "duration": int(time.time() * 1000) - start_time, "error": None,
+            })
+
+            if response.status_code >= 400:
+                error_data = response.json() if response.content else {}
+                error_msg = error_data.get("error", response.reason_phrase)
+                raise Exception(f"Firecrawl API error: {response.status_code} - {error_msg}")
+
+            return response.json()
+
+        except httpx.HTTPStatusError as e:
+            status = e.response.status_code
+            status_text = e.response.reason_phrase
+            try:
+                response_data = e.response.json()
+                error_detail = response_data.get("error", "")
+            except Exception:
+                error_detail = ""
+
+            error_message = f"Firecrawl API Error ({status} {status_text})"
+            if error_detail:
+                error_message += f": {error_detail}"
+
+            raise Exception(error_message) from e
+
+        except httpx.RequestError as e:
+            raise Exception(f"Firecrawl API Error: {e}") from e
+
     def _clean_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """Remove empty/null params."""
         clean = {}

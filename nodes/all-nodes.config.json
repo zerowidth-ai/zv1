@@ -20302,11 +20302,11 @@
     {
         "display_name": "Search the Internet",
         "tagline": "Search the internet",
-        "description": "Search the web using Google Custom Search - returns clean search results with titles, links, and snippets",
+        "description": "Search the web using Firecrawl Search - returns clean search results with titles, links, and snippets",
         "category": "third-party",
-        "provider": "google",
+        "provider": "firecrawl",
         "needs_key_from": [
-            "google_custom_search"
+            "firecrawl"
         ],
         "is_macro": true,
         "is_plugin": true,
@@ -20321,13 +20321,13 @@
                 },
                 {
                     "id": "search",
-                    "type": "google-custom-search"
+                    "type": "firecrawl-search"
                 },
                 {
                     "id": "num_results",
-                    "type": "string",
+                    "type": "number",
                     "settings": {
-                        "value": "10"
+                        "value": 5
                     }
                 },
                 {
@@ -20356,7 +20356,7 @@
                     },
                     "to": {
                         "node_id": "search",
-                        "port_name": "num"
+                        "port_name": "limit"
                     }
                 },
                 {
@@ -32250,6 +32250,55 @@
         "timeout": 15000,
         "retry_limit": 1,
         "id": "http-request"
+    },
+    {
+        "display_name": "Firecrawl Search",
+        "tagline": "Search the web with Firecrawl",
+        "description": "Search the web using the Firecrawl Search API - returns clean search results with titles, links, and snippets",
+        "category": "third-party",
+        "provider": "firecrawl",
+        "needs_key_from": [
+            "firecrawl"
+        ],
+        "is_plugin": true,
+        "inputs": [
+            {
+                "name": "query",
+                "display_name": "Search Query",
+                "type": "string",
+                "description": "The search query string",
+                "required": true
+            },
+            {
+                "name": "limit",
+                "display_name": "Number of Results",
+                "type": "number",
+                "description": "Maximum number of search results to return (1-100)",
+                "default": 5
+            }
+        ],
+        "outputs": [
+            {
+                "name": "items",
+                "display_name": "Search Results",
+                "type": "array of objects",
+                "description": "Array of cleaned search result items with title, link, displayLink, snippet, and position"
+            },
+            {
+                "name": "total_results",
+                "display_name": "Total Results",
+                "type": "number",
+                "description": "Number of search results returned"
+            },
+            {
+                "name": "warning",
+                "display_name": "Warning",
+                "type": "string",
+                "description": "Any warning message returned by the Firecrawl API"
+            }
+        ],
+        "settings": [],
+        "id": "firecrawl-search"
     },
     {
         "display_name": "Boolean Switch",

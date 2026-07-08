@@ -83,6 +83,77 @@ export default class FirecrawlIntegration {
     }
 
     /**
+     * Search the web with the Firecrawl Search API
+     * @param {Object} params - Search parameters (query, limit, ...)
+     * @returns {Promise<Object>} Search response
+     */
+    async search(params = {}) {
+        try {
+            const url = `${this.options.baseURL}/search`;
+
+            // Remove any params that are null, undefined, or empty strings
+            Object.keys(params).forEach(key => {
+                if (params[key] === '') {
+                    delete params[key];
+                }
+                if (params[key] === null) {
+                    delete params[key];
+                }
+                if (params[key] === undefined) {
+                    delete params[key];
+                }
+                if (Array.isArray(params[key]) && params[key].length === 0) {
+                    delete params[key];
+                }
+            });
+
+            const requestHeaders = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.apiKey}` };
+            const startTime = Date.now();
+
+            const response = await axios({
+                url: url,
+                method: 'POST',
+                headers: requestHeaders,
+                data: params,
+                timeout: this.options.timeout
+            });
+
+            await emitAPICallEvent(this._engineConfig, {
+                timestamp: startTime, integration: 'firecrawl', nodeId: null, nodeType: null,
+                request: { method: 'POST', url, headers: requestHeaders, body: params },
+                response: { status: response.status, statusText: response.statusText },
+                duration: Date.now() - startTime, error: null
+            });
+
+            if (response.status >= 400) {
+                throw new Error(`Firecrawl API error: ${response.status} - ${response.data?.error || response.statusText}`);
+            }
+
+            return response.data;
+
+        } catch (error) {
+            // Note: emitAPICallEvent for error case is handled by the catch in the caller
+            // since errors from axios.post throw before we can capture the response
+            if (error.response) {
+                const status = error.response.status;
+                const statusText = error.response.statusText;
+                const responseData = error.response.data;
+
+                let errorMessage = `Firecrawl API Error (${status} ${statusText})`;
+                if (responseData?.error) {
+                    errorMessage += `: ${responseData.error}`;
+                }
+
+                throw new Error(errorMessage);
+            } else if (error.request) {
+                throw new Error('Firecrawl API Error: No response received');
+            } else {
+                throw new Error(`Firecrawl API Error: ${error.message}`);
+            }
+        }
+    }
+
+    /**
      * Helper function to convert comma-separated string to array
      * @param {string|Array} input - String or array input
      * @returns {Array} Array of strings
