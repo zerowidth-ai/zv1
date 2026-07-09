@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.1 — 2026-07
 
 - **Assistant text alongside tool calls is no longer dropped.** The tool loop rebuilt the assistant turn as `{ role, content: null, tool_calls }`, discarding any narration the model emitted before calling its tools (e.g. "Let me search for that!"). The text was lost from both the final `conversation` output — even though it had already streamed to the user — and from the model's own context on subsequent rounds, compounding across turns in chat flows. Fixed in the JS and Python engines; covered by `tests/test.tool-loop-content.js`.
 
