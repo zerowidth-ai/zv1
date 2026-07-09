@@ -2366,10 +2366,13 @@ export default class Workbench {
             }
           }
         }
-        // Prepare the tool call message for the next LLM call
+        // Prepare the tool call message for the next LLM call.
+        // Preserve any text the model emitted alongside the tool calls —
+        // nulling it here loses it from both the next round's context and
+        // the final conversation output.
         toolCallMessage = {
           role: "assistant",
-          content: null,
+          content: llmResult.content ?? null,
           tool_calls: llmResult.tool_calls
         };
         toolCallCount++;

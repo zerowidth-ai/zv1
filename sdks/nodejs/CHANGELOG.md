@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Assistant text alongside tool calls is no longer dropped.** The tool loop rebuilt the assistant turn as `{ role, content: null, tool_calls }`, discarding any narration the model emitted before calling its tools (e.g. "Let me search for that!"). The text was lost from both the final `conversation` output — even though it had already streamed to the user — and from the model's own context on subsequent rounds, compounding across turns in chat flows. Fixed in the JS and Python engines; covered by `tests/test.tool-loop-content.js`.
+
 ## 2.1.0 — 2026-07
 
 - **`search-internet` is backed by Firecrawl Search.** Google's Custom Search JSON API is closed to new customers, so the macro now wraps a new `firecrawl-search` node (`POST /v2/search`) and requires a `firecrawl` key instead of `google_custom_search`. The macro's surface is unchanged: `query` in, `results` out — an array of `{ title, link, displayLink, snippet }` (each item also carries `position`). Default result count is 5 (was 10).

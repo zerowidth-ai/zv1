@@ -1435,10 +1435,13 @@ class Workbench:
                                 "result": {"error": True, "message": f"Tool '{tool_name}' is not available"},
                             })
 
-                # Prepare tool call message for next round
+                # Prepare tool call message for next round.
+                # Preserve any text the model emitted alongside the tool calls —
+                # nulling it here loses it from both the next round's context and
+                # the final conversation output.
                 tool_call_message = {
                     "role": "assistant",
-                    "content": None,
+                    "content": llm_result.get("content"),
                     "tool_calls": llm_result["tool_calls"],
                 }
                 tool_call_count += 1
