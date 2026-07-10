@@ -1,0 +1,120 @@
+{
+  "description": "Image-bearing tool result: the model must actually SEE the image (solid red PNG) returned by the ShowImage tool \u2014 regression for the tool-loop stringifying image blocks into base64 text. Also pins conversation-output invariants: the full tool cycle survives (assistant tool_calls + tool response), and the ephemeral vision message (role user, image_url parts) must NOT leak into the output.",
+  "requiresEnv": [
+    "OPENROUTER_API_KEY"
+  ],
+  "inputs": {
+    "chat": [
+      {
+        "role": "user",
+        "content": "Call the ShowImage tool exactly once (it takes no arguments). Look at the image it returns. Then reply with ONLY the dominant color of that image, one lowercase English word, nothing else."
+      }
+    ]
+  },
+  "expectedSchema": {
+    "type": "object",
+    "required": [
+      "outputs"
+    ],
+    "properties": {
+      "outputs": {
+        "type": "object",
+        "required": [
+          "chat"
+        ],
+        "properties": {
+          "chat": {
+            "type": "array",
+            "minItems": 3,
+            "allOf": [
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "const": "assistant"
+                    },
+                    "tool_calls": {
+                      "type": "array",
+                      "minItems": 1
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "tool_calls"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "const": "tool"
+                    },
+                    "content": {
+                      "type": "string",
+                      "pattern": "image"
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "content"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "const": "assistant"
+                    },
+                    "content": {
+                      "type": "string",
+                      "pattern": "[Rr]ed"
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "content"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "const": "user"
+                      },
+                      "content": {
+                        "type": "array",
+                        "contains": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "const": "image_url"
+                            }
+                          },
+                          "required": [
+                            "type"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "role",
+                      "content"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

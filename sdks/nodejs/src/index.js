@@ -20,6 +20,96 @@ import { sanitizeAPICallEvent } from "./utilities/sanitizeAPICall.js";
  * Workbench - Core class for executing node-based flows
  * Handles node loading, input/output validation, and flow execution
  */
+
+/**
+ * Convert one tool result into the message(s) the next LLM round
+ * needs. MCP results may carry image content blocks — those must ride
+ * as VISION inputs (an OpenAI-style `role:"tool"` message is text-only,
+ * so stringifying them hands the model base64 soup and it confabulates
+ * what the image "probably" shows). Image blocks are split out of the
+ * tool message and re-attached as a user message with `image_url`
+ * data-URI parts immediately after it.
+ */
+function toolResultToMessages(toolResult) {
+  const result = toolResult.result;
+  let images = [];
+  let textResult = result;
+  if (result && Array.isArray(result.content)) {
+    images = result.content.filter(
+      (c) => c && c.type === 'image' && typeof c.data === 'string'
+    );
+    if (images.length > 0) {
+      textResult = {
+        ...result,
+        content: result.content
+          .filter((c) => !(c && c.type === 'image'))
+          .concat([{ type: 'text', text: '[image attached in the following message]' }]),
+      };
+    }
+  }
+  const toolMessage = {
+    role: 'tool',
+    tool_call_id: toolResult.tool_call_id,
+    name: toolResult.name,
+    content:
+      typeof textResult === 'string' ? textResult : JSON.stringify(textResult),
+  };
+  let visionMessage = null;
+  if (images.length > 0) {
+    visionMessage = {
+      role: 'user',
+      content: [
+        {
+          type: 'text',
+          text: `[Rendered image${images.length > 1 ? 's' : ''} returned by the ${toolResult.name} tool call below — this is the actual content:]`,
+        },
+        ...images.map((img) => ({
+          type: 'image_url',
+          image_url: {
+            url: `data:${img.mimeType || 'image/png'};base64,${img.data}`,
+          },
+        })),
+      ],
+    };
+  }
+  return { toolMessage, visionMessage };
+}
+
+/**
+ * Durable-record twin of `toolResultToMessages`: exactly the 2.1.x
+ * single `role:"tool"` message (streaming and the final conversation
+ * output must match message-for-message), with raw image bytes
+ * replaced by a small note — the pixels were delivered to the model
+ * as an ephemeral vision input on the wire (see callLLMWithTools) and
+ * have no reader in history, only cost.
+ */
+function toolResultToDurableMessage(toolResult) {
+  const result = toolResult.result;
+  let durable = result;
+  if (result && Array.isArray(result.content)) {
+    const hasImage = result.content.some((c) => c && c.type === 'image');
+    if (hasImage) {
+      durable = {
+        ...result,
+        content: result.content.map((c) =>
+          c && c.type === 'image' && typeof c.data === 'string'
+            ? {
+                type: 'text',
+                text: `[image (${c.mimeType || 'image/png'}) — shown to the model as a vision input]`,
+              }
+            : c
+        ),
+      };
+    }
+  }
+  return {
+    role: 'tool',
+    tool_call_id: toolResult.tool_call_id,
+    name: toolResult.name,
+    content: typeof durable === 'string' ? durable : JSON.stringify(durable),
+  };
+}
+
 export default class Workbench {
 
 
@@ -2171,14 +2261,7 @@ export default class Workbench {
       if (toolCallMessage && tool_results.length > 0) {
         accumulatedMessages = [...accumulatedMessages, toolCallMessage];
         for (const toolResult of tool_results) {
-          accumulatedMessages.push({
-            role: "tool",
-            tool_call_id: toolResult.tool_call_id,
-            name: toolResult.name,
-            content: typeof toolResult.result === "string"
-              ? toolResult.result
-              : JSON.stringify(toolResult.result)
-          });
+          accumulatedMessages.push(toolResultToDurableMessage(toolResult));
         }
       }
 
@@ -2851,27 +2934,21 @@ export default class Workbench {
 
     // If this is a tool call response, append it to the messages array (OpenAI style)
     if (toolCallMessage && toolResults && Array.isArray(llmInputs.messages)) {
-
-      // 
+      const toolMessages = [];
+      const visionMessages = [];
+      for (const toolResult of toolResults) {
+        // You may need to adapt this for other LLMs
+        const { toolMessage, visionMessage } = toolResultToMessages(toolResult);
+        toolMessages.push(toolMessage);
+        if (visionMessage) visionMessages.push(visionMessage);
+      }
+      // Vision messages go ABOVE the tool cycle — see toolResultToMessages.
       llmInputs.messages = [
         ...llmInputs.messages,
-        toolCallMessage
+        ...visionMessages,
+        toolCallMessage,
+        ...toolMessages
       ];
-
-      for(const toolResult of toolResults) {
-        // You may need to adapt this for other LLMs
-          llmInputs.messages = [
-            ...llmInputs.messages,
-            {
-              role: "tool",
-              tool_call_id: toolResult.tool_call_id,
-              name: toolResult.name,
-              content: typeof toolResult.result === "string"
-                ? toolResult.result
-                : JSON.stringify(toolResult.result)
-            }
-          ];
-      }
     }
 
     // Execute using the shared core logic
