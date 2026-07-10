@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.2 — 2026-07
+
+- **Image-bearing tool results reach the model as vision inputs.** MCP tool results carrying image content blocks were `JSON.stringify`'d into the text-only `role:"tool"` message — the model received base64 as text and confabulated the image's contents. Image blocks are now delivered as an ephemeral `image_url` user message placed above the entire trailing tool-cycle run on the wire (so multi-round tool cycles all survive into the `conversation` output), while the `role:"tool"` message carries a short text note in place of the raw bytes — identical on the wire, in multi-round history, and in the final output. Fixed in the JS and Python engines. Covered live by `tests/flows/flow.chat-tool-image.zv1` (the model must actually identify the image; full cycle preserved; no vision message leaks) and deterministically by `tests/test.tool-vision.js` (wire shape + multi-round cycle survival, no network).
+
 ## 2.1.1 — 2026-07
 
 - **Assistant text alongside tool calls is no longer dropped.** The tool loop rebuilt the assistant turn as `{ role, content: null, tool_calls }`, discarding any narration the model emitted before calling its tools (e.g. "Let me search for that!"). The text was lost from both the final `conversation` output — even though it had already streamed to the user — and from the model's own context on subsequent rounds, compounding across turns in chat flows. Fixed in the JS and Python engines; covered by `tests/test.tool-loop-content.js`.
