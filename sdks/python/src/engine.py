@@ -46,6 +46,107 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def _is_string_image_block(block: Any) -> bool:
+    return (
+        isinstance(block, dict)
+        and block.get("type") == "image"
+        and isinstance(block.get("data"), str)
+    )
+
+
+def _tool_result_to_durable_message(tool_result: dict[str, Any]) -> dict[str, Any]:
+    """The single role:"tool" message for one tool result.
+
+    MCP-style image content blocks ({type:'image', data, mimeType} with
+    string data) are replaced in place by a short text note — the pixels
+    are delivered to the model separately as an ephemeral vision input
+    (see _tool_result_to_messages / _call_llm_with_tools). This same
+    message is used on the wire, in the accumulated multi-round history,
+    and therefore in the final conversation output, so all three carry an
+    identical record with no base64 payload. Image blocks whose data is
+    not a string are left untouched and serialize as before.
+    """
+    result = tool_result["result"]
+    durable = result
+    if isinstance(result, dict) and isinstance(result.get("content"), list):
+        if any(_is_string_image_block(c) for c in result["content"]):
+            durable = {
+                **result,
+                "content": [
+                    {
+                        "type": "text",
+                        "text": f"[image ({c.get('mimeType') or 'image/png'}) — delivered to the model as a vision input]",
+                    }
+                    if _is_string_image_block(c)
+                    else c
+                    for c in result["content"]
+                ],
+            }
+    return {
+        "role": "tool",
+        "tool_call_id": tool_result["tool_call_id"],
+        "name": tool_result["name"],
+        "content": durable if isinstance(durable, str) else json.dumps(durable),
+    }
+
+
+def _tool_result_to_messages(
+    tool_result: dict[str, Any],
+) -> tuple[dict[str, Any], Optional[dict[str, Any]]]:
+    """Split one tool result into (tool_message, vision_message | None).
+
+    The tool message is the durable record; the vision message is an
+    ephemeral role:"user" message carrying the result's image blocks as
+    image_url data-URI parts — an OpenAI-style tool message is text-only,
+    so serializing image blocks hands the model base64 as text and it
+    confabulates the image's contents.
+
+    The caller must insert vision messages ABOVE the entire trailing run
+    of tool-cycle messages: LLM nodes rebuild their conversation output by
+    walking the wire messages backwards and stopping at the first message
+    that is neither a tool result nor an assistant tool_calls turn.
+    Placed above the whole run, a vision message is naturally excluded
+    from the durable output while every tool cycle below it survives.
+    """
+    tool_message = _tool_result_to_durable_message(tool_result)
+    result = tool_result["result"]
+    vision_message: Optional[dict[str, Any]] = None
+    if isinstance(result, dict) and isinstance(result.get("content"), list):
+        images = [c for c in result["content"] if _is_string_image_block(c)]
+        if images:
+            plural = "s" if len(images) > 1 else ""
+            vision_message = {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": f"[Image{plural} returned by the {tool_result['name']} tool call ({tool_result['tool_call_id']}) — this is the actual content:]",
+                    },
+                    *[
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:{img.get('mimeType') or 'image/png'};base64,{img['data']}"
+                            },
+                        }
+                        for img in images
+                    ],
+                ],
+            }
+    return tool_message, vision_message
+
+
+def _is_tool_cycle_message(message: Any) -> bool:
+    """True for messages that belong to a tool cycle on the wire: a
+    role:"tool" result or an assistant turn carrying tool_calls."""
+    if not isinstance(message, dict):
+        return False
+    if message.get("role") == "tool":
+        return True
+    tool_calls = message.get("tool_calls")
+    return isinstance(tool_calls, list) and len(tool_calls) > 0
+
+
 @dataclass
 class TimelineEntry:
     """Entry in the execution timeline."""
@@ -1104,19 +1205,30 @@ class Workbench:
 
         # If this is a tool call response, append to messages
         if tool_call_message and tool_results and isinstance(llm_inputs.get("messages"), list):
-            llm_inputs["messages"] = [*llm_inputs["messages"], tool_call_message]
-
+            tool_messages = []
+            vision_messages = []
             for tool_result in tool_results:
-                result_content = tool_result["result"]
-                if not isinstance(result_content, str):
-                    result_content = json.dumps(result_content)
+                tool_message, vision_message = _tool_result_to_messages(tool_result)
+                tool_messages.append(tool_message)
+                if vision_message:
+                    vision_messages.append(vision_message)
 
-                llm_inputs["messages"].append({
-                    "role": "tool",
-                    "tool_call_id": tool_result["tool_call_id"],
-                    "name": tool_result["name"],
-                    "content": result_content,
-                })
+            # Vision messages go ABOVE the entire trailing tool-cycle run,
+            # not just this round's cycle — a vision message wedged between
+            # two cycles would stop the conversation walk early and cut
+            # every earlier cycle out of the final output.
+            base = llm_inputs["messages"]
+            insert_at = len(base)
+            while insert_at > 0 and _is_tool_cycle_message(base[insert_at - 1]):
+                insert_at -= 1
+
+            llm_inputs["messages"] = [
+                *base[:insert_at],
+                *vision_messages,
+                *base[insert_at:],
+                tool_call_message,
+                *tool_messages,
+            ]
 
         # Execute using the shared core logic
         outputs = await self._execute_node_core(
@@ -1367,15 +1479,7 @@ class Workbench:
             if tool_call_message and tool_results:
                 accumulated_messages = [*accumulated_messages, tool_call_message]
                 for tr in tool_results:
-                    result_content = tr["result"]
-                    if not isinstance(result_content, str):
-                        result_content = json.dumps(result_content)
-                    accumulated_messages.append({
-                        "role": "tool",
-                        "tool_call_id": tr["tool_call_id"],
-                        "name": tr["name"],
-                        "content": result_content,
-                    })
+                    accumulated_messages.append(_tool_result_to_durable_message(tr))
 
             tool_results = []
             tool_call_message = None

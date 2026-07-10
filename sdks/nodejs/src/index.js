@@ -22,72 +22,23 @@ import { sanitizeAPICallEvent } from "./utilities/sanitizeAPICall.js";
  */
 
 /**
- * Convert one tool result into the message(s) the next LLM round
- * needs. MCP results may carry image content blocks — those must ride
- * as VISION inputs (an OpenAI-style `role:"tool"` message is text-only,
- * so stringifying them hands the model base64 soup and it confabulates
- * what the image "probably" shows). Image blocks are split out of the
- * tool message and re-attached as a user message with `image_url`
- * data-URI parts immediately after it.
- */
-function toolResultToMessages(toolResult) {
-  const result = toolResult.result;
-  let images = [];
-  let textResult = result;
-  if (result && Array.isArray(result.content)) {
-    images = result.content.filter(
-      (c) => c && c.type === 'image' && typeof c.data === 'string'
-    );
-    if (images.length > 0) {
-      textResult = {
-        ...result,
-        content: result.content
-          .filter((c) => !(c && c.type === 'image'))
-          .concat([{ type: 'text', text: '[image attached in the following message]' }]),
-      };
-    }
-  }
-  const toolMessage = {
-    role: 'tool',
-    tool_call_id: toolResult.tool_call_id,
-    name: toolResult.name,
-    content:
-      typeof textResult === 'string' ? textResult : JSON.stringify(textResult),
-  };
-  let visionMessage = null;
-  if (images.length > 0) {
-    visionMessage = {
-      role: 'user',
-      content: [
-        {
-          type: 'text',
-          text: `[Rendered image${images.length > 1 ? 's' : ''} returned by the ${toolResult.name} tool call below — this is the actual content:]`,
-        },
-        ...images.map((img) => ({
-          type: 'image_url',
-          image_url: {
-            url: `data:${img.mimeType || 'image/png'};base64,${img.data}`,
-          },
-        })),
-      ],
-    };
-  }
-  return { toolMessage, visionMessage };
-}
-
-/**
- * Durable-record twin of `toolResultToMessages`: exactly the 2.1.x
- * single `role:"tool"` message (streaming and the final conversation
- * output must match message-for-message), with raw image bytes
- * replaced by a small note — the pixels were delivered to the model
- * as an ephemeral vision input on the wire (see callLLMWithTools) and
- * have no reader in history, only cost.
+ * The single `role:"tool"` message for one tool result. MCP-style image
+ * content blocks ({type:'image', data, mimeType} with string data) are
+ * replaced in place by a short text note — the pixels are delivered to
+ * the model separately as an ephemeral vision input (see
+ * toolResultToMessages / callLLMWithTools). This same message is used on
+ * the wire, in the accumulated multi-round history, and therefore in the
+ * final conversation output, so all three carry an identical record with
+ * no base64 payload. Image blocks whose data is not a string are left
+ * untouched and stringify as before.
  */
 function toolResultToDurableMessage(toolResult) {
   const result = toolResult.result;
   let durable = result;
   if (result && Array.isArray(result.content)) {
-    const hasImage = result.content.some((c) => c && c.type === 'image');
+    const hasImage = result.content.some(
+      (c) => c && c.type === 'image' && typeof c.data === 'string'
+    );
     if (hasImage) {
       durable = {
         ...result,
@@ -95,7 +46,7 @@ function toolResultToDurableMessage(toolResult) {
           c && c.type === 'image' && typeof c.data === 'string'
             ? {
                 type: 'text',
-                text: `[image (${c.mimeType || 'image/png'}) — shown to the model as a vision input]`,
+                text: `[image (${c.mimeType || 'image/png'}) — delivered to the model as a vision input]`,
               }
             : c
         ),
@@ -108,6 +59,51 @@ function toolResultToDurableMessage(toolResult) {
     name: toolResult.name,
     content: typeof durable === 'string' ? durable : JSON.stringify(durable),
   };
+}
+
+/**
+ * Split one tool result into the wire messages for the next LLM round:
+ * the durable `role:"tool"` message plus, when the result carries image
+ * content blocks, an ephemeral `role:"user"` vision message with
+ * `image_url` data-URI parts. An OpenAI-style tool message is text-only —
+ * stringifying image blocks hands the model base64 soup and it
+ * confabulates what the image "probably" shows.
+ *
+ * The caller must insert vision messages ABOVE the entire trailing run of
+ * tool-cycle messages, not adjacent to this round's cycle: LLM nodes
+ * rebuild their `conversation` output by walking the wire messages
+ * backwards and stopping at the first message that is neither a tool
+ * result nor an assistant tool_calls turn. Placed above the whole run,
+ * a vision message is naturally excluded from the durable output while
+ * every tool cycle below it survives the walk.
+ */
+function toolResultToMessages(toolResult) {
+  const toolMessage = toolResultToDurableMessage(toolResult);
+  const result = toolResult.result;
+  let visionMessage = null;
+  if (result && Array.isArray(result.content)) {
+    const images = result.content.filter(
+      (c) => c && c.type === 'image' && typeof c.data === 'string'
+    );
+    if (images.length > 0) {
+      visionMessage = {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: `[Image${images.length > 1 ? 's' : ''} returned by the ${toolResult.name} tool call (${toolResult.tool_call_id}) — this is the actual content:]`,
+          },
+          ...images.map((img) => ({
+            type: 'image_url',
+            image_url: {
+              url: `data:${img.mimeType || 'image/png'};base64,${img.data}`,
+            },
+          })),
+        ],
+      };
+    }
+  }
+  return { toolMessage, visionMessage };
 }
 
 export default class Workbench {
@@ -2942,10 +2938,23 @@ export default class Workbench {
         toolMessages.push(toolMessage);
         if (visionMessage) visionMessages.push(visionMessage);
       }
-      // Vision messages go ABOVE the tool cycle — see toolResultToMessages.
+      // Vision messages go ABOVE the entire trailing tool-cycle run, not
+      // just this round's cycle — a vision message wedged between two
+      // cycles would stop the conversation walk early and cut every
+      // earlier cycle out of the final output (see toolResultToMessages).
+      const base = llmInputs.messages;
+      let insertAt = base.length;
+      while (insertAt > 0) {
+        const m = base[insertAt - 1];
+        const inCycle = m && typeof m === 'object' &&
+          (m.role === 'tool' || (Array.isArray(m.tool_calls) && m.tool_calls.length > 0));
+        if (!inCycle) break;
+        insertAt--;
+      }
       llmInputs.messages = [
-        ...llmInputs.messages,
+        ...base.slice(0, insertAt),
         ...visionMessages,
+        ...base.slice(insertAt),
         toolCallMessage,
         ...toolMessages
       ];

@@ -2,7 +2,7 @@
 
 ## 2.1.2 — 2026-07
 
-- **Image-bearing tool results reach the model as vision inputs.** MCP tool results carrying image content blocks were `JSON.stringify`'d into the text-only `role:"tool"` message — the model received base64 as text and confabulated the image's contents. Image blocks are now split out and delivered as an ephemeral `image_url` user message placed above the tool cycle on the wire; the durable `conversation` output is unchanged message-for-message (raw bytes replaced by a short note), so streaming and final output stay aligned. Covered by `tests/flows/flow.chat-tool-image.zv1`, which asserts the model actually identifies the image AND that the full tool cycle survives with no vision message leaking into the output.
+- **Image-bearing tool results reach the model as vision inputs.** MCP tool results carrying image content blocks were `JSON.stringify`'d into the text-only `role:"tool"` message — the model received base64 as text and confabulated the image's contents. Image blocks are now delivered as an ephemeral `image_url` user message placed above the entire trailing tool-cycle run on the wire (so multi-round tool cycles all survive into the `conversation` output), while the `role:"tool"` message carries a short text note in place of the raw bytes — identical on the wire, in multi-round history, and in the final output. Fixed in the JS and Python engines. Covered live by `tests/flows/flow.chat-tool-image.zv1` (the model must actually identify the image; full cycle preserved; no vision message leaks) and deterministically by `tests/test.tool-vision.js` (wire shape + multi-round cycle survival, no network).
 
 ## 2.1.1 — 2026-07
 
