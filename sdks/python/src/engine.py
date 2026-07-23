@@ -1400,8 +1400,14 @@ class Workbench:
                                 self._log_debug(
                                     f"Calling MCP tool '{tool_name}' with args: {args}"
                                 )
-                                mcp_args = {**args, "name": tool_name}
-                                result = await call_mcp_tool(mcp_args, url=url, token=token)
+                                # Tool identity and tool arguments stay
+                                # separate — merging them clobbered any
+                                # tool argument itself named "name".
+                                result = await call_mcp_tool(
+                                    {"name": tool_name, "arguments": args},
+                                    url=url,
+                                    token=token,
+                                )
                                 return result
 
                             return runner

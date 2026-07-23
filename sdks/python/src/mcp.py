@@ -18,7 +18,7 @@ _mcp_schema_cache: dict[str, list[dict[str, Any]]] = {}
 
 
 async def call_mcp_tool(
-    args: dict[str, Any],
+    call: dict[str, Any],
     *,
     url: str,
     token: Optional[str] = None,
@@ -26,8 +26,17 @@ async def call_mcp_tool(
     """
     Call an MCP tool.
 
+    Tool identity and tool arguments are carried as SEPARATE fields —
+    never merged into one flat object. The previous flat-object
+    contract ({**tool_args, "name": tool_name}) made a tool argument
+    named ``name`` indistinguishable from the tool's own name, so
+    tools with a top-level ``name`` parameter received None. Any
+    unexpected top-level key raises so a legacy-shape caller fails
+    loudly instead of silently dropping arguments.
+
     Args:
-        args: The arguments to pass to the tool (must include 'name').
+        call: {"name": str, "arguments": dict} — the tool's name and
+            the model-provided arguments, forwarded verbatim.
         url: The MCP server URL.
         token: Optional bearer token for authentication.
 
@@ -40,12 +49,19 @@ async def call_mcp_tool(
     if not url:
         raise RuntimeError("No MCP URL provided")
 
-    tool_name = args.get("name")
+    tool_name = (call or {}).get("name")
     if not tool_name:
         raise RuntimeError("No tool name provided for MCP call")
 
-    # Separate name from the rest of the args
-    tool_args = {k: v for k, v in args.items() if k != "name"}
+    extra_keys = [k for k in call if k not in ("name", "arguments")]
+    if extra_keys:
+        raise RuntimeError(
+            "call_mcp_tool takes {name, arguments} — unexpected top-level "
+            f"keys: {', '.join(extra_keys)}. Tool arguments belong under "
+            '"arguments".'
+        )
+
+    tool_args = call.get("arguments") or {}
 
     request_id = str(uuid.uuid4())
 

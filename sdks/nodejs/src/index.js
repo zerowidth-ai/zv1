@@ -2176,7 +2176,13 @@ export default class Workbench {
             toolSchemas.push(tool);
             toolNodeMap[tool.name] = { node: pluginNode, type: 'mcp', mcpToolName: tool.name };
             toolRunners[tool.name] = async (args) => {
-              return await callMCPTool({ ...args, name: tool.name }, { url, token });
+              // Tool identity and tool arguments stay separate — spreading
+              // args next to `name` clobbered any tool argument that was
+              // itself named `name` (caliper_datasets_create et al).
+              return await callMCPTool(
+                { name: tool.name, arguments: args },
+                { url, token },
+              );
             };
           }
           this.logDebug(`Loaded ${tools.length} MCP tools from "${integrationName}"`);
