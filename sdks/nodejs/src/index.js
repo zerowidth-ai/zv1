@@ -2316,6 +2316,8 @@ export default class Workbench {
                     await this.config.onNodeError({
                       nodeId: toolNodeInfo.node.id,
                       nodeType: toolNodeInfo.node.type,
+                      toolName,
+                      toolCallId: tool_call.id,
                       error: parseError
                     });
                   }
@@ -2339,11 +2341,20 @@ export default class Workbench {
               // multi-round tool-calling LLMs look like a single
               // long "LLM node running…" entry — the waterfall has
               // no visibility into the tool-call cycles inside.
+              //
+              // `toolName` / `toolCallId` ride on every tool-call
+              // event: nodeId/nodeType identify the integration node
+              // (shared by every tool on that MCP server), so without
+              // the model-invoked tool name a live UI can't label the
+              // chip, and without the call id it can't pair start →
+              // complete/error across a multi-round loop.
               if (toolNodeInfo?.node && this.config.onNodeStart) {
                 try {
                   await this.config.onNodeStart({
                     nodeId: toolNodeInfo.node.id,
                     nodeType: toolNodeInfo.node.type,
+                    toolName,
+                    toolCallId: tool_call.id,
                     inputs: toolArguments,
                   });
                 } catch (_hookErr) {
@@ -2386,6 +2397,8 @@ export default class Workbench {
                       await this.config.onNodeComplete({
                         nodeId: toolNodeInfo.node.id,
                         nodeType: toolNodeInfo.node.type,
+                        toolName,
+                        toolCallId: tool_call.id,
                         inputs: toolArguments,
                         outputs: { result: toolResult },
                       });
@@ -2419,6 +2432,8 @@ export default class Workbench {
                     await this.config.onNodeError({
                       nodeId: toolNodeInfo.node.id,
                       nodeType: toolNodeInfo.node.type,
+                      toolName,
+                      toolCallId: tool_call.id,
                       error: executionError
                     });
                   }
