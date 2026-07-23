@@ -1,7 +1,7 @@
 {
   "display_name": "Prompt Injection Guard",
   "tagline": "Withhold prompt injections",
-  "description": "Scans user messages in a conversation for prompt-injection attempts — instruction overrides, jailbreak personas, system-prompt extraction, safety-bypass requests, template-marker spoofing, typoglycemia-scrambled variants, and base64-smuggled payloads. Flagged messages are replaced with a notice instructing the model to decline the request and steer the conversation back on course. Detection is heuristic (patterns inspired by the OWASP LLM Prompt Injection Prevention Cheat Sheet) and runs entirely offline — no model call, no keys.",
+  "description": "Scans user messages in a conversation for prompt-injection attempts — instruction overrides, jailbreak personas, system-prompt extraction, safety-bypass requests, template-marker spoofing, typoglycemia-scrambled variants, and base64-smuggled payloads. Flagged messages are replaced with a neutral withholding note; the model naturally tells the user the message couldn't be delivered and continues with the task. Detection is heuristic (patterns inspired by the OWASP LLM Prompt Injection Prevention Cheat Sheet) and runs entirely offline — no model call, no keys.",
   "icon": "shield-exclamation",
   "category": "messages",
   "inputs": [
@@ -32,7 +32,7 @@
       "name": "notice",
       "display_name": "Notice",
       "type": "string",
-      "description": "Custom replacement text for withheld messages. Leave unset to use the built-in notice, which tells the model to decline and steer the conversation back on course.",
+      "description": "Custom replacement text for withheld messages. Leave unset to use the built-in neutral withholding note. Avoid instructional or authority-claiming text — models treat user-role commands from a claimed security layer as suspect.",
       "required": false
     }
   ]
