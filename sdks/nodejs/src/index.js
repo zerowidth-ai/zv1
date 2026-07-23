@@ -197,6 +197,26 @@ export default class Workbench {
     this.flowTimeout = null;
     this.timeline = [];
 
+    // Idle watchdog state (see run()). `touchActivity()` stamps
+    // progress; a sub-engine created by this engine gets
+    // `_notifyParentActivity` wired so descendant progress keeps the
+    // whole ancestor chain alive.
+    this.idleWatchdog = null;
+    this._lastActivityAt = 0;
+    this._notifyParentActivity = null;
+
+    // Token deltas are progress too — the LLM integrations call
+    // config.onNodeUpdate directly, so wrap it once here to stamp
+    // activity before forwarding to the consumer's handler (if any).
+    // A model streaming a long completion is alive, not idle.
+    {
+      const consumerOnNodeUpdate = this.config.onNodeUpdate || null;
+      this.config.onNodeUpdate = (event) => {
+        this.touchActivity();
+        return consumerOnNodeUpdate ? consumerOnNodeUpdate(event) : undefined;
+      };
+    }
+
     // Initialize ErrorManager for centralized error handling
     this.errorManager = new ErrorManager({
       onError: this.config.onError || null,
@@ -429,8 +449,11 @@ export default class Workbench {
       startTime: new Date().toISOString()
     };
     const startDate = new Date();
-    
+
     try {
+      // Every node-execution boundary is progress for the idle
+      // watchdog — entry here, plus the success/error exits below.
+      this.touchActivity();
       if(this.config.onNodeStart) {
         await this.config.onNodeStart({
           nodeId: node.id,
@@ -474,7 +497,8 @@ export default class Workbench {
       timelineEntry.durationMs = endDate - startDate;
       timelineEntry.status = 'success';
       this.timeline.push(timelineEntry);
-      
+      this.touchActivity();
+
       if(this.config.onNodeComplete) {
         await this.config.onNodeComplete({
           nodeId: node.id,
@@ -494,7 +518,8 @@ export default class Workbench {
       timelineEntry.status = 'error';
       timelineEntry.errorMessage = error.message;
       this.timeline.push(timelineEntry);
-      
+      this.touchActivity();
+
       // Update execution context for ErrorManager
       this.errorManager.updateExecutionContext({
         timeline: this.timeline,
@@ -1230,6 +1255,22 @@ export default class Workbench {
    * @param {number} timeout - Maximum execution time in milliseconds
    * @returns {Object} The final output from output nodes
    */
+  /**
+   * Stamp forward progress for the idle watchdog (see run()). Called
+   * from every node-execution boundary, every tool-call dispatch and
+   * settle, and every streaming token delta. Chains upward: when this
+   * engine is a sub-engine (macro / imported flow), the parent wired
+   * `_notifyParentActivity` at construction so descendant progress
+   * keeps every ancestor's watchdog fed — a parent awaiting a hard-
+   * working sub-agent is not idle.
+   */
+  touchActivity() {
+    this._lastActivityAt = Date.now();
+    if (typeof this._notifyParentActivity === 'function') {
+      this._notifyParentActivity();
+    }
+  }
+
   async run(inputData, timeout = 60000) {
     this.logDebug(`Starting flow execution with timeout: ${timeout}ms`);
     this.logDebug(`Input data:`, JSON.stringify(inputData, null, 2));
@@ -1282,6 +1323,36 @@ export default class Workbench {
         this.abortController.abort(new Error(`Flow execution timed out after ${timeout}ms`));
       }
     }, timeout);
+
+    // Idle watchdog (opt-in via config.idleTimeoutMs). The flow
+    // timeout above is a wall-clock cap on the WHOLE run — one budget
+    // that a multi-round agent legitimately eats with many quick tool
+    // calls. The watchdog instead bounds time-without-progress: every
+    // node boundary / tool dispatch / tool settle / token delta calls
+    // touchActivity(), and only silence longer than idleTimeoutMs
+    // aborts. Hosts pair a short idle bound (e.g. 60s) with a long
+    // wall-clock cap so busy flows finish and hung flows still die
+    // fast. Uses the same hasTimedOut + abort path as the flow
+    // timeout so downstream status handling is identical.
+    const idleTimeoutMs = typeof this.config.idleTimeoutMs === 'number' && this.config.idleTimeoutMs > 0
+      ? this.config.idleTimeoutMs
+      : null;
+    if (idleTimeoutMs !== null) {
+      this._lastActivityAt = Date.now();
+      const checkEveryMs = Math.min(1000, Math.max(50, Math.floor(idleTimeoutMs / 4)));
+      this.idleWatchdog = setInterval(() => {
+        if (Date.now() - this._lastActivityAt <= idleTimeoutMs) return;
+        this.logDebug("Flow execution idle-timed out (no progress)");
+        this.hasTimedOut = true;
+        if (!this.abortController.signal.aborted) {
+          this.abortController.abort(new Error(
+            `Flow execution timed out after ${idleTimeoutMs}ms without progress (idle timeout)`,
+          ));
+        }
+        clearInterval(this.idleWatchdog);
+        this.idleWatchdog = null;
+      }, checkEveryMs);
+    }
 
     let inputsMissingValues = [];
 
@@ -1544,6 +1615,7 @@ export default class Workbench {
       
       this.logDebug("Flow execution complete. Final outputs:", finalOutputs);
       clearTimeout(this.flowTimeout);
+      if (this.idleWatchdog) { clearInterval(this.idleWatchdog); this.idleWatchdog = null; }
 
       return {
         outputs: finalOutputs,
@@ -1555,6 +1627,7 @@ export default class Workbench {
     } catch (error) {
       // Clear the timeout on error
       clearTimeout(this.flowTimeout);
+      if (this.idleWatchdog) { clearInterval(this.idleWatchdog); this.idleWatchdog = null; }
       
       // If this is a timeout error, add it to the timeline
       if (error.errorType === 'timeout') {
@@ -1583,6 +1656,7 @@ export default class Workbench {
       throw error;
     } finally {
       clearTimeout(this.flowTimeout);
+      if (this.idleWatchdog) { clearInterval(this.idleWatchdog); this.idleWatchdog = null; }
       this._abortTeardown?.();
       // Restore the inherited signal so a reused engine doesn't treat this run's
       // (possibly aborted) signal as an ancestor on the next run().
@@ -1673,6 +1747,12 @@ export default class Workbench {
     
     // Share executed states with internal engine to prevent duplicate execution
     internalEngine.executedNodeStates = this.executedNodeStates;
+
+    // Chain idle-watchdog activity upward: a sub-engine making
+    // progress means this engine (awaiting it) is not idle. Without
+    // this, a parent with idleTimeoutMs would kill a hard-working
+    // sub-agent after one idle window of parent-level silence.
+    internalEngine._notifyParentActivity = () => this.touchActivity();
     
     // Initialize the internal engine
     await internalEngine.initialize();
@@ -2362,9 +2442,14 @@ export default class Workbench {
                 }
               }
 
-              // Execute the tool runner with error handling
+              // Execute the tool runner with error handling. Dispatch
+              // and settle both stamp the idle watchdog — MCP tools
+              // call out directly (no _executeNodeCore boundary), so
+              // without these a tool-heavy round would read as silence.
+              this.touchActivity();
               try {
                 const toolResult = await toolRunners[toolName](toolArguments);
+                this.touchActivity();
 
                 // Success - push result
                 tool_results.push({
@@ -2410,6 +2495,7 @@ export default class Workbench {
 
               } catch (executionError) {
                 // Tool execution failed - create error result
+                this.touchActivity();
                 this.logDebug(`Tool execution failed for ${toolName}:`, executionError.message);
 
                 // Create timeline entry for the execution error
