@@ -23957,6 +23957,46 @@
         "id": "google-gemini-3-1-flash-lite"
     },
     {
+        "display_name": "Prompt Injection Guard",
+        "tagline": "Withhold prompt injections",
+        "description": "Scans user messages in a conversation for prompt-injection attempts \u2014 instruction overrides, jailbreak personas, system-prompt extraction, safety-bypass requests, template-marker spoofing, typoglycemia-scrambled variants, and base64-smuggled payloads. Flagged messages are replaced with a neutral withholding note; the model naturally tells the user the message couldn't be delivered and continues with the task. Detection is heuristic (patterns inspired by the OWASP LLM Prompt Injection Prevention Cheat Sheet) and runs entirely offline \u2014 no model call, no keys.",
+        "icon": "shield-exclamation",
+        "category": "messages",
+        "inputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "conversation",
+                "description": "Array of message objects to scan. Only user-role messages are analyzed; assistant, tool, and system messages pass through untouched.",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "messages",
+                "display_name": "Messages",
+                "type": "conversation",
+                "description": "The conversation with any flagged user messages replaced by the injection notice"
+            },
+            {
+                "name": "flagged_count",
+                "display_name": "Flagged Count",
+                "type": "number",
+                "description": "Number of user messages that were flagged and replaced in this pass"
+            }
+        ],
+        "settings": [
+            {
+                "name": "notice",
+                "display_name": "Notice",
+                "type": "string",
+                "description": "Custom replacement text for withheld messages. Leave unset to use the built-in neutral withholding note. Avoid instructional or authority-claiming text \u2014 models treat user-role commands from a claimed security layer as suspect.",
+                "required": false
+            }
+        ],
+        "id": "prompt-injection-guard"
+    },
+    {
         "display_name": "Qwen: Qwen3 Next 80B A3B Instruct (free)",
         "tagline": "Generate text",
         "description": "Qwen3-Next-80B-A3B-Instruct is an instruction-tuned chat model in the Qwen3-Next series optimized for fast, stable responses without \u201cthinking\u201d traces. It targets complex tasks across reasoning, code generation, knowledge QA, and multilingual...",

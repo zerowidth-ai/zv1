@@ -86,17 +86,37 @@ function parseMcpResponse(response) {
 
 /**
  * Call an MCP tool.
- * @param {Object} args - The arguments to pass to the tool (must include 'name')
+ *
+ * Tool identity and tool arguments are carried as SEPARATE fields —
+ * never merged into one flat object. The previous flat-object contract
+ * ({ ...toolArgs, name: toolName }) made a tool argument named `name`
+ * indistinguishable from the tool's own name: it was overwritten at
+ * the call site, then stripped here, so tools with a top-level `name`
+ * parameter received `name: undefined`. Any unexpected top-level key
+ * throws so a legacy-shape caller fails loudly instead of silently
+ * dropping arguments.
+ *
+ * @param {Object} call - { name: string, arguments?: Object } — the
+ *   tool's name and the model-provided arguments, forwarded verbatim.
  * @param {Object} options - { url, token }
  * @returns {Object} The result of the tool call
  */
-export async function callMCPTool(args, { url, token } = {}) {
+export async function callMCPTool(call, { url, token } = {}) {
   if (!url) throw new Error('No MCP URL provided');
 
-  const toolName = args.name;
+  const { name: toolName, arguments: toolArgs } = call ?? {};
   if (!toolName) throw new Error('No tool name provided for MCP call');
 
-  const { name, ...toolArgs } = args;
+  const extraKeys = Object.keys(call).filter(
+    (k) => k !== 'name' && k !== 'arguments',
+  );
+  if (extraKeys.length > 0) {
+    throw new Error(
+      `callMCPTool takes { name, arguments } — unexpected top-level keys: ` +
+      `${extraKeys.join(', ')}. Tool arguments belong under "arguments".`,
+    );
+  }
+
   const id = uuidv4();
 
   try {
@@ -108,7 +128,7 @@ export async function callMCPTool(args, { url, token } = {}) {
         method: 'tools/call',
         params: {
           name: toolName,
-          arguments: toolArgs,
+          arguments: toolArgs ?? {},
         },
       },
       {
