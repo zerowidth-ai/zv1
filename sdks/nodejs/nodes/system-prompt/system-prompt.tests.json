@@ -1,0 +1,113 @@
+[
+  {
+    "description": "String variable is injected as-is",
+    "inputs": {
+      "variables": [
+        {
+          "name": "Ada"
+        }
+      ]
+    },
+    "settings": {
+      "content": "Hello {{name}}!"
+    },
+    "expected": {
+      "message": {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": "Hello Ada!"
+          }
+        ]
+      },
+      "prompt": "Hello Ada!"
+    }
+  },
+  {
+    "description": "Nested object variable is JSON stringified, not [object Object]",
+    "inputs": {
+      "variables": [
+        {
+          "profile": {
+            "name": "Ada",
+            "langs": [
+              "js",
+              "py"
+            ]
+          }
+        }
+      ]
+    },
+    "settings": {
+      "content": "Profile: {{profile}}"
+    },
+    "expected": {
+      "message": {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": "Profile: {\n  \"name\": \"Ada\",\n  \"langs\": [\n    \"js\",\n    \"py\"\n  ]\n}"
+          }
+        ]
+      },
+      "prompt": "Profile: {\n  \"name\": \"Ada\",\n  \"langs\": [\n    \"js\",\n    \"py\"\n  ]\n}"
+    }
+  },
+  {
+    "description": "Array of objects delivered as a single connection is flattened",
+    "inputs": {
+      "variables": [
+        [
+          {
+            "first": "Ada"
+          },
+          {
+            "last": "Lovelace"
+          }
+        ]
+      ]
+    },
+    "settings": {
+      "content": "{{first}} {{last}}"
+    },
+    "expected": {
+      "message": {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": "Ada Lovelace"
+          }
+        ]
+      },
+      "prompt": "Ada Lovelace"
+    }
+  },
+  {
+    "description": "Unmatched placeholder is left intact",
+    "inputs": {
+      "variables": [
+        {
+          "name": "Ada"
+        }
+      ]
+    },
+    "settings": {
+      "content": "Hello {{missing}}!"
+    },
+    "expected": {
+      "message": {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": "Hello {{missing}}!"
+          }
+        ]
+      },
+      "prompt": "Hello {{missing}}!"
+    }
+  }
+]

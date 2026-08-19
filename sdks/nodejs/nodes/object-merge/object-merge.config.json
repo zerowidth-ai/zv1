@@ -8,8 +8,8 @@
     {
       "name": "objects",
       "display_name": "Objects",
-      "type": "object",
-      "description": "Objects to merge (later objects override earlier ones)",
+      "type": "object or array of objects",
+      "description": "Objects to merge, individually or as arrays of objects (later objects override earlier ones)",
       "required": true,
       "allow_multiple": true
     },

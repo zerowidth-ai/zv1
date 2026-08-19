@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "workbench-sdk"
-version = "0.4.3"
+version = "0.5.0"
 description = "The Workbench SDK for executing AI orchestration flows, by ZeroWidth"
 readme = "README.md"
 license = "Apache-2.0"

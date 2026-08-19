@@ -6073,8 +6073,8 @@
             {
                 "name": "json",
                 "display_name": "JSON",
-                "type": "object",
-                "description": "The JSON object to convert to YAML",
+                "type": "object or array of objects",
+                "description": "The JSON object, or array of objects, to convert to YAML",
                 "required": true
             },
             {
@@ -15267,7 +15267,7 @@
             {
                 "name": "variables",
                 "display_name": "Variables",
-                "type": "object",
+                "type": "object or array of objects",
                 "allow_multiple": true,
                 "description": "Connect key-value pairs to inject into any matched {{key}} in the text content."
             },
@@ -16691,8 +16691,8 @@
             {
                 "name": "json",
                 "display_name": "JSON",
-                "type": "object",
-                "description": "The JSON object to convert to XML",
+                "type": "object or array of objects",
+                "description": "The JSON object, or array of objects, to convert to XML",
                 "required": true
             },
             {
@@ -18807,7 +18807,7 @@
             {
                 "name": "variables",
                 "display_name": "Variables",
-                "type": "object",
+                "type": "object or array of objects",
                 "allow_multiple": true,
                 "description": "Connect key-value pairs to inject into any matched {{key}} in the text content."
             }
@@ -34005,8 +34005,8 @@
             {
                 "name": "objects",
                 "display_name": "Objects",
-                "type": "object",
-                "description": "Objects to merge (later objects override earlier ones)",
+                "type": "object or array of objects",
+                "description": "Objects to merge, individually or as arrays of objects (later objects override earlier ones)",
                 "required": true,
                 "allow_multiple": true
             },
@@ -43981,8 +43981,8 @@
             {
                 "name": "variables",
                 "display_name": "Variables",
-                "description": "Object containing variable values",
-                "type": "object",
+                "description": "Object containing variable values, or an array of such objects to merge",
+                "type": "object or array of objects",
                 "required": true
             }
         ],

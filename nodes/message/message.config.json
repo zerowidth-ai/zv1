@@ -23,7 +23,7 @@
     {
       "name": "variables",
       "display_name": "Variables",
-      "type": "object",
+      "type": "object or array of objects",
       "allow_multiple": true,
       "description": "Connect key-value pairs to inject into any matched {{key}} in the text content."
     }

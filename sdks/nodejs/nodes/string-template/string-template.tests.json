@@ -59,5 +59,57 @@
     "expected": {
       "text": "Hello World! "
     }
+  },
+  {
+    "description": "Object variable is JSON stringified, not [object Object]",
+    "inputs": {
+      "template": "Config: {config}",
+      "variables": {"config": {"host": "localhost", "port": 8080}}
+    },
+    "settings": {
+      "keep_missing": false
+    },
+    "expected": {
+      "text": "Config: {\n  \"host\": \"localhost\",\n  \"port\": 8080\n}"
+    }
+  },
+  {
+    "description": "Array variable is JSON stringified",
+    "inputs": {
+      "template": "Items: {items}",
+      "variables": {"items": [1, 2]}
+    },
+    "settings": {
+      "keep_missing": false
+    },
+    "expected": {
+      "text": "Items: [\n  1,\n  2\n]"
+    }
+  },
+  {
+    "description": "Array of objects input is merged into one lookup",
+    "inputs": {
+      "template": "{greeting} {name}!",
+      "variables": [{"greeting": "Hello"}, {"name": "World"}]
+    },
+    "settings": {
+      "keep_missing": false
+    },
+    "expected": {
+      "text": "Hello World!"
+    }
+  },
+  {
+    "description": "Null variable renders as empty string",
+    "inputs": {
+      "template": "Value: {value}.",
+      "variables": {"value": null}
+    },
+    "settings": {
+      "keep_missing": false
+    },
+    "expected": {
+      "text": "Value: ."
+    }
   }
 ] 

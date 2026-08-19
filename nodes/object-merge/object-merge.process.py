@@ -11,8 +11,16 @@ async def process(
     objects = inputs.get("objects")
     array_mode = inputs.get("array_mode") if inputs.get("array_mode") is not None else "replace"
 
-    # Normalize to list
-    object_list = objects if isinstance(objects, list) else [objects]
+    # Normalize to a flat list. A single connection can deliver a list of
+    # objects, and a multi-connection input can deliver lists alongside plain
+    # objects, so flatten one level before filtering.
+    raw_list = objects if isinstance(objects, list) else [objects]
+    object_list = []
+    for entry in raw_list:
+        if isinstance(entry, list):
+            object_list.extend(entry)
+        else:
+            object_list.append(entry)
 
     # Filter out non-dicts
     valid_objects = [
