@@ -1,0 +1,85 @@
+[
+  {
+    "description": "String variable is injected as-is",
+    "inputs": {
+      "variables": [
+        {
+          "name": "Ada"
+        }
+      ]
+    },
+    "settings": {
+      "role": "user",
+      "content": "Hello {{name}}!"
+    },
+    "expected": {
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Hello Ada!"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "description": "Nested object variable is JSON stringified, not [object Object]",
+    "inputs": {
+      "variables": [
+        {
+          "order": {
+            "id": 7,
+            "paid": true
+          }
+        }
+      ]
+    },
+    "settings": {
+      "role": "user",
+      "content": "Order: {{order}}"
+    },
+    "expected": {
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Order: {\n  \"id\": 7,\n  \"paid\": true\n}"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "description": "Array of objects delivered as a single connection is flattened",
+    "inputs": {
+      "variables": [
+        [
+          {
+            "first": "Ada"
+          },
+          {
+            "last": "Lovelace"
+          }
+        ]
+      ]
+    },
+    "settings": {
+      "role": "user",
+      "content": "{{first}} {{last}}"
+    },
+    "expected": {
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Ada Lovelace"
+          }
+        ]
+      }
+    }
+  }
+]

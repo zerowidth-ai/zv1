@@ -8,8 +8,8 @@
     {
       "name": "json",
       "display_name": "JSON",
-      "type": "object",
-      "description": "The JSON object to convert to YAML",
+      "type": "object or array of objects",
+      "description": "The JSON object, or array of objects, to convert to YAML",
       "required": true
     },
     {

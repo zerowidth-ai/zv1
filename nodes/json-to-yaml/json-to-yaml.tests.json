@@ -97,5 +97,14 @@
     "expected": {
       "yaml": "null"
     }
+  },
+  {
+    "description": "Top-level array of objects",
+    "inputs": {
+      "json": [{"name": "Alice"}, {"name": "Bob"}]
+    },
+    "expected": {
+      "yaml": "- name: Alice\n- name: Bob"
+    }
   }
 ]

@@ -23,7 +23,7 @@ from src.errors import (
 )
 from src.cache import CacheManager
 
-__version__ = "0.4.3"
+__version__ = "0.5.0"
 __all__ = [
     "Zv1",
     "CacheManager",

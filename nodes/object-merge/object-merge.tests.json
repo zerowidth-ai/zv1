@@ -142,5 +142,17 @@
     "expected": {
       "merged": {"level1": {"level2": {"level3": {"a": 1, "b": 2, "c": 3}}}}
     }
+  },
+  {
+    "description": "Array of objects delivered as a single connection is flattened",
+    "inputs": {
+      "objects": [
+        [{"a": 1}, {"b": 2}],
+        {"c": 3}
+      ]
+    },
+    "expected": {
+      "merged": {"a": 1, "b": 2, "c": 3}
+    }
   }
 ]

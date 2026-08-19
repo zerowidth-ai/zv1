@@ -147,6 +147,8 @@ Connection suggestions provide hints for common connection patterns to improve t
 
 #### Type Guidelines
 - **Arrays**: Use `"array of objects"` or `"array of strings"` for clarity
+- **Object inputs**: If the node treats the object as opaque data it serializes, merges, or passes through, declare `"object or array of objects"` so a list-producing node can connect. Reserve a bare `"object"` for inputs that must be one specific shape (a JSON Schema, an HTTP header map, an API filter).
+- **Template variables**: Values injected into text (`{{key}}` / `{key}`) must be JSON encoded when they aren't strings, so nested data reads as JSON instead of `[object Object]` (JS) or a Python repr.
 - **Complex types**: Be specific about what the object contains
 - **Multitypes** Use the "or" to delimit multiple types and aim to handle as much translation as possible. Ex: `"string or array of strings"` and internally in the process.js function if a single string is detected, convert it to an array
 - **Optional fields**: Sometimes outputs are null, this will stop propagation and can be used to make conditional routing

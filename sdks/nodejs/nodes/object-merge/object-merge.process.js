@@ -2,8 +2,12 @@ export default async ({ inputs, settings, config }) => {
   const objects = inputs.objects;
   const arrayMode = inputs.array_mode ?? "replace";
 
-  // Normalize to array
-  const objectList = Array.isArray(objects) ? objects : [objects];
+  // Normalize to a flat array. A single connection can deliver an array of
+  // objects, and a multi-connection input can deliver arrays alongside plain
+  // objects, so flatten one level before filtering.
+  const objectList = (Array.isArray(objects) ? objects : [objects]).flatMap(
+    (entry) => (Array.isArray(entry) ? entry : [entry])
+  );
 
   // Filter out non-objects
   const validObjects = objectList.filter(

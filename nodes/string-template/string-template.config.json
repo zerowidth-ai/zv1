@@ -14,8 +14,8 @@
     {
       "name": "variables",
       "display_name": "Variables",
-      "description": "Object containing variable values",
-      "type": "object",
+      "description": "Object containing variable values, or an array of such objects to merge",
+      "type": "object or array of objects",
       "required": true
     }
   ],
