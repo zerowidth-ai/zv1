@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Bring-your-own inference endpoints.** A host can register custom OpenAI-compatible or Azure OpenAI endpoints and route flow nodes to them instead of the platform OpenRouter endpoint. `Workbench.create(flow, { customInferenceProviders: { <name>: { baseURL, apiKey, dialect: "openai" | "azure", apiVersion?, models? } } })` builds a `custom:<name>` integration per provider, reusing the OpenRouter integration's completion logic with a configurable destination + dialect (`azure` uses `AzureOpenAI` — deployment-as-model + `api-version`). OpenRouter-only payload fields (`provider`, `usage:{include}`) are omitted for custom dialects so strict servers don't reject them. New node **`custom-inference`** resolves `settings.provider` → the `custom:<provider>` integration and sends `settings.model`; the host rewrites its own `byo:<provider>:<model>` nodes to this at run time. Covered by `tests/test.custom-inference.js` (dialect construction, payload trimming, end-to-end flow routing). Powers ZeroWidth inference governance (ADR 0048 Phase 3).
+
 ## 2.2.0 — 2026-08
 
 - **Template variables holding structured data now render as JSON instead of `[object Object]`.** `system-prompt`, `message`, and `string-template` coerced every variable with `String()`/`str()`, so connecting a nested object or an array to a `{{key}}` / `{key}` placeholder injected `[object Object]` (or `[object Object],[object Object]` for a list) straight into the prompt. Non-string values are now JSON-encoded with 2-space indent; strings still pass through untouched. This also closes a JS/Python divergence — Python's `str()` emitted `True`/`None` where JS emitted `true`/`null`; both now go through JSON encoding, and null/`None` renders as an empty string rather than the literal word. Covered by new `system-prompt.tests.json` and `message.tests.json`, plus four new `string-template` cases.
