@@ -11,6 +11,7 @@
 import assert from "assert";
 import Workbench from "../src/index.js";
 import OpenRouterIntegration from "../src/integrations/openrouter.js";
+import { loadIntegrations } from "../src/utilities/loaders.js";
 
 let failures = 0;
 function check(name, fn) {
@@ -94,6 +95,32 @@ await check("end-to-end flow routes through the custom provider", async () => {
   const outputs = await engine.run({ text: "hi" });
   const answer = JSON.stringify(outputs);
   assert.ok(answer.includes("Hello world"), `expected output to include the completion, got ${answer}`);
+});
+
+const noKb = { knowledgeBase: { enabled: false } };
+
+await check("generic inferenceBaseURL + keys.inference wires a plain OpenAI endpoint", async () => {
+  const ints = await loadIntegrations({ ...noKb, keys: { inference: "k" }, inferenceBaseURL: "https://vllm.internal/v1" });
+  assert.ok(ints.openrouter, "primary LLM integration should be built");
+  assert.equal(ints.openrouter.client.baseURL, "https://vllm.internal/v1");
+  assert.equal(ints.openrouter.dialect, "openai");
+});
+
+await check("legacy openrouterBaseURL + keys.openrouter is an equivalent alias", async () => {
+  const ints = await loadIntegrations({ ...noKb, keys: { openrouter: "k" }, openrouterBaseURL: "https://vllm.internal/v1" });
+  assert.equal(ints.openrouter.client.baseURL, "https://vllm.internal/v1");
+  assert.equal(ints.openrouter.dialect, "openai");
+});
+
+await check("the default endpoint keeps the OpenRouter dialect + base", async () => {
+  const ints = await loadIntegrations({ ...noKb, keys: { openrouter: "k" } });
+  assert.equal(ints.openrouter.dialect, "openrouter");
+  assert.ok(ints.openrouter.client.baseURL.includes("openrouter.ai"));
+});
+
+await check("an explicit OpenRouter base URL still keeps full accounting", async () => {
+  const ints = await loadIntegrations({ ...noKb, keys: { inference: "k" }, inferenceBaseURL: "https://openrouter.ai/api/v1" });
+  assert.equal(ints.openrouter.dialect, "openrouter");
 });
 
 if (failures > 0) {

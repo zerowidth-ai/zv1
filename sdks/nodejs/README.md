@@ -48,7 +48,7 @@ import Workbench from '@zerowidth/workbench-sdk';
 // Create engine instance by passing the location of your configured flow
 const engine = await Workbench.create('./path/to/myflow.zwf', {
   keys: {
-    openrouter: process.env.OPENROUTER_API_KEY
+    inference: process.env.INFERENCE_API_KEY  // your LLM endpoint's key
   }
 });
 
@@ -281,14 +281,36 @@ The engine supports secure API key management for nodes that require external se
 ```javascript
 const engine = await Workbench.create(flow, {
   keys: {
-    openrouter: "sk-...",  // OpenRouter API key
+    inference: "sk-...",  // key for the LLM endpoint (default: OpenRouter)
   }
 });
 ```
 
+### Pointing at your own LLM
+
+Every OpenAI-compatible LLM node runs against a single inference endpoint.
+By default that's OpenRouter, but you can point it at **your own**
+OpenAI-compatible endpoint (vLLM, Ollama, TGI, a LiteLLM proxy, or any
+gateway) — nothing leaves your infrastructure:
+
+```javascript
+const engine = await Workbench.create(flow, {
+  keys: { inference: process.env.MY_LLM_KEY },
+  inferenceBaseURL: "https://llm.my-internal-host/v1",
+});
+```
+
+The model ids in the flow (e.g. `openai/gpt-4o`) must be ones your endpoint
+serves — a LiteLLM `model_list` mapping is the usual way to line these up.
+A custom `inferenceBaseURL` sends plain OpenAI-shaped requests (the
+OpenRouter-only payload fields are dropped automatically).
+
+> **Aliases:** `keys.openrouter` and `openrouterBaseURL` are still accepted
+> as backward-compatible aliases for `keys.inference` and `inferenceBaseURL`.
+
 ### Node Key Requirements
 
-Nodes specify their key requirements in their configuration. All LLMs are configured by default to use OpenRouter, but this can be overridden.
+Nodes specify their key requirements in their configuration. All LLMs are configured by default to use the inference endpoint (OpenRouter unless overridden), but this can be overridden.
 
 ```json
 {
