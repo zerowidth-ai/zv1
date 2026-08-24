@@ -1,6 +1,6 @@
 {
   "name": "@zerowidth/workbench-sdk",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "dependencies": {
     "adm-zip": "^0.5.16",
     "ajv": "^8.17.1",
@@ -11,7 +11,11 @@
     "tiktoken": "^1.0.22",
     "uuid": "^11.1.0"
   },
-  "repository": "https://github.com/zerowidth-ai/workbench-sdk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zerowidth-ai/workbench-sdk.git",
+    "directory": "sdks/nodejs"
+  },
   "description": "Workbench SDK \u2014 execute Workbench-authored flows in production. Successor to the zv1 package; see https://zerowidth.ai for the design surface.",
   "main": "./src/index.js",
   "files": [
@@ -34,7 +38,8 @@
     "test-nodes": "node tests/test.all-nodes.js",
     "test-flows": "node tests/test.flows.js",
     "test-flow": "node tests/test.flows.js",
-    "test-kb": "node tests/test.kb-search.js && node tests/test.kb-graph.js"
+    "test-kb": "node tests/test.kb-search.js && node tests/test.kb-graph.js",
+    "test-custom-inference": "node tests/test.custom-inference.js"
   },
   "author": "Peter Binggeser @ ZeroWidth, LLC",
   "license": "Apache-2.0",

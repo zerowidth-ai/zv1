@@ -112,13 +112,27 @@ export async function loadNodes(flow) {
 export async function loadIntegrations(config, flow = null) {
   const integrations = {};
   
-  // Load OpenRouter integration if API key is provided
-  if (config.keys?.openrouter) {
+  // Load the primary LLM integration (OpenAI-compatible chat/completions).
+  // Public config is provider-agnostic — `inferenceBaseURL` + `keys.inference`
+  // — so a self-hosted host can point the engine at its own endpoint without
+  // any "openrouter" branding. `openrouterBaseURL` + `keys.openrouter` remain
+  // as backward-compatible aliases (the platform default endpoint stays
+  // OpenRouter). The integration is still registered under `openrouter` for
+  // the LLM nodes that look it up by that name.
+  const inferenceKey = config.keys?.inference ?? config.keys?.openrouter;
+  if (inferenceKey) {
       const openrouterPath = path.join(getDirname(import.meta.url), '../integrations', 'openrouter.js');
+      const inferenceBaseURL = config.inferenceBaseURL || config.openrouterBaseURL || 'https://openrouter.ai/api/v1';
+      // Only the real OpenRouter endpoint understands the OpenRouter-only
+      // payload extensions (provider routing, usage accounting). A custom
+      // base URL is a plain OpenAI-compatible endpoint, so use the 'openai'
+      // dialect there and don't send those fields (see openrouter.js).
+      const isOpenRouterEndpoint = /^https?:\/\/openrouter\.ai(\/|$)/i.test(inferenceBaseURL);
       try {
           const OpenRouterIntegration = await import(openrouterPath).then(module => module.default);
-          integrations.openrouter = new OpenRouterIntegration(config.keys.openrouter, {
-              baseURL: config.openrouterBaseURL || 'https://openrouter.ai/api/v1',
+          integrations.openrouter = new OpenRouterIntegration(inferenceKey, {
+              baseURL: inferenceBaseURL,
+              dialect: isOpenRouterEndpoint ? 'openrouter' : 'openai',
               referer: 'https://workbench.zerowidth.ai',
               title: 'Workbench by ZeroWidth'
           });
@@ -126,7 +140,28 @@ export async function loadIntegrations(config, flow = null) {
           throw error;
       }
   }
-  
+
+  // Bring-your-own inference endpoints (ADR 0048 Phase 3). The host passes
+  // `customInferenceProviders: { <name>: { baseURL, apiKey, dialect,
+  // apiVersion?, models? } }`. Each becomes an integration keyed
+  // `custom:<name>`, reusing the OpenRouter integration's completion logic
+  // with a custom destination + dialect. The `custom-inference` node
+  // resolves `custom:<provider>` by its settings.
+  if (config.customInferenceProviders && typeof config.customInferenceProviders === 'object') {
+      const openrouterPath = path.join(getDirname(import.meta.url), '../integrations', 'openrouter.js');
+      const OpenRouterIntegration = await import(openrouterPath).then(module => module.default);
+      for (const [name, provider] of Object.entries(config.customInferenceProviders)) {
+          if (!provider?.baseURL || !provider?.apiKey) continue;
+          integrations['custom:' + name] = new OpenRouterIntegration(provider.apiKey, {
+              baseURL: provider.baseURL,
+              dialect: provider.dialect === 'azure' ? 'azure' : 'openai',
+              apiVersion: provider.apiVersion,
+              referer: 'https://workbench.zerowidth.ai',
+              title: 'Workbench by ZeroWidth'
+          });
+      }
+  }
+
   // Load knowledge base integration if available
   const knowledgeBaseType = config.knowledgeBase?.type || 'sqlite';
   const knowledgeBaseConfig = config.knowledgeBase || {};

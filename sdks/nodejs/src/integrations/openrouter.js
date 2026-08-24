@@ -1,18 +1,38 @@
-import OpenAI from 'openai';
+import OpenAI, { AzureOpenAI } from 'openai';
 import { emitAPICallEvent } from '../utilities/sanitizeAPICall.js';
 
 export default class OpenRouterIntegration {
     constructor(apiKey, options = {}) {
-        
-        this.client = new OpenAI({
-            baseURL: options.baseURL || 'https://openrouter.ai/api/v1',
-            apiKey: apiKey,
-            defaultHeaders: {
-                'Content-Type': 'application/json',
-                'HTTP-Referer': options.referer || 'https://workbench.zerowidth.ai',
-                'X-Title': options.title || 'Workbench by ZeroWidth'
-            }
-        });
+        // dialect: 'openrouter' (default — the platform endpoint, which
+        // accepts OpenRouter-specific payload extensions), or a custom
+        // OpenAI-compatible endpoint: 'openai' (vLLM/Ollama/TGI/gateways)
+        // or 'azure' (Azure OpenAI — deployment routing + api-version).
+        // See ADR 0048 Phase 3 in the zerowidth monorepo.
+        this.dialect = options.dialect || 'openrouter';
+
+        const defaultHeaders = {
+            'Content-Type': 'application/json',
+            'HTTP-Referer': options.referer || 'https://workbench.zerowidth.ai',
+            'X-Title': options.title || 'Workbench by ZeroWidth'
+        };
+
+        if (this.dialect === 'azure') {
+            // Azure OpenAI: the model name is the deployment; auth is the
+            // `api-key` header + a required `api-version`. AzureOpenAI wires
+            // all three from these options.
+            this.client = new AzureOpenAI({
+                endpoint: options.baseURL,
+                apiKey: apiKey,
+                apiVersion: options.apiVersion || '2024-10-21',
+                defaultHeaders
+            });
+        } else {
+            this.client = new OpenAI({
+                baseURL: options.baseURL || 'https://openrouter.ai/api/v1',
+                apiKey: apiKey,
+                defaultHeaders
+            });
+        }
     }
 
     async chatCompletion(params, nodeConfig = null, engineConfig = null) {
@@ -24,16 +44,20 @@ export default class OpenRouterIntegration {
         } = params;
 
         // Base payload with required fields
-        const payload = {
-            model,
-            provider: {
+        const payload = { model };
+        // OpenRouter-only extensions: the `provider` routing directive and
+        // usage accounting. A custom OpenAI-compatible / Azure endpoint
+        // doesn't understand these and strict servers (Azure) reject
+        // unknown fields — so only send them to the platform endpoint.
+        if (this.dialect === 'openrouter') {
+            payload.provider = {
                 data_collection: "deny",
                 require_parameters: true,
-            },
+            };
             // Request OpenRouter usage accounting so the response carries the
             // authoritative cost (usage.cost). buildCostData prefers it.
-            usage: { include: true }
-        };
+            payload.usage = { include: true };
+        }
 
         // Add messages or prompt (required)
         if (messages) {

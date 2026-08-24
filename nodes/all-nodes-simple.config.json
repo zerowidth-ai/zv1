@@ -67,6 +67,7 @@ confluence-search,Confluence Search,Search for pages and content in Confluence u
 conversation-to-text,Conversation to Text,Converts a conversation message array into a readable text transcript. Useful for logging, display, or feeding to models expecting plain text.
 csv-parser,CSV Parser,Parses a CSV string into an array of objects or arrays
 csv-stringifier,CSV Stringifier,Converts an array of objects or arrays into a CSV string
+custom-inference,Custom Inference,Runs a chat completion against a host-registered custom inference provider (an OpenAI-compatible or Azure OpenAI endpoint). The host resolves `settings.provider` to a `custom:<provider>` integration and sends `settings.model` as the model. Used by ZeroWidth's BYO inference endpoints (ADR 0048 Phase 3); the host rewrites a `byo:<provider>:<model>` node into this one at run time.
 date-formatter,Date Formatter,Formats a date or timestamp into a string using various formats
 dedupe-messages,Dedupe Messages,Removes consecutive duplicate messages from a conversation. Messages are considered duplicates if they have the same role and content. Useful for cleaning up retry artifacts.
 deepseek-deepseek-chat,DeepSeek: DeepSeek V3,DeepSeek-V3 is the latest model from the DeepSeek team, building upon the instruction following and coding abilities of the previous versions. Pre-trained on nearly 15 trillion tokens, the reported evaluations...
